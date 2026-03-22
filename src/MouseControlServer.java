@@ -9,6 +9,12 @@ import java.net.DatagramSocket;
 
 import com.sun.jna.Native;
 
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinDef;
+import com.sun.jna.platform.win32.WinUser;
+
+import com.sun.jna.platform.win32.BaseTSD;
+
 public class MouseControlServer {
 
     private static final int PORT = 6000;
@@ -21,6 +27,8 @@ public class MouseControlServer {
 
     private static final byte EVT_KEY_DOWN = 10;
     private static final byte EVT_KEY_UP   = 11;
+    
+    private static final byte EVT_KEY_TYPED = 12;
 
     private static double scaleX = 1.0;
     private static double scaleY = 1.0;
@@ -124,13 +132,25 @@ public class MouseControlServer {
 
                 case EVT_KEY_DOWN: {
                     int keyCode = dis.readInt();
+                    if (keyCode <= 0) {
+                        break;
+                    }
                     robot.keyPress(keyCode);
                     break;
                 }
 
                 case EVT_KEY_UP: {
                     int keyCode = dis.readInt();
+                    if (keyCode <= 0) {
+                        break;
+                    }
                     robot.keyRelease(keyCode);
+                    break;
+                }
+                
+                case EVT_KEY_TYPED: {
+                    char ch = dis.readChar();
+                    sendUnicodeChar(ch);
                     break;
                 }
 
@@ -139,5 +159,40 @@ public class MouseControlServer {
                     break;
             }
         }
+    }
+    
+    private static void sendUnicodeChar(char ch) {
+        WinUser.INPUT input = new WinUser.INPUT();
+        input.type = new WinDef.DWORD(WinUser.INPUT.INPUT_KEYBOARD);
+        input.input.setType("ki");
+        input.input.ki.wVk = new WinDef.WORD(0);
+        input.input.ki.wScan = new WinDef.WORD(ch);
+        input.input.ki.dwFlags = new WinDef.DWORD(WinUser.KEYBDINPUT.KEYEVENTF_UNICODE);
+        input.input.ki.time = new WinDef.DWORD(0);
+        input.input.ki.dwExtraInfo = new BaseTSD.ULONG_PTR(0);
+
+
+        WinUser.INPUT inputUp = new WinUser.INPUT();
+        inputUp.type = new WinDef.DWORD(WinUser.INPUT.INPUT_KEYBOARD);
+        inputUp.input.setType("ki");
+        inputUp.input.ki.wVk = new WinDef.WORD(0);
+        inputUp.input.ki.wScan = new WinDef.WORD(ch);
+        inputUp.input.ki.dwFlags = new WinDef.DWORD(
+                WinUser.KEYBDINPUT.KEYEVENTF_UNICODE | WinUser.KEYBDINPUT.KEYEVENTF_KEYUP
+        );
+        inputUp.input.ki.time = new WinDef.DWORD(0);
+        inputUp.input.ki.dwExtraInfo = new BaseTSD.ULONG_PTR(0);
+
+        User32.INSTANCE.SendInput(
+                new WinDef.DWORD(1),
+                (WinUser.INPUT[]) input.toArray(1),
+                input.size()
+        );
+
+        User32.INSTANCE.SendInput(
+                new WinDef.DWORD(1),
+                (WinUser.INPUT[]) inputUp.toArray(1),
+                inputUp.size()
+        );
     }
 }
