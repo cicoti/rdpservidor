@@ -1,6 +1,9 @@
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
+import java.awt.Robot;
+import java.awt.Toolkit;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -8,12 +11,10 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
 import com.sun.jna.Native;
-
+import com.sun.jna.platform.win32.BaseTSD;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinUser;
-
-import com.sun.jna.platform.win32.BaseTSD;
 
 public class MouseControlServer {
 
@@ -51,6 +52,100 @@ public class MouseControlServer {
     }
     // =========================
 
+    
+	private static void processPacket(DatagramPacket packet) throws Exception {
+
+		if (packet == null || packet.getLength() <= 0) {
+			return;
+		}
+
+		DataInputStream dis = new DataInputStream(new ByteArrayInputStream(packet.getData(), 0, packet.getLength()));
+
+		byte type = dis.readByte();
+
+		switch (type) {
+
+		case EVT_MOVE: {
+		    if (packet.getLength() < 9) {
+		        return;
+		    }
+
+		    int xNorm = dis.readInt();
+		    int yNorm = dis.readInt();
+
+		    if (xNorm < 0 || xNorm > 10000 || yNorm < 0 || yNorm > 10000) {
+		        break;
+		    }
+
+		    int logicalX = (int) ((xNorm / 10000.0) * screenW);
+		    int logicalY = (int) ((yNorm / 10000.0) * screenH);
+
+		    int realX = (int) (logicalX * scaleX);
+		    int realY = (int) (logicalY * scaleY);
+
+		    robot.mouseMove(realX, realY);
+		    break;
+		}
+
+		case EVT_LEFT_DOWN:
+		    robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+		    break;
+
+		case EVT_LEFT_UP:
+		    robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+		    break;
+
+		case EVT_RIGHT_DOWN:
+		    robot.mousePress(InputEvent.BUTTON3_DOWN_MASK);
+		    break;
+
+		case EVT_RIGHT_UP:
+		    robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
+		    break;
+
+		case EVT_KEY_DOWN: {
+		    if (packet.getLength() < 5) {
+		        return;
+		    }
+
+		    int keyCode = dis.readInt();
+		    if (keyCode <= 0) {
+		        break;
+		    }
+		    robot.keyPress(keyCode);
+		    break;
+		}
+
+		case EVT_KEY_UP: {
+		    if (packet.getLength() < 5) {
+		        return;
+		    }
+
+		    int keyCode = dis.readInt();
+		    if (keyCode <= 0) {
+		        break;
+		    }
+		    robot.keyRelease(keyCode);
+		    break;
+		}
+
+		case EVT_KEY_TYPED: {
+		    if (packet.getLength() < 3) {
+		        return;
+		    }
+
+		    char ch = dis.readChar();
+		    sendUnicodeChar(ch);
+		    break;
+		}
+
+		default:
+		    break;
+		
+		}    
+
+	}
+    
     public static void main(String[] args) throws Exception {
 
         System.out.println("Iniciando Remote Desktop Server...");
@@ -91,73 +186,16 @@ public class MouseControlServer {
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
             socket.receive(packet);
 
-            DataInputStream dis = new DataInputStream(
-                    new ByteArrayInputStream(packet.getData(), 0, packet.getLength()));
-
-            byte type = dis.readByte();
-
-            switch (type) {
-
-                case EVT_MOVE: {
-                    int xNorm = dis.readInt();
-                    int yNorm = dis.readInt();
-
-                    if (xNorm < 0 || yNorm < 0) break;
-
-                    int logicalX = (int) ((xNorm / 10000.0) * screenW);
-                    int logicalY = (int) ((yNorm / 10000.0) * screenH);
-
-                    int realX = (int) (logicalX * scaleX);
-                    int realY = (int) (logicalY * scaleY);
-
-                    robot.mouseMove(realX, realY);
-                    break;
+            try {
+                processPacket(packet);
+            }   catch (Exception e) {
+                    System.err.println("Falha ao processar pacote de " 
+                            + packet.getAddress().getHostAddress() 
+                            + ":" + packet.getPort() 
+                            + " -> " + e.getClass().getSimpleName() 
+                            + ": " + e.getMessage());
                 }
-
-                case EVT_LEFT_DOWN:
-                    robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-                    break;
-
-                case EVT_LEFT_UP:
-                    robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-                    break;
-
-                case EVT_RIGHT_DOWN:
-                    robot.mousePress(InputEvent.BUTTON3_DOWN_MASK);
-                    break;
-
-                case EVT_RIGHT_UP:
-                    robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
-                    break;
-
-                case EVT_KEY_DOWN: {
-                    int keyCode = dis.readInt();
-                    if (keyCode <= 0) {
-                        break;
-                    }
-                    robot.keyPress(keyCode);
-                    break;
-                }
-
-                case EVT_KEY_UP: {
-                    int keyCode = dis.readInt();
-                    if (keyCode <= 0) {
-                        break;
-                    }
-                    robot.keyRelease(keyCode);
-                    break;
-                }
-                
-                case EVT_KEY_TYPED: {
-                    char ch = dis.readChar();
-                    sendUnicodeChar(ch);
-                    break;
-                }
-
-                default:
-                    // evento desconhecido
-                    break;
-            }
+          
         }
     }
     
