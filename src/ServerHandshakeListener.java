@@ -37,13 +37,22 @@ public class ServerHandshakeListener implements Runnable {
 
                 if (type == TYPE_HELLO) {
 
-                    String ip = dis.readUTF();
-                    int videoPort = dis.readInt();
-                    int controlPort = dis.readInt();
+                	String ip = dis.readUTF();
+                	int videoPort = dis.readInt();
+                	int controlPort = dis.readInt();
 
-                    clientAddress = InetAddress.getByName(ip);
-                    clientVideoPort = videoPort;
-                    clientControlPort = controlPort;
+                	clientAddress = packet.getAddress();
+                	clientVideoPort = videoPort;
+                	clientControlPort = controlPort;
+
+                    byte[] ack = new byte[] { 101 };
+                    DatagramPacket ackPacket = new DatagramPacket(
+                            ack,
+                            ack.length,
+                            packet.getAddress(),
+                            packet.getPort()
+                    );
+                    socket.send(ackPacket);
 
                     System.out.println("Cliente conectado: " + ip +
                             " videoPort=" + videoPort +
