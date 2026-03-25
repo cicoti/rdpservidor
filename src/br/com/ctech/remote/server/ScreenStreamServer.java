@@ -4,7 +4,6 @@ import org.freedesktop.gstreamer.Bus;
 import org.freedesktop.gstreamer.Gst;
 import org.freedesktop.gstreamer.Pipeline;
 
-import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -25,6 +24,7 @@ public class ScreenStreamServer {
 
     private volatile InetAddress clientIp;
     private volatile int videoPort;
+    private volatile long sessionId = -1;
 
     public ScreenStreamServer() {
         this(7000);
@@ -66,6 +66,10 @@ public class ScreenStreamServer {
             serverThread = null;
         }
 
+        clientIp = null;
+        videoPort = 0;
+        sessionId = -1;
+
         System.out.println("ScreenStreamServer parado.");
     }
 
@@ -90,45 +94,26 @@ public class ScreenStreamServer {
         return videoPort;
     }
 
+    public long getSessionId() {
+        return sessionId;
+    }
+
     private void runServer() {
         try {
             handshakeListener = new ServerHandshakeListener(handshakePort);
             handshakeThread = new Thread(handshakeListener, "handshake-listener");
             handshakeThread.start();
 
-            System.out.println("Aguardando cliente...");
-
-            while (running && !handshakeListener.hasClient()) {
-                Thread.sleep(200);
-            }
-
-            if (!running) {
-                return;
-            }
-
-            clientIp = handshakeListener.getClientAddress();
-            videoPort = handshakeListener.getClientVideoPort();
-
-            System.out.println("Cliente detectado: " + clientIp.getHostAddress());
-
-            stopHandshakeListener();
-
-            String pipelineStr = buildPipeline(clientIp, videoPort);
-
-            pipeline = (Pipeline) Gst.parseLaunch(pipelineStr);
-
-            pipeline.getBus().connect((Bus.MESSAGE) (bus, msg) -> {
-                System.out.println(msg);
-            });
-
-            System.out.println("Servidor de tela enviando para " +
-                    clientIp.getHostAddress() + ":" + videoPort);
-
-            pipeline.play();
-            streaming = true;
+            System.out.println("ScreenStreamServer pronto. Aguardando cliente...");
 
             while (running) {
-                Thread.sleep(500);
+                ServerHandshakeListener.HandshakeSession newSession = handshakeListener.consumePendingSession();
+
+                if (newSession != null) {
+                    activateSession(newSession);
+                }
+
+                Thread.sleep(200);
             }
 
         } catch (InterruptedException e) {
@@ -141,7 +126,48 @@ public class ScreenStreamServer {
             stopPipeline();
             stopHandshakeListener();
             running = false;
+            clientIp = null;
+            videoPort = 0;
+            sessionId = -1;
         }
+    }
+
+    private synchronized void activateSession(ServerHandshakeListener.HandshakeSession session) {
+        if (!running) {
+            return;
+        }
+
+        this.sessionId = session.getSessionId();
+        this.clientIp = session.getClientAddress();
+        this.videoPort = session.getClientVideoPort();
+
+        System.out.println(
+                "Ativando sessão " + sessionId +
+                " para " + clientIp.getHostAddress() +
+                ":" + videoPort
+        );
+
+        restartPipelineForCurrentSession();
+    }
+
+    private void restartPipelineForCurrentSession() {
+        stopPipeline();
+
+        String pipelineStr = buildPipeline(clientIp, videoPort);
+
+        pipeline = (Pipeline) Gst.parseLaunch(pipelineStr);
+
+        pipeline.getBus().connect((Bus.MESSAGE) (bus, msg) -> {
+            System.out.println(msg);
+        });
+
+        System.out.println(
+                "Servidor de tela enviando para " +
+                clientIp.getHostAddress() + ":" + videoPort
+        );
+
+        pipeline.play();
+        streaming = true;
     }
 
     private String buildPipeline(InetAddress clientIp, int videoPort) {
@@ -171,6 +197,8 @@ public class ScreenStreamServer {
                 System.err.println("Falha ao liberar pipeline: " + e.getMessage());
             }
         }
+
+        streaming = false;
     }
 
     private void stopHandshakeListener() {
@@ -193,17 +221,6 @@ public class ScreenStreamServer {
     private static void initGStreamerOnce() {
         if (GST_INITIALIZED.compareAndSet(false, true)) {
             Gst.init("ScreenStreamServer", new String[0]);
-        }
-    }
-
-    private static void invokeIfExists(Object target, String methodName) {
-        try {
-            Method method = target.getClass().getMethod(methodName);
-            method.invoke(target);
-        } catch (NoSuchMethodException ignored) {
-        } catch (Exception e) {
-            System.err.println("Falha ao invocar " + methodName + " em "
-                    + target.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
 

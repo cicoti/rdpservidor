@@ -6,6 +6,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class ServerHandshakeListener implements Runnable, AutoCloseable {
 
@@ -21,21 +22,22 @@ public class ServerHandshakeListener implements Runnable, AutoCloseable {
     private volatile int clientVideoPort;
     private volatile int clientControlPort;
 
+    private final AtomicLong sessionSequence = new AtomicLong(0);
+    private volatile HandshakeSession pendingSession;
+
     public ServerHandshakeListener(int port) {
         this.port = port;
     }
 
     @Override
     public void run() {
-        resetClient();
-
         try {
             running = true;
             socket = new DatagramSocket(port);
 
             System.out.println("Handshake server escutando na porta " + port);
 
-            while (running && !hasClient()) {
+            while (running) {
                 byte[] buf = new byte[256];
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
 
@@ -80,9 +82,14 @@ public class ServerHandshakeListener implements Runnable, AutoCloseable {
         int videoPort = dis.readInt();
         int controlPort = dis.readInt();
 
-        clientAddress = packet.getAddress();
+        InetAddress address = packet.getAddress();
+
+        clientAddress = address;
         clientVideoPort = videoPort;
         clientControlPort = controlPort;
+
+        long sessionId = sessionSequence.incrementAndGet();
+        pendingSession = new HandshakeSession(sessionId, address, videoPort, controlPort);
 
         byte[] ack = new byte[] { TYPE_ACK };
         DatagramPacket ackPacket = new DatagramPacket(
@@ -93,11 +100,18 @@ public class ServerHandshakeListener implements Runnable, AutoCloseable {
         );
         socket.send(ackPacket);
 
-        System.out.println("Cliente conectado: " + ip +
+        System.out.println(
+                "Cliente conectado: " + ip +
                 " videoPort=" + videoPort +
-                " controlPort=" + controlPort);
+                " controlPort=" + controlPort +
+                " sessionId=" + sessionId
+        );
+    }
 
-        running = false;
+    public HandshakeSession consumePendingSession() {
+        HandshakeSession session = pendingSession;
+        pendingSession = null;
+        return session;
     }
 
     public synchronized void stop() {
@@ -130,18 +144,42 @@ public class ServerHandshakeListener implements Runnable, AutoCloseable {
         return clientControlPort;
     }
 
-    private void resetClient() {
-        clientAddress = null;
-        clientVideoPort = 0;
-        clientControlPort = 0;
-    }
-
     private void closeSocket() {
         DatagramSocket localSocket = socket;
         socket = null;
 
         if (localSocket != null && !localSocket.isClosed()) {
             localSocket.close();
+        }
+    }
+
+    public static final class HandshakeSession {
+        private final long sessionId;
+        private final InetAddress clientAddress;
+        private final int clientVideoPort;
+        private final int clientControlPort;
+
+        public HandshakeSession(long sessionId, InetAddress clientAddress, int clientVideoPort, int clientControlPort) {
+            this.sessionId = sessionId;
+            this.clientAddress = clientAddress;
+            this.clientVideoPort = clientVideoPort;
+            this.clientControlPort = clientControlPort;
+        }
+
+        public long getSessionId() {
+            return sessionId;
+        }
+
+        public InetAddress getClientAddress() {
+            return clientAddress;
+        }
+
+        public int getClientVideoPort() {
+            return clientVideoPort;
+        }
+
+        public int getClientControlPort() {
+            return clientControlPort;
         }
     }
 }
