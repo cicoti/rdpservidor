@@ -1,0 +1,226 @@
+package br.com.ctech.remote.server;
+
+import org.freedesktop.gstreamer.Bus;
+import org.freedesktop.gstreamer.Gst;
+import org.freedesktop.gstreamer.Pipeline;
+
+import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+public class ScreenStreamServer {
+
+    private static final AtomicBoolean GST_INITIALIZED = new AtomicBoolean(false);
+
+    private final int handshakePort;
+
+    private volatile boolean running;
+    private volatile boolean streaming;
+
+    private volatile Thread serverThread;
+    private volatile Thread handshakeThread;
+
+    private volatile ServerHandshakeListener handshakeListener;
+    private volatile Pipeline pipeline;
+
+    private volatile InetAddress clientIp;
+    private volatile int videoPort;
+
+    public ScreenStreamServer() {
+        this(7000);
+    }
+
+    public ScreenStreamServer(int handshakePort) {
+        this.handshakePort = handshakePort;
+    }
+
+    public synchronized void start() {
+        if (running) {
+            System.out.println("ScreenStreamServer já está em execução.");
+            return;
+        }
+
+        initGStreamerOnce();
+
+        running = true;
+        serverThread = new Thread(this::runServer, "ScreenStreamServer");
+        serverThread.start();
+    }
+
+    public synchronized void stop() {
+        if (!running && serverThread == null) {
+            return;
+        }
+
+        System.out.println("Parando ScreenStreamServer...");
+
+        running = false;
+        streaming = false;
+
+        stopPipeline();
+        stopHandshakeListener();
+
+        if (serverThread != null) {
+            serverThread.interrupt();
+            joinQuietly(serverThread, 2000);
+            serverThread = null;
+        }
+
+        System.out.println("ScreenStreamServer parado.");
+    }
+
+    public synchronized void restart() {
+        stop();
+        start();
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public boolean isStreaming() {
+        return streaming;
+    }
+
+    public InetAddress getClientIp() {
+        return clientIp;
+    }
+
+    public int getVideoPort() {
+        return videoPort;
+    }
+
+    private void runServer() {
+        try {
+            handshakeListener = new ServerHandshakeListener(handshakePort);
+            handshakeThread = new Thread(handshakeListener, "handshake-listener");
+            handshakeThread.start();
+
+            System.out.println("Aguardando cliente...");
+
+            while (running && !handshakeListener.hasClient()) {
+                Thread.sleep(200);
+            }
+
+            if (!running) {
+                return;
+            }
+
+            clientIp = handshakeListener.getClientAddress();
+            videoPort = handshakeListener.getClientVideoPort();
+
+            System.out.println("Cliente detectado: " + clientIp.getHostAddress());
+
+            stopHandshakeListener();
+
+            String pipelineStr = buildPipeline(clientIp, videoPort);
+
+            pipeline = (Pipeline) Gst.parseLaunch(pipelineStr);
+
+            pipeline.getBus().connect((Bus.MESSAGE) (bus, msg) -> {
+                System.out.println(msg);
+            });
+
+            System.out.println("Servidor de tela enviando para " +
+                    clientIp.getHostAddress() + ":" + videoPort);
+
+            pipeline.play();
+            streaming = true;
+
+            while (running) {
+                Thread.sleep(500);
+            }
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            System.err.println("Erro no ScreenStreamServer: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            streaming = false;
+            stopPipeline();
+            stopHandshakeListener();
+            running = false;
+        }
+    }
+
+    private String buildPipeline(InetAddress clientIp, int videoPort) {
+        return "d3d11screencapturesrc ! queue ! d3d11convert ! d3d11download ! videoconvert ! " +
+               "video/x-raw,framerate=30/1 ! " +
+               "x264enc tune=zerolatency speed-preset=ultrafast bitrate=6000 key-int-max=30 ! " +
+               "h264parse ! rtph264pay pt=96 config-interval=1 ! " +
+               "udpsink host=" + clientIp.getHostAddress() +
+               " port=" + videoPort +
+               " sync=false";
+    }
+
+    private void stopPipeline() {
+        Pipeline localPipeline = pipeline;
+        pipeline = null;
+
+        if (localPipeline != null) {
+            try {
+                localPipeline.stop();
+            } catch (Exception e) {
+                System.err.println("Falha ao parar pipeline: " + e.getMessage());
+            }
+
+            try {
+                localPipeline.dispose();
+            } catch (Exception e) {
+                System.err.println("Falha ao liberar pipeline: " + e.getMessage());
+            }
+        }
+    }
+
+    private void stopHandshakeListener() {
+        ServerHandshakeListener localHandshakeListener = handshakeListener;
+        Thread localHandshakeThread = handshakeThread;
+
+        handshakeListener = null;
+        handshakeThread = null;
+
+        if (localHandshakeListener != null) {
+            localHandshakeListener.stop();
+        }
+
+        if (localHandshakeThread != null) {
+            localHandshakeThread.interrupt();
+            joinQuietly(localHandshakeThread, 1000);
+        }
+    }
+
+    private static void initGStreamerOnce() {
+        if (GST_INITIALIZED.compareAndSet(false, true)) {
+            Gst.init("ScreenStreamServer", new String[0]);
+        }
+    }
+
+    private static void invokeIfExists(Object target, String methodName) {
+        try {
+            Method method = target.getClass().getMethod(methodName);
+            method.invoke(target);
+        } catch (NoSuchMethodException ignored) {
+        } catch (Exception e) {
+            System.err.println("Falha ao invocar " + methodName + " em "
+                    + target.getClass().getSimpleName() + ": " + e.getMessage());
+        }
+    }
+
+    private static void joinQuietly(Thread thread, long timeoutMillis) {
+        try {
+            thread.join(timeoutMillis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        ScreenStreamServer server = new ScreenStreamServer();
+        server.start();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
+
+        Thread.currentThread().join();
+    }
+}
