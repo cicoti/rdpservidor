@@ -72,7 +72,7 @@ public class ServerConfigDialog extends JDialog {
 
         add(contentPanel, BorderLayout.CENTER);
 
-        setPreferredSize(new Dimension(560, 340));
+        setPreferredSize(new Dimension(560, 345));
         pack();
         setResizable(false);
         setLocationRelativeTo(getParent());
