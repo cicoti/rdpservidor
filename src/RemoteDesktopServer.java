@@ -200,12 +200,6 @@ public class RemoteDesktopServer {
         logServersState("Estado após stop");
     }
 
-    private static synchronized void restartServers() {
-        System.out.println("Reiniciando servidores...");
-        stopServers();
-        startServers();
-    }
-
     private static void logServersState(String context) {
         String videoState = (screenServer != null && screenServer.isRunning()) ? "ativo" : "parado";
         String mouseState = (mouseServer != null && mouseServer.isRunning()) ? "ativo" : "parado";
@@ -250,12 +244,6 @@ public class RemoteDesktopServer {
 
                 PopupMenu popupMenu = new PopupMenu();
 
-                MenuItem restartItem = new MenuItem("Reiniciar");
-                restartItem.addActionListener(e -> {
-                    restartServers();
-                    showTrayMessage(APP_NAME, "Servidores reiniciados.", MessageType.INFO);
-                });
-
                 MenuItem statusItem = new MenuItem("Status");
                 statusItem.addActionListener(e ->
                         showTrayMessage(APP_NAME, buildStatusMessage(), MessageType.INFO));
@@ -266,8 +254,6 @@ public class RemoteDesktopServer {
                 MenuItem exitItem = new MenuItem("Sair");
                 exitItem.addActionListener(e -> shutdownApplication());
 
-                popupMenu.add(restartItem);
-                popupMenu.addSeparator();
                 popupMenu.add(statusItem);
                 popupMenu.addSeparator();
                 popupMenu.add(configItem);
