@@ -11,17 +11,20 @@ import java.awt.TrayIcon.MessageType;
 import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.RandomAccessFile;
-import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import br.com.ctech.remote.server.MouseControlServer;
 import br.com.ctech.remote.server.ScreenStreamServer;
+import br.com.ctech.remote.server.ServerConfig;
+import br.com.ctech.remote.server.ServerConfigDialog;
+import br.com.ctech.remote.server.ServerConfigManager;
+
 
 public class RemoteDesktopServer {
 
@@ -34,8 +37,11 @@ public class RemoteDesktopServer {
     private static FileChannel lockChannel;
     private static FileLock lock;
 
-    private static final ScreenStreamServer screenServer = new ScreenStreamServer();
-    private static final MouseControlServer mouseServer = new MouseControlServer(5000);
+    private static ScreenStreamServer screenServer;
+    private static MouseControlServer mouseServer;
+
+    private static ServerConfigManager configManager;
+    private static ServerConfig currentConfig;
 
     private static final AtomicBoolean shuttingDown = new AtomicBoolean(false);
 
@@ -49,7 +55,18 @@ public class RemoteDesktopServer {
             return;
         }
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> performShutdown(false), "remote-desktop-shutdown-hook"));
+        configManager = new ServerConfigManager();
+        currentConfig = configManager.load();
+
+        System.out.println("Configuração carregada | handshake=" + currentConfig.getHandshakePort()
+                + " | controle=" + currentConfig.getControlPort());
+
+        screenServer = new ScreenStreamServer(currentConfig.getHandshakePort());
+        mouseServer = new MouseControlServer(currentConfig.getControlPort());
+
+        Runtime.getRuntime().addShutdownHook(
+                new Thread(() -> performShutdown(false), "remote-desktop-shutdown-hook")
+        );
 
         enableDPIAwareness();
         logDpiScale();
@@ -133,6 +150,11 @@ public class RemoteDesktopServer {
     }
 
     private static synchronized void startServers() {
+        if (screenServer == null || mouseServer == null) {
+            System.out.println("Servidores não foram inicializados corretamente.");
+            return;
+        }
+
         if (!screenServer.isRunning()) {
             System.out.println("Iniciando ScreenStreamServer...");
             screenServer.start();
@@ -153,18 +175,26 @@ public class RemoteDesktopServer {
     private static synchronized void stopServers() {
         System.out.println("Parando servidores...");
 
-        if (screenServer.isRunning()) {
-            System.out.println("Parando ScreenStreamServer...");
-            screenServer.stop();
+        if (screenServer != null) {
+            if (screenServer.isRunning()) {
+                System.out.println("Parando ScreenStreamServer...");
+                screenServer.stop();
+            } else {
+                System.out.println("ScreenStreamServer já estava parado.");
+            }
         } else {
-            System.out.println("ScreenStreamServer já estava parado.");
+            System.out.println("ScreenStreamServer não foi instanciado.");
         }
 
-        if (mouseServer.isRunning()) {
-            System.out.println("Parando MouseControlServer...");
-            mouseServer.stop();
+        if (mouseServer != null) {
+            if (mouseServer.isRunning()) {
+                System.out.println("Parando MouseControlServer...");
+                mouseServer.stop();
+            } else {
+                System.out.println("MouseControlServer já estava parado.");
+            }
         } else {
-            System.out.println("MouseControlServer já estava parado.");
+            System.out.println("MouseControlServer não foi instanciado.");
         }
 
         logServersState("Estado após stop");
@@ -177,11 +207,10 @@ public class RemoteDesktopServer {
     }
 
     private static void logServersState(String context) {
-        System.out.println(
-                context
-                        + " | vídeo=" + (screenServer.isRunning() ? "ativo" : "parado")
-                        + " | mouse=" + (mouseServer.isRunning() ? "ativo" : "parado")
-        );
+        String videoState = (screenServer != null && screenServer.isRunning()) ? "ativo" : "parado";
+        String mouseState = (mouseServer != null && mouseServer.isRunning()) ? "ativo" : "parado";
+
+        System.out.println(context + " | vídeo=" + videoState + " | mouse=" + mouseState);
     }
 
     private static void logDpiScale() {
@@ -231,12 +260,17 @@ public class RemoteDesktopServer {
                 statusItem.addActionListener(e ->
                         showTrayMessage(APP_NAME, buildStatusMessage(), MessageType.INFO));
 
+                MenuItem configItem = new MenuItem("Configuração");
+                configItem.addActionListener(e -> openConfigurationDialog());
+
                 MenuItem exitItem = new MenuItem("Sair");
                 exitItem.addActionListener(e -> shutdownApplication());
 
                 popupMenu.add(restartItem);
                 popupMenu.addSeparator();
                 popupMenu.add(statusItem);
+                popupMenu.addSeparator();
+                popupMenu.add(configItem);
                 popupMenu.addSeparator();
                 popupMenu.add(exitItem);
 
@@ -260,9 +294,36 @@ public class RemoteDesktopServer {
         });
     }
 
+    private static void openConfigurationDialog() {
+        try {
+            ServerConfig latestConfig = configManager.load();
+
+            int activeHandshakePort = currentConfig != null ? currentConfig.getHandshakePort() : ServerConfig.DEFAULT_HANDSHAKE_PORT;
+            int activeControlPort = currentConfig != null ? currentConfig.getControlPort() : ServerConfig.DEFAULT_CONTROL_PORT;
+
+            SwingUtilities.invokeLater(() -> {
+                ServerConfigDialog dialog = new ServerConfigDialog(
+                        null,
+                        latestConfig,
+                        configManager,
+                        activeHandshakePort,
+                        activeControlPort
+                );
+                dialog.setVisible(true);
+                currentConfig = configManager.load();
+            });
+
+        } catch (Exception e) {
+            System.out.println("Erro ao abrir tela de configuração.");
+            e.printStackTrace();
+        }
+    }
+
     private static String buildStatusMessage() {
-        return "Vídeo: " + (screenServer.isRunning() ? "ativo" : "parado")
-                + " | Mouse: " + (mouseServer.isRunning() ? "ativo" : "parado");
+        return "Vídeo: " + ((screenServer != null && screenServer.isRunning()) ? "ativo" : "parado")
+                + " | Mouse: " + ((mouseServer != null && mouseServer.isRunning()) ? "ativo" : "parado")
+                + " | Handshake: " + (currentConfig != null ? currentConfig.getHandshakePort() : "-")
+                + " | Controle: " + (currentConfig != null ? currentConfig.getControlPort() : "-");
     }
 
     private static Image loadTrayImage() {
