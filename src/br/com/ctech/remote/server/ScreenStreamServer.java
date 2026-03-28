@@ -60,17 +60,27 @@ public class ScreenStreamServer {
         stopPipeline();
         stopHandshakeListener();
 
-        if (serverThread != null) {
-            serverThread.interrupt();
-            joinQuietly(serverThread, 2000);
-            serverThread = null;
+        Thread localServerThread = serverThread;
+
+        if (localServerThread != null) {
+            localServerThread.interrupt();
+            joinQuietly(localServerThread, 2000);
+
+            if (localServerThread.isAlive()) {
+                System.err.println("A thread principal do ScreenStreamServer não encerrou no tempo esperado.");
+            } else {
+                System.out.println("Thread principal do ScreenStreamServer encerrada com sucesso.");
+                if (serverThread == localServerThread) {
+                    serverThread = null;
+                }
+            }
         }
 
         clientIp = null;
         videoPort = 0;
         sessionId = -1;
 
-        System.out.println("ScreenStreamServer parado.");
+        System.out.println("Estado final do ScreenStreamServer | running=" + running + " | streaming=" + streaming);
     }
 
     public synchronized void restart() {
@@ -129,6 +139,12 @@ public class ScreenStreamServer {
             clientIp = null;
             videoPort = 0;
             sessionId = -1;
+
+            if (Thread.currentThread() == serverThread) {
+                serverThread = null;
+            }
+
+            System.out.println("Loop principal do ScreenStreamServer finalizado.");
         }
     }
 
@@ -206,7 +222,6 @@ public class ScreenStreamServer {
         Thread localHandshakeThread = handshakeThread;
 
         handshakeListener = null;
-        handshakeThread = null;
 
         if (localHandshakeListener != null) {
             localHandshakeListener.stop();
@@ -215,6 +230,17 @@ public class ScreenStreamServer {
         if (localHandshakeThread != null) {
             localHandshakeThread.interrupt();
             joinQuietly(localHandshakeThread, 1000);
+
+            if (localHandshakeThread.isAlive()) {
+                System.err.println("A thread de handshake não encerrou no tempo esperado.");
+            } else {
+                System.out.println("Thread de handshake encerrada com sucesso.");
+                if (handshakeThread == localHandshakeThread) {
+                    handshakeThread = null;
+                }
+            }
+        } else {
+            handshakeThread = null;
         }
     }
 

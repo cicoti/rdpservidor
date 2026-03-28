@@ -15,6 +15,7 @@ import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -34,7 +35,9 @@ public class RemoteDesktopServer {
     private static FileLock lock;
 
     private static final ScreenStreamServer screenServer = new ScreenStreamServer();
-    private static final MouseControlServer mouseServer = new MouseControlServer();
+    private static final MouseControlServer mouseServer = new MouseControlServer(5000);
+
+    private static final AtomicBoolean shuttingDown = new AtomicBoolean(false);
 
     private static native boolean setProcessDPIAware();
 
@@ -46,11 +49,7 @@ public class RemoteDesktopServer {
             return;
         }
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            stopServers();
-            removeTrayIcon();
-            releaseSingleInstance();
-        }));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> performShutdown(false), "remote-desktop-shutdown-hook"));
 
         enableDPIAwareness();
         logDpiScale();
@@ -135,27 +134,54 @@ public class RemoteDesktopServer {
 
     private static synchronized void startServers() {
         if (!screenServer.isRunning()) {
+            System.out.println("Iniciando ScreenStreamServer...");
             screenServer.start();
+        } else {
+            System.out.println("ScreenStreamServer já estava ativo.");
         }
 
         if (!mouseServer.isRunning()) {
+            System.out.println("Iniciando MouseControlServer...");
             mouseServer.start();
+        } else {
+            System.out.println("MouseControlServer já estava ativo.");
         }
+
+        logServersState("Estado após start");
     }
 
     private static synchronized void stopServers() {
+        System.out.println("Parando servidores...");
+
         if (screenServer.isRunning()) {
+            System.out.println("Parando ScreenStreamServer...");
             screenServer.stop();
+        } else {
+            System.out.println("ScreenStreamServer já estava parado.");
         }
 
         if (mouseServer.isRunning()) {
+            System.out.println("Parando MouseControlServer...");
             mouseServer.stop();
+        } else {
+            System.out.println("MouseControlServer já estava parado.");
         }
+
+        logServersState("Estado após stop");
     }
 
     private static synchronized void restartServers() {
+        System.out.println("Reiniciando servidores...");
         stopServers();
         startServers();
+    }
+
+    private static void logServersState(String context) {
+        System.out.println(
+                context
+                        + " | vídeo=" + (screenServer.isRunning() ? "ativo" : "parado")
+                        + " | mouse=" + (mouseServer.isRunning() ? "ativo" : "parado")
+        );
     }
 
     private static void logDpiScale() {
@@ -273,12 +299,44 @@ public class RemoteDesktopServer {
     }
 
     private static void shutdownApplication() {
-        stopServers();
-        removeTrayIcon();
-        releaseSingleInstance();
-        System.out.println("Programa encerrado.");
-        System.exit(0);
-        
+        performShutdown(true);
+    }
+
+    private static void performShutdown(boolean exitJvm) {
+        if (!shuttingDown.compareAndSet(false, true)) {
+            System.out.println("Shutdown já está em andamento.");
+            return;
+        }
+
+        System.out.println("Iniciando encerramento da aplicação...");
+
+        try {
+            stopServers();
+        } catch (Exception e) {
+            System.out.println("Erro ao parar servidores.");
+            e.printStackTrace();
+        }
+
+        try {
+            removeTrayIcon();
+        } catch (Exception e) {
+            System.out.println("Erro ao remover tray icon.");
+            e.printStackTrace();
+        }
+
+        try {
+            releaseSingleInstance();
+        } catch (Exception e) {
+            System.out.println("Erro ao liberar lock da aplicação.");
+            e.printStackTrace();
+        }
+
+        System.out.println("Encerramento finalizado.");
+
+        if (exitJvm) {
+            System.out.println("Finalizando JVM...");
+            System.exit(0);
+        }
     }
 
     private static void removeTrayIcon() {

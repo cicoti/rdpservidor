@@ -46,10 +46,6 @@ public class MouseControlServer {
 
     private static native boolean SetProcessDPIAware();
 
-    public MouseControlServer() {
-        this(6000);
-    }
-
     public MouseControlServer(int port) {
         this.port = port;
     }
@@ -75,13 +71,23 @@ public class MouseControlServer {
         running = false;
         closeSocket();
 
-        if (serverThread != null) {
-            serverThread.interrupt();
-            joinQuietly(serverThread, 2000);
-            serverThread = null;
+        Thread localServerThread = serverThread;
+
+        if (localServerThread != null) {
+            localServerThread.interrupt();
+            joinQuietly(localServerThread, 2000);
+
+            if (localServerThread.isAlive()) {
+                System.err.println("A thread principal do MouseControlServer não encerrou no tempo esperado.");
+            } else {
+                System.out.println("Thread principal do MouseControlServer encerrada com sucesso.");
+                if (serverThread == localServerThread) {
+                    serverThread = null;
+                }
+            }
         }
 
-        System.out.println("MouseControlServer parado.");
+        System.out.println("Estado final do MouseControlServer | running=" + running);
     }
 
     public synchronized void restart() {
@@ -129,6 +135,12 @@ public class MouseControlServer {
         } finally {
             closeSocket();
             running = false;
+
+            if (Thread.currentThread() == serverThread) {
+                serverThread = null;
+            }
+
+            System.out.println("Loop principal do MouseControlServer finalizado.");
         }
     }
 
@@ -303,14 +315,5 @@ public class MouseControlServer {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-    }
-
-    public static void main(String[] args) throws Exception {
-        MouseControlServer server = new MouseControlServer();
-        server.start();
-
-        Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
-
-        Thread.currentThread().join();
     }
 }
