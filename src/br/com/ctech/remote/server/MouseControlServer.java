@@ -52,7 +52,7 @@ public class MouseControlServer {
 
     public synchronized void start() {
         if (running) {
-            System.out.println("MouseControlServer já está em execução.");
+            //System.out.println("MouseControlServer já está em execução.");
             return;
         }
 
@@ -66,7 +66,7 @@ public class MouseControlServer {
             return;
         }
 
-        System.out.println("Parando MouseControlServer...");
+        //System.out.println("Parando MouseControlServer...");
 
         running = false;
         closeSocket();
@@ -80,14 +80,14 @@ public class MouseControlServer {
             if (localServerThread.isAlive()) {
                 System.err.println("A thread principal do MouseControlServer não encerrou no tempo esperado.");
             } else {
-                System.out.println("Thread principal do MouseControlServer encerrada com sucesso.");
+                //System.out.println("Thread principal do MouseControlServer encerrada com sucesso.");
                 if (serverThread == localServerThread) {
                     serverThread = null;
                 }
             }
         }
 
-        System.out.println("Estado final do MouseControlServer | running=" + running);
+        //System.out.println("Estado final do MouseControlServer | running=" + running);
     }
 
     public synchronized void restart() {
@@ -106,7 +106,7 @@ public class MouseControlServer {
             detectScreenConfiguration();
 
             socket = new DatagramSocket(port);
-            System.out.println("MouseControlServer rodando na porta " + port);
+            //System.out.println("MouseControlServer rodando na porta " + port);
 
             while (running) {
                 byte[] buf = new byte[32];
@@ -140,7 +140,7 @@ public class MouseControlServer {
                 serverThread = null;
             }
 
-            System.out.println("Loop principal do MouseControlServer finalizado.");
+            //System.out.println("Loop principal do MouseControlServer finalizado.");
         }
     }
 
@@ -164,8 +164,8 @@ public class MouseControlServer {
         scaleX = tx.getScaleX();
         scaleY = tx.getScaleY();
 
-        System.out.println("DPI scale X=" + scaleX + " Y=" + scaleY);
-        System.out.println("Resolucao detectada: " + screenW + " x " + screenH);
+        //System.out.println("DPI scale X=" + scaleX + " Y=" + scaleY);
+        //System.out.println("Resolucao detectada: " + screenW + " x " + screenH);
     }
 
     private static void enableDPIAwareness() {

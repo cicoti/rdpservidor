@@ -43,7 +43,7 @@ public class ServerConfigManager {
             config.setControlPort(controlPort);
 
         } catch (Exception e) {
-            System.out.println("Falha ao carregar configuração. Usando valores padrão.");
+            //System.out.println("Falha ao carregar configuração. Usando valores padrão.");
             e.printStackTrace();
         }
 

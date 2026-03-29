@@ -35,7 +35,7 @@ public class ServerHandshakeListener implements Runnable, AutoCloseable {
             running = true;
             socket = new DatagramSocket(port);
 
-            System.out.println("Handshake server escutando na porta " + port);
+            //System.out.println("Handshake server escutando na porta " + port);
 
             while (running) {
                 byte[] buf = new byte[256];

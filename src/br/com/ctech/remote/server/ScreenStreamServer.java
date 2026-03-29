@@ -36,7 +36,7 @@ public class ScreenStreamServer {
 
     public synchronized void start() {
         if (running) {
-            System.out.println("ScreenStreamServer já está em execução.");
+            //System.out.println("ScreenStreamServer já está em execução.");
             return;
         }
 
@@ -52,7 +52,7 @@ public class ScreenStreamServer {
             return;
         }
 
-        System.out.println("Parando ScreenStreamServer...");
+        //System.out.println("Parando ScreenStreamServer...");
 
         running = false;
         streaming = false;
@@ -69,7 +69,7 @@ public class ScreenStreamServer {
             if (localServerThread.isAlive()) {
                 System.err.println("A thread principal do ScreenStreamServer não encerrou no tempo esperado.");
             } else {
-                System.out.println("Thread principal do ScreenStreamServer encerrada com sucesso.");
+                //System.out.println("Thread principal do ScreenStreamServer encerrada com sucesso.");
                 if (serverThread == localServerThread) {
                     serverThread = null;
                 }
@@ -80,7 +80,7 @@ public class ScreenStreamServer {
         videoPort = 0;
         sessionId = -1;
 
-        System.out.println("Estado final do ScreenStreamServer | running=" + running + " | streaming=" + streaming);
+        //System.out.println("Estado final do ScreenStreamServer | running=" + running + " | streaming=" + streaming);
     }
 
     public synchronized void restart() {
@@ -114,7 +114,7 @@ public class ScreenStreamServer {
             handshakeThread = new Thread(handshakeListener, "handshake-listener");
             handshakeThread.start();
 
-            System.out.println("ScreenStreamServer pronto. Aguardando cliente...");
+            //System.out.println("ScreenStreamServer pronto. Aguardando cliente...");
 
             while (running) {
                 ServerHandshakeListener.HandshakeSession newSession = handshakeListener.consumePendingSession();
@@ -144,7 +144,7 @@ public class ScreenStreamServer {
                 serverThread = null;
             }
 
-            System.out.println("Loop principal do ScreenStreamServer finalizado.");
+            //System.out.println("Loop principal do ScreenStreamServer finalizado.");
         }
     }
 
@@ -232,9 +232,9 @@ public class ScreenStreamServer {
             joinQuietly(localHandshakeThread, 1000);
 
             if (localHandshakeThread.isAlive()) {
-                System.err.println("A thread de handshake não encerrou no tempo esperado.");
+                //System.err.println("A thread de handshake não encerrou no tempo esperado.");
             } else {
-                System.out.println("Thread de handshake encerrada com sucesso.");
+                //System.out.println("Thread de handshake encerrada com sucesso.");
                 if (handshakeThread == localHandshakeThread) {
                     handshakeThread = null;
                 }

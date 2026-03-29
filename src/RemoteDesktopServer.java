@@ -48,7 +48,7 @@ public class RemoteDesktopServer {
     private static native boolean setProcessDPIAware();
 
     public static void main(String[] args) {
-        System.out.println("Iniciando " + APP_NAME + "...");
+        //System.out.println("Iniciando " + APP_NAME + "...");
 
         if (!isSingleInstance()) {
             showAlreadyRunningMessage();
@@ -58,8 +58,8 @@ public class RemoteDesktopServer {
         configManager = new ServerConfigManager();
         currentConfig = configManager.load();
 
-        System.out.println("Configuração carregada | handshake=" + currentConfig.getHandshakePort()
-                + " | controle=" + currentConfig.getControlPort());
+        //System.out.println("Configuração carregada | handshake=" + currentConfig.getHandshakePort()
+        //        + " | controle=" + currentConfig.getControlPort());
 
         screenServer = new ScreenStreamServer(currentConfig.getHandshakePort());
         mouseServer = new MouseControlServer(currentConfig.getControlPort());
@@ -73,7 +73,7 @@ public class RemoteDesktopServer {
         initializeSystemTray();
         startServers();
 
-        System.out.println("Servidor de vídeo e mouse iniciados.");
+        //System.out.println("Servidor de vídeo e mouse iniciados.");
     }
 
     private static boolean isSingleInstance() {
@@ -151,50 +151,50 @@ public class RemoteDesktopServer {
 
     private static synchronized void startServers() {
         if (screenServer == null || mouseServer == null) {
-            System.out.println("Servidores não foram inicializados corretamente.");
+            //System.out.println("Servidores não foram inicializados corretamente.");
             return;
         }
 
         if (!screenServer.isRunning()) {
-            System.out.println("Iniciando ScreenStreamServer...");
+            //System.out.println("Iniciando ScreenStreamServer...");
             screenServer.start();
         } else {
-            System.out.println("ScreenStreamServer já estava ativo.");
+            //System.out.println("ScreenStreamServer já estava ativo.");
         }
 
         if (!mouseServer.isRunning()) {
-            System.out.println("Iniciando MouseControlServer...");
+            //System.out.println("Iniciando MouseControlServer...");
             mouseServer.start();
         } else {
-            System.out.println("MouseControlServer já estava ativo.");
+            //System.out.println("MouseControlServer já estava ativo.");
         }
 
         logServersState("Estado após start");
     }
 
     private static synchronized void stopServers() {
-        System.out.println("Parando servidores...");
+        //System.out.println("Parando servidores...");
 
         if (screenServer != null) {
             if (screenServer.isRunning()) {
-                System.out.println("Parando ScreenStreamServer...");
+                //System.out.println("Parando ScreenStreamServer...");
                 screenServer.stop();
             } else {
-                System.out.println("ScreenStreamServer já estava parado.");
+                //System.out.println("ScreenStreamServer já estava parado.");
             }
         } else {
-            System.out.println("ScreenStreamServer não foi instanciado.");
+            //System.out.println("ScreenStreamServer não foi instanciado.");
         }
 
         if (mouseServer != null) {
             if (mouseServer.isRunning()) {
-                System.out.println("Parando MouseControlServer...");
+                //System.out.println("Parando MouseControlServer...");
                 mouseServer.stop();
             } else {
-                System.out.println("MouseControlServer já estava parado.");
+                //System.out.println("MouseControlServer já estava parado.");
             }
         } else {
-            System.out.println("MouseControlServer não foi instanciado.");
+            //System.out.println("MouseControlServer não foi instanciado.");
         }
 
         logServersState("Estado após stop");
@@ -220,17 +220,17 @@ public class RemoteDesktopServer {
         scaleX = tx.getScaleX();
         scaleY = tx.getScaleY();
 
-        System.out.println("DPI scale X=" + scaleX + " Y=" + scaleY);
+        //System.out.println("DPI scale X=" + scaleX + " Y=" + scaleY);
     }
 
     private static void initializeSystemTray() {
         if (GraphicsEnvironment.isHeadless()) {
-            System.out.println("Ambiente sem interface gráfica. Tray não disponível.");
+            //System.out.println("Ambiente sem interface gráfica. Tray não disponível.");
             return;
         }
 
         if (!SystemTray.isSupported()) {
-            System.out.println("SystemTray não suportado neste ambiente.");
+            //System.out.println("SystemTray não suportado neste ambiente.");
             return;
         }
 
@@ -238,7 +238,7 @@ public class RemoteDesktopServer {
             try {
                 Image trayImage = loadTrayImage();
                 if (trayImage == null) {
-                    System.out.println("Ícone da bandeja não encontrado em resources.");
+                    //System.out.println("Ícone da bandeja não encontrado em resources.");
                     return;
                 }
 
@@ -271,10 +271,10 @@ public class RemoteDesktopServer {
                 showTrayMessage(APP_NAME, "Aplicação iniciada com sucesso.", MessageType.INFO);
 
             } catch (AWTException e) {
-                System.out.println("Erro ao adicionar ícone na bandeja.");
+                //System.out.println("Erro ao adicionar ícone na bandeja.");
                 e.printStackTrace();
             } catch (Exception e) {
-                System.out.println("Erro inesperado ao inicializar a bandeja.");
+                //System.out.println("Erro inesperado ao inicializar a bandeja.");
                 e.printStackTrace();
             }
         });
@@ -300,7 +300,7 @@ public class RemoteDesktopServer {
             });
 
         } catch (Exception e) {
-            System.out.println("Erro ao abrir tela de configuração.");
+            //System.out.println("Erro ao abrir tela de configuração.");
             e.printStackTrace();
         }
     }
@@ -317,21 +317,21 @@ public class RemoteDesktopServer {
                      RemoteDesktopServer.class.getClassLoader().getResourceAsStream("icon_remote_server.png")) {
 
             if (is == null) {
-                System.out.println("Arquivo icon_remote_server.png não encontrado no classpath.");
+                //System.out.println("Arquivo icon_remote_server.png não encontrado no classpath.");
                 return null;
             }
 
             java.awt.image.BufferedImage image = javax.imageio.ImageIO.read(is);
 
             if (image == null) {
-                System.out.println("Falha ao ler icon_remote_server.png.");
+                //System.out.println("Falha ao ler icon_remote_server.png.");
                 return null;
             }
 
             return image;
 
         } catch (Exception e) {
-            System.out.println("Erro ao carregar ícone da bandeja.");
+            //System.out.println("Erro ao carregar ícone da bandeja.");
             e.printStackTrace();
             return null;
         }
@@ -351,37 +351,37 @@ public class RemoteDesktopServer {
 
     private static void performShutdown(boolean exitJvm) {
         if (!shuttingDown.compareAndSet(false, true)) {
-            System.out.println("Shutdown já está em andamento.");
+            //System.out.println("Shutdown já está em andamento.");
             return;
         }
 
-        System.out.println("Iniciando encerramento da aplicação...");
+        //System.out.println("Iniciando encerramento da aplicação...");
 
         try {
             stopServers();
         } catch (Exception e) {
-            System.out.println("Erro ao parar servidores.");
+            //System.out.println("Erro ao parar servidores.");
             e.printStackTrace();
         }
 
         try {
             removeTrayIcon();
         } catch (Exception e) {
-            System.out.println("Erro ao remover tray icon.");
+            //System.out.println("Erro ao remover tray icon.");
             e.printStackTrace();
         }
 
         try {
             releaseSingleInstance();
         } catch (Exception e) {
-            System.out.println("Erro ao liberar lock da aplicação.");
+            //System.out.println("Erro ao liberar lock da aplicação.");
             e.printStackTrace();
         }
 
-        System.out.println("Encerramento finalizado.");
+        //System.out.println("Encerramento finalizado.");
 
         if (exitJvm) {
-            System.out.println("Finalizando JVM...");
+            //System.out.println("Finalizando JVM...");
             System.exit(0);
         }
     }
