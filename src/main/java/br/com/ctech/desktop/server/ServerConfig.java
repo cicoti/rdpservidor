@@ -1,4 +1,4 @@
-package br.com.ctech.remote.server;
+package br.com.ctech.desktop.server;
 
 public class ServerConfig {
 

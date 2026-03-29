@@ -1,4 +1,13 @@
-package br.com.ctech.remote.server;
+package br.com.ctech.desktop.server;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -12,18 +21,14 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 
 public class ServerConfigDialog extends JDialog {
 
-    private final JTextField handshakeField;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private final JTextField handshakeField;
     private final JTextField controlField;
 
     private final ServerConfigManager configManager;
@@ -41,7 +46,7 @@ public class ServerConfigDialog extends JDialog {
             int activeHandshakePort,
             int activeControlPort
     ) {
-        super(parent, "Configuração de Portas", true);
+    	super(parent, "Configuração de Portas | S4eTech - RemoteDesktopServer - v1.0", true);
 
         this.currentConfig = currentConfig;
         this.configManager = configManager;

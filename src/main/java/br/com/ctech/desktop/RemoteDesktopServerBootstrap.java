@@ -1,7 +1,9 @@
+package br.com.ctech.desktop;
+
 import java.io.File;
 
-import br.com.ctech.remote.server.ApplicationPaths;
-import br.com.ctech.remote.server.RemoteDesktopServer;
+import br.com.ctech.desktop.server.ApplicationPaths;
+import br.com.ctech.desktop.server.RemoteDesktopServer;
 
 public class RemoteDesktopServerBootstrap {
 

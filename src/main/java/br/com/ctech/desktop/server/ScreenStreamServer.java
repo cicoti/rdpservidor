@@ -1,4 +1,4 @@
-package br.com.ctech.remote.server;
+package br.com.ctech.desktop.server;
 
 import org.freedesktop.gstreamer.Bus;
 import org.freedesktop.gstreamer.Gst;

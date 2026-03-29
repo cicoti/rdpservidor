@@ -1,4 +1,4 @@
-package br.com.ctech.remote.server;
+package br.com.ctech.desktop.server;
 import java.awt.AWTException;
 import java.awt.EventQueue;
 import java.awt.GraphicsConfiguration;
