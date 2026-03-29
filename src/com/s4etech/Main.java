@@ -1,11 +1,11 @@
-package br.com.ctech.desktop;
+package com.s4etech;
 
 import java.io.File;
 
-import br.com.ctech.desktop.server.ApplicationPaths;
-import br.com.ctech.desktop.server.RemoteDesktopServer;
+import com.s4etech.desktop.path.ApplicationPaths;
+import com.s4etech.desktop.server.RemoteDesktopServer;
 
-public class RemoteDesktopServerBootstrap {
+public class Main {
 
     public static void main(String[] args) {
         File baseDir = ApplicationPaths.getApplicationBaseDirectory();

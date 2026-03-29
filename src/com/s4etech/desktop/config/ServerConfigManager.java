@@ -1,4 +1,4 @@
-package br.com.ctech.desktop.server;
+package com.s4etech.desktop.config;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,6 +7,8 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.s4etech.desktop.path.ApplicationPaths;
 
 public class ServerConfigManager {
 

@@ -1,4 +1,4 @@
-package br.com.ctech.desktop.server;
+package com.s4etech.desktop.validador;
 
 import java.net.DatagramSocket;
 

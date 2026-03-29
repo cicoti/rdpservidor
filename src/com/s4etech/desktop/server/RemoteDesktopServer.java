@@ -1,4 +1,4 @@
-package br.com.ctech.desktop.server;
+package com.s4etech.desktop.server;
 import java.awt.AWTException;
 import java.awt.EventQueue;
 import java.awt.GraphicsConfiguration;
@@ -22,6 +22,11 @@ import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.s4etech.desktop.config.ServerConfig;
+import com.s4etech.desktop.config.ServerConfigDialog;
+import com.s4etech.desktop.config.ServerConfigManager;
+import com.s4etech.desktop.path.ApplicationPaths;
 
 public class RemoteDesktopServer {
 

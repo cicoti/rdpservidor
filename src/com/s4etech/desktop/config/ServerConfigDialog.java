@@ -1,4 +1,4 @@
-package br.com.ctech.desktop.server;
+package com.s4etech.desktop.config;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -21,6 +21,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+
+import com.s4etech.desktop.validador.PortValidator;
 
 public class ServerConfigDialog extends JDialog {
 

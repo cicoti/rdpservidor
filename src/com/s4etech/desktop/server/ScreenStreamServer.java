@@ -1,11 +1,13 @@
-package br.com.ctech.desktop.server;
+package com.s4etech.desktop.server;
+
+import java.net.InetAddress;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.freedesktop.gstreamer.Bus;
 import org.freedesktop.gstreamer.Gst;
 import org.freedesktop.gstreamer.Pipeline;
 
-import java.net.InetAddress;
-import java.util.concurrent.atomic.AtomicBoolean;
+import com.s4etech.desktop.listener.ServerHandshakeListener;
 
 public class ScreenStreamServer {
 
