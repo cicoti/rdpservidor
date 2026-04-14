@@ -388,7 +388,7 @@ public class RemoteDesktopServer {
 
     private static void performShutdown(boolean exitJvm) {
         if (!shuttingDown.compareAndSet(false, true)) {
-            logger.warn("Shutdown já está em andamento");
+            //logger.warn("Shutdown já está em andamento");
             return;
         }
 
@@ -415,7 +415,7 @@ public class RemoteDesktopServer {
         logger.info("Encerramento da aplicação concluído");
 
         if (exitJvm) {
-            logger.info("Finalizando JVM");
+            logger.info("JVM Finalizanda");
             System.exit(0);
         }
     }
