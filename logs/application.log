@@ -425,3 +425,32 @@
 2026-04-14 18:25:01 INFO  c.s.d.server.RemoteDesktopServer - Iniciando MouseControlServer
 2026-04-14 18:25:01 INFO  c.s.d.server.RemoteDesktopServer - Estado após start | vídeo=ativo | mouse=ativo
 2026-04-14 18:25:01 INFO  c.s.d.server.RemoteDesktopServer - Fluxo principal de inicialização concluído
+2026-04-14 19:16:56 INFO  c.s.d.server.RemoteDesktopServer - Aplicação iniciando
+2026-04-14 19:16:56 INFO  c.s.d.server.RemoteDesktopServer - Validando instância única | lockFile=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote_desktop_server.lock
+2026-04-14 19:16:56 INFO  c.s.d.server.RemoteDesktopServer - Lock de instância única obtido com sucesso
+2026-04-14 19:16:56 INFO  c.s.d.config.ServerConfigManager - Gerenciador de configuração inicializado | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-04-14 19:16:56 INFO  c.s.d.config.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-04-14 19:16:56 INFO  c.s.d.config.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-04-14 19:16:56 INFO  c.s.d.server.RemoteDesktopServer - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-04-14 19:16:56 INFO  c.s.d.server.RemoteDesktopServer - Servidores criados com sucesso
+2026-04-14 19:16:57 WARN  c.s.d.server.RemoteDesktopServer - Não foi possível habilitar DPI awareness
+2026-04-14 19:16:57 INFO  c.s.d.server.RemoteDesktopServer - DPI detectado | scaleX=1.0 | scaleY=1.0
+2026-04-14 19:16:57 INFO  c.s.d.server.RemoteDesktopServer - Inicializando system tray
+2026-04-14 19:16:57 INFO  c.s.d.server.RemoteDesktopServer - Iniciando servidores
+2026-04-14 19:16:57 INFO  c.s.d.server.RemoteDesktopServer - Iniciando ScreenStreamServer
+2026-04-14 19:16:57 INFO  c.s.d.server.RemoteDesktopServer - Carregando ícone do system tray
+2026-04-14 19:16:57 INFO  c.s.d.server.RemoteDesktopServer - Ícone do system tray carregado com sucesso
+2026-04-14 19:16:57 INFO  c.s.d.server.RemoteDesktopServer - Iniciando MouseControlServer
+2026-04-14 19:16:57 INFO  c.s.d.server.RemoteDesktopServer - Estado após start | vídeo=ativo | mouse=ativo
+2026-04-14 19:16:57 INFO  c.s.d.server.RemoteDesktopServer - Fluxo principal de inicialização concluído
+2026-04-14 19:16:57 INFO  c.s.d.server.RemoteDesktopServer - System tray inicializado com sucesso
+2026-04-14 19:17:05 INFO  c.s.d.server.RemoteDesktopServer - Solicitação de encerramento da aplicação recebida
+2026-04-14 19:17:05 INFO  c.s.d.server.RemoteDesktopServer - Iniciando encerramento da aplicação
+2026-04-14 19:17:05 INFO  c.s.d.server.RemoteDesktopServer - Parando servidores
+2026-04-14 19:17:05 INFO  c.s.d.server.RemoteDesktopServer - Parando ScreenStreamServer
+2026-04-14 19:17:05 INFO  c.s.d.server.RemoteDesktopServer - Parando MouseControlServer
+2026-04-14 19:17:05 INFO  c.s.d.server.RemoteDesktopServer - Estado após stop | vídeo=parado | mouse=parado
+2026-04-14 19:17:05 INFO  c.s.d.server.RemoteDesktopServer - Ícone do system tray removido com sucesso
+2026-04-14 19:17:05 INFO  c.s.d.server.RemoteDesktopServer - Encerramento da aplicação concluído
+2026-04-14 19:17:05 INFO  c.s.d.server.RemoteDesktopServer - Finalizando JVM
+2026-04-14 19:17:05 WARN  c.s.d.server.RemoteDesktopServer - Shutdown já está em andamento
