@@ -1,0 +1,456 @@
+2026-03-29 13:51:55 INFO  b.c.c.r.server.RemoteDesktopServer - Aplicação iniciando
+2026-03-29 13:51:55 INFO  b.c.c.r.server.RemoteDesktopServer - Validando instância única | lockFile=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote_desktop_server.lock
+2026-03-29 13:51:55 INFO  b.c.c.r.server.RemoteDesktopServer - Lock de instância única obtido com sucesso
+2026-03-29 13:51:55 INFO  b.c.c.r.server.ServerConfigManager - Gerenciador de configuração inicializado | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 13:51:55 INFO  b.c.c.r.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 13:51:55 INFO  b.c.c.r.server.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 13:51:55 INFO  b.c.c.r.server.RemoteDesktopServer - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 13:51:55 INFO  b.c.c.r.server.RemoteDesktopServer - Servidores criados com sucesso
+2026-03-29 13:51:55 WARN  b.c.c.r.server.RemoteDesktopServer - Não foi possível habilitar DPI awareness
+2026-03-29 13:51:55 INFO  b.c.c.r.server.RemoteDesktopServer - DPI detectado | scaleX=1.0 | scaleY=1.0
+2026-03-29 13:51:55 INFO  b.c.c.r.server.RemoteDesktopServer - Inicializando system tray
+2026-03-29 13:51:55 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando servidores
+2026-03-29 13:51:55 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando ScreenStreamServer
+2026-03-29 13:51:55 INFO  b.c.c.r.server.RemoteDesktopServer - Carregando ícone do system tray
+2026-03-29 13:51:55 INFO  b.c.c.r.server.RemoteDesktopServer - Ícone do system tray carregado com sucesso
+2026-03-29 13:51:55 INFO  b.c.c.r.server.RemoteDesktopServer - System tray inicializado com sucesso
+2026-03-29 13:51:55 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando MouseControlServer
+2026-03-29 13:51:55 INFO  b.c.c.r.server.RemoteDesktopServer - Estado após start | vídeo=ativo | mouse=ativo
+2026-03-29 13:51:55 INFO  b.c.c.r.server.RemoteDesktopServer - Fluxo principal de inicialização concluído
+2026-03-29 13:52:01 INFO  b.c.c.r.server.RemoteDesktopServer - Solicitação de encerramento da aplicação recebida
+2026-03-29 13:52:01 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando encerramento da aplicação
+2026-03-29 13:52:01 INFO  b.c.c.r.server.RemoteDesktopServer - Parando servidores
+2026-03-29 13:52:01 INFO  b.c.c.r.server.RemoteDesktopServer - Parando ScreenStreamServer
+2026-03-29 13:52:01 INFO  b.c.c.r.server.RemoteDesktopServer - Parando MouseControlServer
+2026-03-29 13:52:01 INFO  b.c.c.r.server.RemoteDesktopServer - Estado após stop | vídeo=parado | mouse=parado
+2026-03-29 13:52:01 INFO  b.c.c.r.server.RemoteDesktopServer - Ícone do system tray removido com sucesso
+2026-03-29 13:52:01 INFO  b.c.c.r.server.RemoteDesktopServer - Encerramento da aplicação concluído
+2026-03-29 13:52:01 INFO  b.c.c.r.server.RemoteDesktopServer - Finalizando JVM
+2026-03-29 13:52:01 WARN  b.c.c.r.server.RemoteDesktopServer - Shutdown já está em andamento
+2026-03-29 16:29:18 INFO  b.c.c.r.server.RemoteDesktopServer - Aplicação iniciando
+2026-03-29 16:29:18 INFO  b.c.c.r.server.RemoteDesktopServer - Validando instância única | lockFile=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote_desktop_server.lock
+2026-03-29 16:29:18 INFO  b.c.c.r.server.RemoteDesktopServer - Lock de instância única obtido com sucesso
+2026-03-29 16:29:18 INFO  b.c.c.r.server.ServerConfigManager - Gerenciador de configuração inicializado | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:29:18 INFO  b.c.c.r.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:29:18 INFO  b.c.c.r.server.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:29:18 INFO  b.c.c.r.server.RemoteDesktopServer - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:29:18 INFO  b.c.c.r.server.RemoteDesktopServer - Servidores criados com sucesso
+2026-03-29 16:29:18 WARN  b.c.c.r.server.RemoteDesktopServer - Não foi possível habilitar DPI awareness
+2026-03-29 16:29:18 INFO  b.c.c.r.server.RemoteDesktopServer - DPI detectado | scaleX=1.0 | scaleY=1.0
+2026-03-29 16:29:18 INFO  b.c.c.r.server.RemoteDesktopServer - Inicializando system tray
+2026-03-29 16:29:18 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando servidores
+2026-03-29 16:29:18 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando ScreenStreamServer
+2026-03-29 16:29:18 INFO  b.c.c.r.server.RemoteDesktopServer - Carregando ícone do system tray
+2026-03-29 16:29:18 INFO  b.c.c.r.server.RemoteDesktopServer - Ícone do system tray carregado com sucesso
+2026-03-29 16:29:18 INFO  b.c.c.r.server.RemoteDesktopServer - System tray inicializado com sucesso
+2026-03-29 16:29:18 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando MouseControlServer
+2026-03-29 16:29:18 INFO  b.c.c.r.server.RemoteDesktopServer - Estado após start | vídeo=ativo | mouse=ativo
+2026-03-29 16:29:18 INFO  b.c.c.r.server.RemoteDesktopServer - Fluxo principal de inicialização concluído
+2026-03-29 16:30:58 INFO  b.c.c.r.server.RemoteDesktopServer - Aplicação iniciando
+2026-03-29 16:30:58 INFO  b.c.c.r.server.RemoteDesktopServer - Validando instância única | lockFile=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote_desktop_server.lock
+2026-03-29 16:30:58 INFO  b.c.c.r.server.RemoteDesktopServer - Lock de instância única obtido com sucesso
+2026-03-29 16:30:58 INFO  b.c.c.r.server.ServerConfigManager - Gerenciador de configuração inicializado | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:30:58 INFO  b.c.c.r.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:30:58 INFO  b.c.c.r.server.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:30:58 INFO  b.c.c.r.server.RemoteDesktopServer - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:30:58 INFO  b.c.c.r.server.RemoteDesktopServer - Servidores criados com sucesso
+2026-03-29 16:30:58 WARN  b.c.c.r.server.RemoteDesktopServer - Não foi possível habilitar DPI awareness
+2026-03-29 16:30:58 INFO  b.c.c.r.server.RemoteDesktopServer - DPI detectado | scaleX=1.0 | scaleY=1.0
+2026-03-29 16:30:58 INFO  b.c.c.r.server.RemoteDesktopServer - Inicializando system tray
+2026-03-29 16:30:58 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando servidores
+2026-03-29 16:30:58 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando ScreenStreamServer
+2026-03-29 16:30:58 INFO  b.c.c.r.server.RemoteDesktopServer - Carregando ícone do system tray
+2026-03-29 16:30:58 INFO  b.c.c.r.server.RemoteDesktopServer - Ícone do system tray carregado com sucesso
+2026-03-29 16:30:58 INFO  b.c.c.r.server.RemoteDesktopServer - System tray inicializado com sucesso
+2026-03-29 16:30:58 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando MouseControlServer
+2026-03-29 16:30:58 INFO  b.c.c.r.server.RemoteDesktopServer - Estado após start | vídeo=ativo | mouse=ativo
+2026-03-29 16:30:58 INFO  b.c.c.r.server.RemoteDesktopServer - Fluxo principal de inicialização concluído
+2026-03-29 16:33:24 INFO  b.c.c.r.server.RemoteDesktopServer - Aplicação iniciando
+2026-03-29 16:33:24 INFO  b.c.c.r.server.RemoteDesktopServer - Validando instância única | lockFile=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote_desktop_server.lock
+2026-03-29 16:33:24 INFO  b.c.c.r.server.RemoteDesktopServer - Lock de instância única obtido com sucesso
+2026-03-29 16:33:24 INFO  b.c.c.r.server.ServerConfigManager - Gerenciador de configuração inicializado | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:33:24 INFO  b.c.c.r.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:33:24 INFO  b.c.c.r.server.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:33:24 INFO  b.c.c.r.server.RemoteDesktopServer - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:33:24 INFO  b.c.c.r.server.RemoteDesktopServer - Servidores criados com sucesso
+2026-03-29 16:33:24 WARN  b.c.c.r.server.RemoteDesktopServer - Não foi possível habilitar DPI awareness
+2026-03-29 16:33:24 INFO  b.c.c.r.server.RemoteDesktopServer - DPI detectado | scaleX=1.0 | scaleY=1.0
+2026-03-29 16:33:24 INFO  b.c.c.r.server.RemoteDesktopServer - Inicializando system tray
+2026-03-29 16:33:24 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando servidores
+2026-03-29 16:33:24 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando ScreenStreamServer
+2026-03-29 16:33:24 INFO  b.c.c.r.server.RemoteDesktopServer - Carregando ícone do system tray
+2026-03-29 16:33:24 INFO  b.c.c.r.server.RemoteDesktopServer - Ícone do system tray carregado com sucesso
+2026-03-29 16:33:24 INFO  b.c.c.r.server.RemoteDesktopServer - System tray inicializado com sucesso
+2026-03-29 16:33:24 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando MouseControlServer
+2026-03-29 16:33:24 INFO  b.c.c.r.server.RemoteDesktopServer - Estado após start | vídeo=ativo | mouse=ativo
+2026-03-29 16:33:24 INFO  b.c.c.r.server.RemoteDesktopServer - Fluxo principal de inicialização concluído
+2026-03-29 16:33:28 INFO  b.c.c.r.server.RemoteDesktopServer - Solicitação de encerramento da aplicação recebida
+2026-03-29 16:33:28 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando encerramento da aplicação
+2026-03-29 16:33:28 INFO  b.c.c.r.server.RemoteDesktopServer - Parando servidores
+2026-03-29 16:33:28 INFO  b.c.c.r.server.RemoteDesktopServer - Parando ScreenStreamServer
+2026-03-29 16:33:28 INFO  b.c.c.r.server.RemoteDesktopServer - Parando MouseControlServer
+2026-03-29 16:33:28 INFO  b.c.c.r.server.RemoteDesktopServer - Estado após stop | vídeo=parado | mouse=parado
+2026-03-29 16:33:28 INFO  b.c.c.r.server.RemoteDesktopServer - Ícone do system tray removido com sucesso
+2026-03-29 16:33:28 INFO  b.c.c.r.server.RemoteDesktopServer - Encerramento da aplicação concluído
+2026-03-29 16:33:28 INFO  b.c.c.r.server.RemoteDesktopServer - Finalizando JVM
+2026-03-29 16:33:28 WARN  b.c.c.r.server.RemoteDesktopServer - Shutdown já está em andamento
+2026-03-29 16:43:50 INFO  b.c.c.r.server.RemoteDesktopServer - Aplicação iniciando
+2026-03-29 16:43:50 INFO  b.c.c.r.server.RemoteDesktopServer - Validando instância única | lockFile=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote_desktop_server.lock
+2026-03-29 16:43:50 INFO  b.c.c.r.server.RemoteDesktopServer - Lock de instância única obtido com sucesso
+2026-03-29 16:43:50 INFO  b.c.c.r.server.ServerConfigManager - Gerenciador de configuração inicializado | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:43:50 INFO  b.c.c.r.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:43:50 INFO  b.c.c.r.server.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:43:50 INFO  b.c.c.r.server.RemoteDesktopServer - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:43:50 INFO  b.c.c.r.server.RemoteDesktopServer - Servidores criados com sucesso
+2026-03-29 16:43:50 WARN  b.c.c.r.server.RemoteDesktopServer - Não foi possível habilitar DPI awareness
+2026-03-29 16:43:50 INFO  b.c.c.r.server.RemoteDesktopServer - DPI detectado | scaleX=1.0 | scaleY=1.0
+2026-03-29 16:43:50 INFO  b.c.c.r.server.RemoteDesktopServer - Inicializando system tray
+2026-03-29 16:43:50 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando servidores
+2026-03-29 16:43:50 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando ScreenStreamServer
+2026-03-29 16:43:50 INFO  b.c.c.r.server.RemoteDesktopServer - Carregando ícone do system tray
+2026-03-29 16:43:50 INFO  b.c.c.r.server.RemoteDesktopServer - Ícone do system tray carregado com sucesso
+2026-03-29 16:43:50 INFO  b.c.c.r.server.RemoteDesktopServer - System tray inicializado com sucesso
+2026-03-29 16:43:50 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando MouseControlServer
+2026-03-29 16:43:50 INFO  b.c.c.r.server.RemoteDesktopServer - Estado após start | vídeo=ativo | mouse=ativo
+2026-03-29 16:43:50 INFO  b.c.c.r.server.RemoteDesktopServer - Fluxo principal de inicialização concluído
+2026-03-29 16:43:57 INFO  b.c.c.r.server.RemoteDesktopServer - Abrindo tela de configuração
+2026-03-29 16:43:57 INFO  b.c.c.r.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:43:57 INFO  b.c.c.r.server.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:43:57 INFO  b.c.c.r.server.RemoteDesktopServer - Configuração atual para abertura da tela | handshake=7000 | controle=5000
+2026-03-29 16:46:20 INFO  b.c.c.r.server.RemoteDesktopServer - Aplicação iniciando
+2026-03-29 16:46:20 INFO  b.c.c.r.server.RemoteDesktopServer - Validando instância única | lockFile=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote_desktop_server.lock
+2026-03-29 16:46:20 INFO  b.c.c.r.server.RemoteDesktopServer - Lock de instância única obtido com sucesso
+2026-03-29 16:46:20 INFO  b.c.c.r.server.ServerConfigManager - Gerenciador de configuração inicializado | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:46:20 INFO  b.c.c.r.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:46:20 INFO  b.c.c.r.server.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:46:20 INFO  b.c.c.r.server.RemoteDesktopServer - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:46:20 INFO  b.c.c.r.server.RemoteDesktopServer - Servidores criados com sucesso
+2026-03-29 16:46:20 WARN  b.c.c.r.server.RemoteDesktopServer - Não foi possível habilitar DPI awareness
+2026-03-29 16:46:20 INFO  b.c.c.r.server.RemoteDesktopServer - DPI detectado | scaleX=1.0 | scaleY=1.0
+2026-03-29 16:46:20 INFO  b.c.c.r.server.RemoteDesktopServer - Inicializando system tray
+2026-03-29 16:46:20 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando servidores
+2026-03-29 16:46:20 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando ScreenStreamServer
+2026-03-29 16:46:20 INFO  b.c.c.r.server.RemoteDesktopServer - Carregando ícone do system tray
+2026-03-29 16:46:20 INFO  b.c.c.r.server.RemoteDesktopServer - Ícone do system tray carregado com sucesso
+2026-03-29 16:46:20 INFO  b.c.c.r.server.RemoteDesktopServer - System tray inicializado com sucesso
+2026-03-29 16:46:20 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando MouseControlServer
+2026-03-29 16:46:20 INFO  b.c.c.r.server.RemoteDesktopServer - Estado após start | vídeo=ativo | mouse=ativo
+2026-03-29 16:46:20 INFO  b.c.c.r.server.RemoteDesktopServer - Fluxo principal de inicialização concluído
+2026-03-29 16:46:25 INFO  b.c.c.r.server.RemoteDesktopServer - Abrindo tela de configuração
+2026-03-29 16:46:25 INFO  b.c.c.r.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:46:25 INFO  b.c.c.r.server.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:46:25 INFO  b.c.c.r.server.RemoteDesktopServer - Configuração atual para abertura da tela | handshake=7000 | controle=5000
+2026-03-29 16:46:38 INFO  b.c.c.r.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:46:38 INFO  b.c.c.r.server.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:46:38 INFO  b.c.c.r.server.RemoteDesktopServer - Tela de configuração encerrada | handshakeAtual=7000 | controleAtual=5000
+2026-03-29 16:50:01 INFO  b.c.c.r.server.RemoteDesktopServer - Aplicação iniciando
+2026-03-29 16:50:01 INFO  b.c.c.r.server.RemoteDesktopServer - Validando instância única | lockFile=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote_desktop_server.lock
+2026-03-29 16:50:01 INFO  b.c.c.r.server.RemoteDesktopServer - Lock de instância única obtido com sucesso
+2026-03-29 16:50:01 INFO  b.c.c.r.server.ServerConfigManager - Gerenciador de configuração inicializado | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:50:01 INFO  b.c.c.r.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:50:01 INFO  b.c.c.r.server.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:50:01 INFO  b.c.c.r.server.RemoteDesktopServer - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:50:01 INFO  b.c.c.r.server.RemoteDesktopServer - Servidores criados com sucesso
+2026-03-29 16:50:01 WARN  b.c.c.r.server.RemoteDesktopServer - Não foi possível habilitar DPI awareness
+2026-03-29 16:50:01 INFO  b.c.c.r.server.RemoteDesktopServer - DPI detectado | scaleX=1.0 | scaleY=1.0
+2026-03-29 16:50:01 INFO  b.c.c.r.server.RemoteDesktopServer - Inicializando system tray
+2026-03-29 16:50:01 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando servidores
+2026-03-29 16:50:01 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando ScreenStreamServer
+2026-03-29 16:50:01 INFO  b.c.c.r.server.RemoteDesktopServer - Carregando ícone do system tray
+2026-03-29 16:50:01 INFO  b.c.c.r.server.RemoteDesktopServer - Ícone do system tray carregado com sucesso
+2026-03-29 16:50:01 INFO  b.c.c.r.server.RemoteDesktopServer - System tray inicializado com sucesso
+2026-03-29 16:50:01 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando MouseControlServer
+2026-03-29 16:50:01 INFO  b.c.c.r.server.RemoteDesktopServer - Estado após start | vídeo=ativo | mouse=ativo
+2026-03-29 16:50:01 INFO  b.c.c.r.server.RemoteDesktopServer - Fluxo principal de inicialização concluído
+2026-03-29 16:50:08 INFO  b.c.c.r.server.RemoteDesktopServer - Abrindo tela de configuração
+2026-03-29 16:50:08 INFO  b.c.c.r.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:50:08 INFO  b.c.c.r.server.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:50:08 INFO  b.c.c.r.server.RemoteDesktopServer - Configuração atual para abertura da tela | handshake=7000 | controle=5000
+2026-03-29 16:50:24 INFO  b.c.c.r.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:50:24 INFO  b.c.c.r.server.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:50:24 INFO  b.c.c.r.server.RemoteDesktopServer - Tela de configuração encerrada | handshakeAtual=7000 | controleAtual=5000
+2026-03-29 16:51:26 INFO  b.c.c.r.server.RemoteDesktopServer - Aplicação iniciando
+2026-03-29 16:51:26 INFO  b.c.c.r.server.RemoteDesktopServer - Validando instância única | lockFile=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote_desktop_server.lock
+2026-03-29 16:51:26 INFO  b.c.c.r.server.RemoteDesktopServer - Lock de instância única obtido com sucesso
+2026-03-29 16:51:26 INFO  b.c.c.r.server.ServerConfigManager - Gerenciador de configuração inicializado | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:51:26 INFO  b.c.c.r.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:51:26 INFO  b.c.c.r.server.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:51:26 INFO  b.c.c.r.server.RemoteDesktopServer - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:51:26 INFO  b.c.c.r.server.RemoteDesktopServer - Servidores criados com sucesso
+2026-03-29 16:51:26 WARN  b.c.c.r.server.RemoteDesktopServer - Não foi possível habilitar DPI awareness
+2026-03-29 16:51:26 INFO  b.c.c.r.server.RemoteDesktopServer - DPI detectado | scaleX=1.0 | scaleY=1.0
+2026-03-29 16:51:26 INFO  b.c.c.r.server.RemoteDesktopServer - Inicializando system tray
+2026-03-29 16:51:26 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando servidores
+2026-03-29 16:51:26 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando ScreenStreamServer
+2026-03-29 16:51:26 INFO  b.c.c.r.server.RemoteDesktopServer - Carregando ícone do system tray
+2026-03-29 16:51:26 INFO  b.c.c.r.server.RemoteDesktopServer - Ícone do system tray carregado com sucesso
+2026-03-29 16:51:26 INFO  b.c.c.r.server.RemoteDesktopServer - System tray inicializado com sucesso
+2026-03-29 16:51:26 INFO  b.c.c.r.server.RemoteDesktopServer - Iniciando MouseControlServer
+2026-03-29 16:51:26 INFO  b.c.c.r.server.RemoteDesktopServer - Estado após start | vídeo=ativo | mouse=ativo
+2026-03-29 16:51:26 INFO  b.c.c.r.server.RemoteDesktopServer - Fluxo principal de inicialização concluído
+2026-03-29 16:54:33 INFO  b.c.c.d.server.RemoteDesktopServer - Aplicação iniciando
+2026-03-29 16:54:33 INFO  b.c.c.d.server.RemoteDesktopServer - Validando instância única | lockFile=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote_desktop_server.lock
+2026-03-29 16:54:33 INFO  b.c.c.d.server.RemoteDesktopServer - Lock de instância única obtido com sucesso
+2026-03-29 16:54:33 INFO  b.c.c.d.server.ServerConfigManager - Gerenciador de configuração inicializado | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:54:33 INFO  b.c.c.d.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:54:33 INFO  b.c.c.d.server.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:54:33 INFO  b.c.c.d.server.RemoteDesktopServer - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:54:33 INFO  b.c.c.d.server.RemoteDesktopServer - Servidores criados com sucesso
+2026-03-29 16:54:33 WARN  b.c.c.d.server.RemoteDesktopServer - Não foi possível habilitar DPI awareness
+2026-03-29 16:54:33 INFO  b.c.c.d.server.RemoteDesktopServer - DPI detectado | scaleX=1.0 | scaleY=1.0
+2026-03-29 16:54:33 INFO  b.c.c.d.server.RemoteDesktopServer - Inicializando system tray
+2026-03-29 16:54:33 INFO  b.c.c.d.server.RemoteDesktopServer - Iniciando servidores
+2026-03-29 16:54:33 INFO  b.c.c.d.server.RemoteDesktopServer - Iniciando ScreenStreamServer
+2026-03-29 16:54:33 INFO  b.c.c.d.server.RemoteDesktopServer - Carregando ícone do system tray
+2026-03-29 16:54:33 INFO  b.c.c.d.server.RemoteDesktopServer - Ícone do system tray carregado com sucesso
+2026-03-29 16:54:33 INFO  b.c.c.d.server.RemoteDesktopServer - System tray inicializado com sucesso
+2026-03-29 16:54:33 INFO  b.c.c.d.server.RemoteDesktopServer - Iniciando MouseControlServer
+2026-03-29 16:54:33 INFO  b.c.c.d.server.RemoteDesktopServer - Estado após start | vídeo=ativo | mouse=ativo
+2026-03-29 16:54:33 INFO  b.c.c.d.server.RemoteDesktopServer - Fluxo principal de inicialização concluído
+2026-03-29 16:54:41 INFO  b.c.c.d.server.RemoteDesktopServer - Abrindo tela de configuração
+2026-03-29 16:54:41 INFO  b.c.c.d.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:54:41 INFO  b.c.c.d.server.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:54:41 INFO  b.c.c.d.server.RemoteDesktopServer - Configuração atual para abertura da tela | handshake=7000 | controle=5000
+2026-03-29 16:54:44 INFO  b.c.c.d.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:54:44 INFO  b.c.c.d.server.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:54:44 INFO  b.c.c.d.server.RemoteDesktopServer - Tela de configuração encerrada | handshakeAtual=7000 | controleAtual=5000
+2026-03-29 16:54:49 INFO  b.c.c.d.server.RemoteDesktopServer - Abrindo tela de configuração
+2026-03-29 16:54:49 INFO  b.c.c.d.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:54:49 INFO  b.c.c.d.server.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:54:49 INFO  b.c.c.d.server.RemoteDesktopServer - Configuração atual para abertura da tela | handshake=7000 | controle=5000
+2026-03-29 16:54:54 INFO  b.c.c.d.server.ServerConfigManager - Salvando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties | handshake=8000 | controle=5000
+2026-03-29 16:54:54 INFO  b.c.c.d.server.ServerConfigManager - Configuração salva com sucesso | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:54:55 INFO  b.c.c.d.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:54:55 INFO  b.c.c.d.server.ServerConfigManager - Configuração carregada com sucesso | handshake=8000 | controle=5000
+2026-03-29 16:54:55 INFO  b.c.c.d.server.RemoteDesktopServer - Tela de configuração encerrada | handshakeAtual=8000 | controleAtual=5000
+2026-03-29 16:54:59 INFO  b.c.c.d.server.RemoteDesktopServer - Solicitação de encerramento da aplicação recebida
+2026-03-29 16:54:59 INFO  b.c.c.d.server.RemoteDesktopServer - Iniciando encerramento da aplicação
+2026-03-29 16:54:59 INFO  b.c.c.d.server.RemoteDesktopServer - Parando servidores
+2026-03-29 16:54:59 INFO  b.c.c.d.server.RemoteDesktopServer - Parando ScreenStreamServer
+2026-03-29 16:54:59 INFO  b.c.c.d.server.RemoteDesktopServer - Parando MouseControlServer
+2026-03-29 16:54:59 INFO  b.c.c.d.server.RemoteDesktopServer - Estado após stop | vídeo=parado | mouse=parado
+2026-03-29 16:54:59 INFO  b.c.c.d.server.RemoteDesktopServer - Ícone do system tray removido com sucesso
+2026-03-29 16:54:59 INFO  b.c.c.d.server.RemoteDesktopServer - Encerramento da aplicação concluído
+2026-03-29 16:54:59 INFO  b.c.c.d.server.RemoteDesktopServer - Finalizando JVM
+2026-03-29 16:54:59 WARN  b.c.c.d.server.RemoteDesktopServer - Shutdown já está em andamento
+2026-03-29 16:55:03 INFO  b.c.c.d.server.RemoteDesktopServer - Aplicação iniciando
+2026-03-29 16:55:03 INFO  b.c.c.d.server.RemoteDesktopServer - Validando instância única | lockFile=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote_desktop_server.lock
+2026-03-29 16:55:03 INFO  b.c.c.d.server.RemoteDesktopServer - Lock de instância única obtido com sucesso
+2026-03-29 16:55:03 INFO  b.c.c.d.server.ServerConfigManager - Gerenciador de configuração inicializado | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:55:03 INFO  b.c.c.d.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:55:03 INFO  b.c.c.d.server.ServerConfigManager - Configuração carregada com sucesso | handshake=8000 | controle=5000
+2026-03-29 16:55:03 INFO  b.c.c.d.server.RemoteDesktopServer - Configuração carregada com sucesso | handshake=8000 | controle=5000
+2026-03-29 16:55:03 INFO  b.c.c.d.server.RemoteDesktopServer - Servidores criados com sucesso
+2026-03-29 16:55:03 WARN  b.c.c.d.server.RemoteDesktopServer - Não foi possível habilitar DPI awareness
+2026-03-29 16:55:03 INFO  b.c.c.d.server.RemoteDesktopServer - DPI detectado | scaleX=1.0 | scaleY=1.0
+2026-03-29 16:55:03 INFO  b.c.c.d.server.RemoteDesktopServer - Inicializando system tray
+2026-03-29 16:55:03 INFO  b.c.c.d.server.RemoteDesktopServer - Iniciando servidores
+2026-03-29 16:55:03 INFO  b.c.c.d.server.RemoteDesktopServer - Iniciando ScreenStreamServer
+2026-03-29 16:55:03 INFO  b.c.c.d.server.RemoteDesktopServer - Carregando ícone do system tray
+2026-03-29 16:55:03 INFO  b.c.c.d.server.RemoteDesktopServer - Ícone do system tray carregado com sucesso
+2026-03-29 16:55:03 INFO  b.c.c.d.server.RemoteDesktopServer - System tray inicializado com sucesso
+2026-03-29 16:55:03 INFO  b.c.c.d.server.RemoteDesktopServer - Iniciando MouseControlServer
+2026-03-29 16:55:03 INFO  b.c.c.d.server.RemoteDesktopServer - Estado após start | vídeo=ativo | mouse=ativo
+2026-03-29 16:55:03 INFO  b.c.c.d.server.RemoteDesktopServer - Fluxo principal de inicialização concluído
+2026-03-29 16:55:08 INFO  b.c.c.d.server.RemoteDesktopServer - Abrindo tela de configuração
+2026-03-29 16:55:08 INFO  b.c.c.d.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:55:08 INFO  b.c.c.d.server.ServerConfigManager - Configuração carregada com sucesso | handshake=8000 | controle=5000
+2026-03-29 16:55:08 INFO  b.c.c.d.server.RemoteDesktopServer - Configuração atual para abertura da tela | handshake=8000 | controle=5000
+2026-03-29 16:55:12 INFO  b.c.c.d.server.ServerConfigManager - Salvando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties | handshake=7000 | controle=5000
+2026-03-29 16:55:12 INFO  b.c.c.d.server.ServerConfigManager - Configuração salva com sucesso | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:55:14 INFO  b.c.c.d.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:55:14 INFO  b.c.c.d.server.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:55:14 INFO  b.c.c.d.server.RemoteDesktopServer - Tela de configuração encerrada | handshakeAtual=7000 | controleAtual=5000
+2026-03-29 16:56:09 INFO  b.c.c.d.server.RemoteDesktopServer - Aplicação iniciando
+2026-03-29 16:56:09 INFO  b.c.c.d.server.RemoteDesktopServer - Validando instância única | lockFile=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote_desktop_server.lock
+2026-03-29 16:56:09 INFO  b.c.c.d.server.RemoteDesktopServer - Lock de instância única obtido com sucesso
+2026-03-29 16:56:09 INFO  b.c.c.d.server.ServerConfigManager - Gerenciador de configuração inicializado | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:56:09 INFO  b.c.c.d.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:56:09 INFO  b.c.c.d.server.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:56:09 INFO  b.c.c.d.server.RemoteDesktopServer - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:56:09 INFO  b.c.c.d.server.RemoteDesktopServer - Servidores criados com sucesso
+2026-03-29 16:56:09 WARN  b.c.c.d.server.RemoteDesktopServer - Não foi possível habilitar DPI awareness
+2026-03-29 16:56:09 INFO  b.c.c.d.server.RemoteDesktopServer - DPI detectado | scaleX=1.0 | scaleY=1.0
+2026-03-29 16:56:09 INFO  b.c.c.d.server.RemoteDesktopServer - Inicializando system tray
+2026-03-29 16:56:09 INFO  b.c.c.d.server.RemoteDesktopServer - Iniciando servidores
+2026-03-29 16:56:09 INFO  b.c.c.d.server.RemoteDesktopServer - Iniciando ScreenStreamServer
+2026-03-29 16:56:09 INFO  b.c.c.d.server.RemoteDesktopServer - Carregando ícone do system tray
+2026-03-29 16:56:09 INFO  b.c.c.d.server.RemoteDesktopServer - Ícone do system tray carregado com sucesso
+2026-03-29 16:56:09 INFO  b.c.c.d.server.RemoteDesktopServer - System tray inicializado com sucesso
+2026-03-29 16:56:09 INFO  b.c.c.d.server.RemoteDesktopServer - Iniciando MouseControlServer
+2026-03-29 16:56:09 INFO  b.c.c.d.server.RemoteDesktopServer - Estado após start | vídeo=ativo | mouse=ativo
+2026-03-29 16:56:09 INFO  b.c.c.d.server.RemoteDesktopServer - Fluxo principal de inicialização concluído
+2026-03-29 16:56:14 INFO  b.c.c.d.server.RemoteDesktopServer - Solicitação de encerramento da aplicação recebida
+2026-03-29 16:56:14 INFO  b.c.c.d.server.RemoteDesktopServer - Iniciando encerramento da aplicação
+2026-03-29 16:56:14 INFO  b.c.c.d.server.RemoteDesktopServer - Parando servidores
+2026-03-29 16:56:14 INFO  b.c.c.d.server.RemoteDesktopServer - Parando ScreenStreamServer
+2026-03-29 16:56:14 INFO  b.c.c.d.server.RemoteDesktopServer - Parando MouseControlServer
+2026-03-29 16:56:14 INFO  b.c.c.d.server.RemoteDesktopServer - Estado após stop | vídeo=parado | mouse=parado
+2026-03-29 16:56:14 INFO  b.c.c.d.server.RemoteDesktopServer - Ícone do system tray removido com sucesso
+2026-03-29 16:56:14 INFO  b.c.c.d.server.RemoteDesktopServer - Encerramento da aplicação concluído
+2026-03-29 16:56:14 INFO  b.c.c.d.server.RemoteDesktopServer - Finalizando JVM
+2026-03-29 16:56:14 WARN  b.c.c.d.server.RemoteDesktopServer - Shutdown já está em andamento
+2026-03-29 16:58:11 INFO  b.c.c.d.server.RemoteDesktopServer - Aplicação iniciando
+2026-03-29 16:58:11 INFO  b.c.c.d.server.RemoteDesktopServer - Validando instância única | lockFile=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote_desktop_server.lock
+2026-03-29 16:58:11 INFO  b.c.c.d.server.RemoteDesktopServer - Lock de instância única obtido com sucesso
+2026-03-29 16:58:11 INFO  b.c.c.d.server.ServerConfigManager - Gerenciador de configuração inicializado | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:58:11 INFO  b.c.c.d.server.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 16:58:11 INFO  b.c.c.d.server.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:58:11 INFO  b.c.c.d.server.RemoteDesktopServer - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 16:58:11 INFO  b.c.c.d.server.RemoteDesktopServer - Servidores criados com sucesso
+2026-03-29 16:58:12 WARN  b.c.c.d.server.RemoteDesktopServer - Não foi possível habilitar DPI awareness
+2026-03-29 16:58:12 INFO  b.c.c.d.server.RemoteDesktopServer - DPI detectado | scaleX=1.0 | scaleY=1.0
+2026-03-29 16:58:12 INFO  b.c.c.d.server.RemoteDesktopServer - Inicializando system tray
+2026-03-29 16:58:12 INFO  b.c.c.d.server.RemoteDesktopServer - Iniciando servidores
+2026-03-29 16:58:12 INFO  b.c.c.d.server.RemoteDesktopServer - Iniciando ScreenStreamServer
+2026-03-29 16:58:12 INFO  b.c.c.d.server.RemoteDesktopServer - Carregando ícone do system tray
+2026-03-29 16:58:12 INFO  b.c.c.d.server.RemoteDesktopServer - Ícone do system tray carregado com sucesso
+2026-03-29 16:58:12 INFO  b.c.c.d.server.RemoteDesktopServer - System tray inicializado com sucesso
+2026-03-29 16:58:12 INFO  b.c.c.d.server.RemoteDesktopServer - Iniciando MouseControlServer
+2026-03-29 16:58:12 INFO  b.c.c.d.server.RemoteDesktopServer - Estado após start | vídeo=ativo | mouse=ativo
+2026-03-29 16:58:12 INFO  b.c.c.d.server.RemoteDesktopServer - Fluxo principal de inicialização concluído
+2026-03-29 16:58:16 INFO  b.c.c.d.server.RemoteDesktopServer - Solicitação de encerramento da aplicação recebida
+2026-03-29 16:58:16 INFO  b.c.c.d.server.RemoteDesktopServer - Iniciando encerramento da aplicação
+2026-03-29 16:58:16 INFO  b.c.c.d.server.RemoteDesktopServer - Parando servidores
+2026-03-29 16:58:16 INFO  b.c.c.d.server.RemoteDesktopServer - Parando ScreenStreamServer
+2026-03-29 16:58:16 INFO  b.c.c.d.server.RemoteDesktopServer - Parando MouseControlServer
+2026-03-29 16:58:16 INFO  b.c.c.d.server.RemoteDesktopServer - Estado após stop | vídeo=parado | mouse=parado
+2026-03-29 16:58:16 INFO  b.c.c.d.server.RemoteDesktopServer - Ícone do system tray removido com sucesso
+2026-03-29 16:58:16 INFO  b.c.c.d.server.RemoteDesktopServer - Encerramento da aplicação concluído
+2026-03-29 16:58:16 INFO  b.c.c.d.server.RemoteDesktopServer - Finalizando JVM
+2026-03-29 16:58:16 WARN  b.c.c.d.server.RemoteDesktopServer - Shutdown já está em andamento
+2026-03-29 17:05:04 INFO  c.s.d.server.RemoteDesktopServer - Aplicação iniciando
+2026-03-29 17:05:04 INFO  c.s.d.server.RemoteDesktopServer - Validando instância única | lockFile=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote_desktop_server.lock
+2026-03-29 17:05:04 INFO  c.s.d.server.RemoteDesktopServer - Lock de instância única obtido com sucesso
+2026-03-29 17:05:04 INFO  c.s.d.config.ServerConfigManager - Gerenciador de configuração inicializado | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 17:05:04 INFO  c.s.d.config.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 17:05:04 INFO  c.s.d.config.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 17:05:04 INFO  c.s.d.server.RemoteDesktopServer - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 17:05:04 INFO  c.s.d.server.RemoteDesktopServer - Servidores criados com sucesso
+2026-03-29 17:05:04 WARN  c.s.d.server.RemoteDesktopServer - Não foi possível habilitar DPI awareness
+2026-03-29 17:05:04 INFO  c.s.d.server.RemoteDesktopServer - DPI detectado | scaleX=1.0 | scaleY=1.0
+2026-03-29 17:05:04 INFO  c.s.d.server.RemoteDesktopServer - Inicializando system tray
+2026-03-29 17:05:04 INFO  c.s.d.server.RemoteDesktopServer - Iniciando servidores
+2026-03-29 17:05:04 INFO  c.s.d.server.RemoteDesktopServer - Iniciando ScreenStreamServer
+2026-03-29 17:05:04 INFO  c.s.d.server.RemoteDesktopServer - Carregando ícone do system tray
+2026-03-29 17:05:04 INFO  c.s.d.server.RemoteDesktopServer - Ícone do system tray carregado com sucesso
+2026-03-29 17:05:04 INFO  c.s.d.server.RemoteDesktopServer - System tray inicializado com sucesso
+2026-03-29 17:05:04 INFO  c.s.d.server.RemoteDesktopServer - Iniciando MouseControlServer
+2026-03-29 17:05:04 INFO  c.s.d.server.RemoteDesktopServer - Estado após start | vídeo=ativo | mouse=ativo
+2026-03-29 17:05:04 INFO  c.s.d.server.RemoteDesktopServer - Fluxo principal de inicialização concluído
+2026-03-29 17:05:09 INFO  c.s.d.server.RemoteDesktopServer - Solicitação de encerramento da aplicação recebida
+2026-03-29 17:05:09 INFO  c.s.d.server.RemoteDesktopServer - Iniciando encerramento da aplicação
+2026-03-29 17:05:09 INFO  c.s.d.server.RemoteDesktopServer - Parando servidores
+2026-03-29 17:05:09 INFO  c.s.d.server.RemoteDesktopServer - Parando ScreenStreamServer
+2026-03-29 17:05:09 INFO  c.s.d.server.RemoteDesktopServer - Parando MouseControlServer
+2026-03-29 17:05:09 INFO  c.s.d.server.RemoteDesktopServer - Estado após stop | vídeo=parado | mouse=parado
+2026-03-29 17:05:09 INFO  c.s.d.server.RemoteDesktopServer - Ícone do system tray removido com sucesso
+2026-03-29 17:05:09 INFO  c.s.d.server.RemoteDesktopServer - Encerramento da aplicação concluído
+2026-03-29 17:05:09 INFO  c.s.d.server.RemoteDesktopServer - Finalizando JVM
+2026-03-29 17:05:09 WARN  c.s.d.server.RemoteDesktopServer - Shutdown já está em andamento
+2026-03-29 17:11:38 INFO  c.s.d.server.RemoteDesktopServer - Aplicação iniciando
+2026-03-29 17:11:38 INFO  c.s.d.server.RemoteDesktopServer - Validando instância única | lockFile=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote_desktop_server.lock
+2026-03-29 17:11:38 INFO  c.s.d.server.RemoteDesktopServer - Lock de instância única obtido com sucesso
+2026-03-29 17:11:38 INFO  c.s.d.config.ServerConfigManager - Gerenciador de configuração inicializado | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 17:11:38 INFO  c.s.d.config.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 17:11:38 INFO  c.s.d.config.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 17:11:38 INFO  c.s.d.server.RemoteDesktopServer - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 17:11:38 INFO  c.s.d.server.RemoteDesktopServer - Servidores criados com sucesso
+2026-03-29 17:11:38 WARN  c.s.d.server.RemoteDesktopServer - Não foi possível habilitar DPI awareness
+2026-03-29 17:11:38 INFO  c.s.d.server.RemoteDesktopServer - DPI detectado | scaleX=1.0 | scaleY=1.0
+2026-03-29 17:11:38 INFO  c.s.d.server.RemoteDesktopServer - Inicializando system tray
+2026-03-29 17:11:38 INFO  c.s.d.server.RemoteDesktopServer - Iniciando servidores
+2026-03-29 17:11:38 INFO  c.s.d.server.RemoteDesktopServer - Iniciando ScreenStreamServer
+2026-03-29 17:11:38 INFO  c.s.d.server.RemoteDesktopServer - Carregando ícone do system tray
+2026-03-29 17:11:38 INFO  c.s.d.server.RemoteDesktopServer - Ícone do system tray carregado com sucesso
+2026-03-29 17:11:38 INFO  c.s.d.server.RemoteDesktopServer - System tray inicializado com sucesso
+2026-03-29 17:11:38 INFO  c.s.d.server.RemoteDesktopServer - Iniciando MouseControlServer
+2026-03-29 17:11:38 INFO  c.s.d.server.RemoteDesktopServer - Estado após start | vídeo=ativo | mouse=ativo
+2026-03-29 17:11:38 INFO  c.s.d.server.RemoteDesktopServer - Fluxo principal de inicialização concluído
+2026-03-29 17:11:43 INFO  c.s.d.server.RemoteDesktopServer - Solicitação de encerramento da aplicação recebida
+2026-03-29 17:11:43 INFO  c.s.d.server.RemoteDesktopServer - Iniciando encerramento da aplicação
+2026-03-29 17:11:43 INFO  c.s.d.server.RemoteDesktopServer - Parando servidores
+2026-03-29 17:11:43 INFO  c.s.d.server.RemoteDesktopServer - Parando ScreenStreamServer
+2026-03-29 17:11:43 INFO  c.s.d.server.RemoteDesktopServer - Parando MouseControlServer
+2026-03-29 17:11:43 INFO  c.s.d.server.RemoteDesktopServer - Estado após stop | vídeo=parado | mouse=parado
+2026-03-29 17:11:43 INFO  c.s.d.server.RemoteDesktopServer - Ícone do system tray removido com sucesso
+2026-03-29 17:11:43 INFO  c.s.d.server.RemoteDesktopServer - Encerramento da aplicação concluído
+2026-03-29 17:11:43 INFO  c.s.d.server.RemoteDesktopServer - Finalizando JVM
+2026-03-29 17:11:43 WARN  c.s.d.server.RemoteDesktopServer - Shutdown já está em andamento
+2026-03-29 17:13:44 INFO  c.s.d.server.RemoteDesktopServer - Aplicação iniciando
+2026-03-29 17:13:44 INFO  c.s.d.server.RemoteDesktopServer - Validando instância única | lockFile=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote_desktop_server.lock
+2026-03-29 17:13:44 INFO  c.s.d.server.RemoteDesktopServer - Lock de instância única obtido com sucesso
+2026-03-29 17:13:44 INFO  c.s.d.config.ServerConfigManager - Gerenciador de configuração inicializado | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 17:13:44 INFO  c.s.d.config.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-03-29 17:13:44 INFO  c.s.d.config.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 17:13:44 INFO  c.s.d.server.RemoteDesktopServer - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-03-29 17:13:44 INFO  c.s.d.server.RemoteDesktopServer - Servidores criados com sucesso
+2026-03-29 17:13:44 WARN  c.s.d.server.RemoteDesktopServer - Não foi possível habilitar DPI awareness
+2026-03-29 17:13:44 INFO  c.s.d.server.RemoteDesktopServer - DPI detectado | scaleX=1.0 | scaleY=1.0
+2026-03-29 17:13:44 INFO  c.s.d.server.RemoteDesktopServer - Inicializando system tray
+2026-03-29 17:13:44 INFO  c.s.d.server.RemoteDesktopServer - Iniciando servidores
+2026-03-29 17:13:44 INFO  c.s.d.server.RemoteDesktopServer - Iniciando ScreenStreamServer
+2026-03-29 17:13:44 INFO  c.s.d.server.RemoteDesktopServer - Carregando ícone do system tray
+2026-03-29 17:13:44 INFO  c.s.d.server.RemoteDesktopServer - Ícone do system tray carregado com sucesso
+2026-03-29 17:13:44 INFO  c.s.d.server.RemoteDesktopServer - System tray inicializado com sucesso
+2026-03-29 17:13:44 INFO  c.s.d.server.RemoteDesktopServer - Iniciando MouseControlServer
+2026-03-29 17:13:44 INFO  c.s.d.server.RemoteDesktopServer - Estado após start | vídeo=ativo | mouse=ativo
+2026-03-29 17:13:44 INFO  c.s.d.server.RemoteDesktopServer - Fluxo principal de inicialização concluído
+2026-03-29 17:13:49 INFO  c.s.d.server.RemoteDesktopServer - Solicitação de encerramento da aplicação recebida
+2026-03-29 17:13:49 INFO  c.s.d.server.RemoteDesktopServer - Iniciando encerramento da aplicação
+2026-03-29 17:13:49 INFO  c.s.d.server.RemoteDesktopServer - Parando servidores
+2026-03-29 17:13:49 INFO  c.s.d.server.RemoteDesktopServer - Parando ScreenStreamServer
+2026-03-29 17:13:49 INFO  c.s.d.server.RemoteDesktopServer - Parando MouseControlServer
+2026-03-29 17:13:49 INFO  c.s.d.server.RemoteDesktopServer - Estado após stop | vídeo=parado | mouse=parado
+2026-03-29 17:13:49 INFO  c.s.d.server.RemoteDesktopServer - Ícone do system tray removido com sucesso
+2026-03-29 17:13:49 INFO  c.s.d.server.RemoteDesktopServer - Encerramento da aplicação concluído
+2026-03-29 17:13:49 INFO  c.s.d.server.RemoteDesktopServer - Finalizando JVM
+2026-03-29 17:13:49 WARN  c.s.d.server.RemoteDesktopServer - Shutdown já está em andamento
+2026-04-14 18:25:01 INFO  c.s.d.server.RemoteDesktopServer - Aplicação iniciando
+2026-04-14 18:25:01 INFO  c.s.d.server.RemoteDesktopServer - Validando instância única | lockFile=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote_desktop_server.lock
+2026-04-14 18:25:01 INFO  c.s.d.server.RemoteDesktopServer - Lock de instância única obtido com sucesso
+2026-04-14 18:25:01 INFO  c.s.d.config.ServerConfigManager - Gerenciador de configuração inicializado | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-04-14 18:25:01 INFO  c.s.d.config.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-04-14 18:25:01 INFO  c.s.d.config.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-04-14 18:25:01 INFO  c.s.d.server.RemoteDesktopServer - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-04-14 18:25:01 INFO  c.s.d.server.RemoteDesktopServer - Servidores criados com sucesso
+2026-04-14 18:25:01 WARN  c.s.d.server.RemoteDesktopServer - Não foi possível habilitar DPI awareness
+2026-04-14 18:25:01 INFO  c.s.d.server.RemoteDesktopServer - DPI detectado | scaleX=1.0 | scaleY=1.0
+2026-04-14 18:25:01 INFO  c.s.d.server.RemoteDesktopServer - Inicializando system tray
+2026-04-14 18:25:01 INFO  c.s.d.server.RemoteDesktopServer - Iniciando servidores
+2026-04-14 18:25:01 INFO  c.s.d.server.RemoteDesktopServer - Iniciando ScreenStreamServer
+2026-04-14 18:25:01 INFO  c.s.d.server.RemoteDesktopServer - Carregando ícone do system tray
+2026-04-14 18:25:01 INFO  c.s.d.server.RemoteDesktopServer - Ícone do system tray carregado com sucesso
+2026-04-14 18:25:01 INFO  c.s.d.server.RemoteDesktopServer - System tray inicializado com sucesso
+2026-04-14 18:25:01 INFO  c.s.d.server.RemoteDesktopServer - Iniciando MouseControlServer
+2026-04-14 18:25:01 INFO  c.s.d.server.RemoteDesktopServer - Estado após start | vídeo=ativo | mouse=ativo
+2026-04-14 18:25:01 INFO  c.s.d.server.RemoteDesktopServer - Fluxo principal de inicialização concluído
+2026-04-14 19:16:56 INFO  c.s.d.server.RemoteDesktopServer - Aplicação iniciando
+2026-04-14 19:16:56 INFO  c.s.d.server.RemoteDesktopServer - Validando instância única | lockFile=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote_desktop_server.lock
+2026-04-14 19:16:56 INFO  c.s.d.server.RemoteDesktopServer - Lock de instância única obtido com sucesso
+2026-04-14 19:16:56 INFO  c.s.d.config.ServerConfigManager - Gerenciador de configuração inicializado | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-04-14 19:16:56 INFO  c.s.d.config.ServerConfigManager - Carregando configuração | arquivo=C:\projetos\ctech\s4etech\workspace\RDPServidor\remote-desktop-server.properties
+2026-04-14 19:16:56 INFO  c.s.d.config.ServerConfigManager - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-04-14 19:16:56 INFO  c.s.d.server.RemoteDesktopServer - Configuração carregada com sucesso | handshake=7000 | controle=5000
+2026-04-14 19:16:56 INFO  c.s.d.server.RemoteDesktopServer - Servidores criados com sucesso
+2026-04-14 19:16:57 WARN  c.s.d.server.RemoteDesktopServer - Não foi possível habilitar DPI awareness
+2026-04-14 19:16:57 INFO  c.s.d.server.RemoteDesktopServer - DPI detectado | scaleX=1.0 | scaleY=1.0
+2026-04-14 19:16:57 INFO  c.s.d.server.RemoteDesktopServer - Inicializando system tray
+2026-04-14 19:16:57 INFO  c.s.d.server.RemoteDesktopServer - Iniciando servidores
+2026-04-14 19:16:57 INFO  c.s.d.server.RemoteDesktopServer - Iniciando ScreenStreamServer
+2026-04-14 19:16:57 INFO  c.s.d.server.RemoteDesktopServer - Carregando ícone do system tray
+2026-04-14 19:16:57 INFO  c.s.d.server.RemoteDesktopServer - Ícone do system tray carregado com sucesso
+2026-04-14 19:16:57 INFO  c.s.d.server.RemoteDesktopServer - Iniciando MouseControlServer
+2026-04-14 19:16:57 INFO  c.s.d.server.RemoteDesktopServer - Estado após start | vídeo=ativo | mouse=ativo
+2026-04-14 19:16:57 INFO  c.s.d.server.RemoteDesktopServer - Fluxo principal de inicialização concluído
+2026-04-14 19:16:57 INFO  c.s.d.server.RemoteDesktopServer - System tray inicializado com sucesso
+2026-04-14 19:17:05 INFO  c.s.d.server.RemoteDesktopServer - Solicitação de encerramento da aplicação recebida
+2026-04-14 19:17:05 INFO  c.s.d.server.RemoteDesktopServer - Iniciando encerramento da aplicação
+2026-04-14 19:17:05 INFO  c.s.d.server.RemoteDesktopServer - Parando servidores
+2026-04-14 19:17:05 INFO  c.s.d.server.RemoteDesktopServer - Parando ScreenStreamServer
+2026-04-14 19:17:05 INFO  c.s.d.server.RemoteDesktopServer - Parando MouseControlServer
+2026-04-14 19:17:05 INFO  c.s.d.server.RemoteDesktopServer - Estado após stop | vídeo=parado | mouse=parado
+2026-04-14 19:17:05 INFO  c.s.d.server.RemoteDesktopServer - Ícone do system tray removido com sucesso
+2026-04-14 19:17:05 INFO  c.s.d.server.RemoteDesktopServer - Encerramento da aplicação concluído
+2026-04-14 19:17:05 INFO  c.s.d.server.RemoteDesktopServer - Finalizando JVM
+2026-04-14 19:17:05 WARN  c.s.d.server.RemoteDesktopServer - Shutdown já está em andamento

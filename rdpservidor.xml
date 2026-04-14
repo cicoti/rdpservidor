@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>C:\projetos\ctech\s4etech\remotedesktop\executavel\rdpservidor.jar</jar>
+  <outfile>C:\projetos\ctech\s4etech\remotedesktop\executavel\rdpservidor.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl></downloadUrl>
+  <supportUrl></supportUrl>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
+  <manifest></manifest>
+  <icon>C:\projetos\ctech\s4etech\remotedesktop\executavel\icon_remote_server.ico</icon>
+  <jre>
+    <path>%JAVA_HOME%;%PATH%</path>
+    <requiresJdk>false</requiresJdk>
+    <requires64Bit>false</requires64Bit>
+    <minVersion></minVersion>
+    <maxVersion></maxVersion>
+    <initialHeapSize>1024</initialHeapSize>
+    <maxHeapSize>4096</maxHeapSize>
+    <opt>-XX:+UseG1GC</opt>
+  </jre>
+</launch4jConfig>
