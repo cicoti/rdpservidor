@@ -1,5 +1,9 @@
 package com.s4etech.desktop.config;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class ServerConfig {
 
 	public static final int DEFAULT_HANDSHAKE_PORT = 7000;
@@ -9,11 +13,14 @@ public class ServerConfig {
 	private int handshakePort;
 	private int controlPort;
 	private ConnectionProfile connectionProfile;
+	private List<ConnectionProfile> availableProfiles;
 
 	public ServerConfig() {
 		this.handshakePort = DEFAULT_HANDSHAKE_PORT;
 		this.controlPort = DEFAULT_CONTROL_PORT;
 		this.connectionProfile = DEFAULT_CONNECTION_PROFILE;
+		this.availableProfiles = new ArrayList<>();
+		this.availableProfiles.add(DEFAULT_CONNECTION_PROFILE);
 	}
 
 	public ServerConfig(int handshakePort, int controlPort) {
@@ -24,6 +31,9 @@ public class ServerConfig {
 		this.handshakePort = handshakePort;
 		this.controlPort = controlPort;
 		this.connectionProfile = connectionProfile != null ? connectionProfile : DEFAULT_CONNECTION_PROFILE;
+		this.availableProfiles = new ArrayList<>();
+		this.availableProfiles.add(this.connectionProfile);
+		ensureDefaultProfileAvailable();
 	}
 
 	public int getHandshakePort() {
@@ -48,5 +58,40 @@ public class ServerConfig {
 
 	public void setConnectionProfile(ConnectionProfile connectionProfile) {
 		this.connectionProfile = connectionProfile != null ? connectionProfile : DEFAULT_CONNECTION_PROFILE;
+		ensureSelectedProfileAvailable();
+	}
+
+	public List<ConnectionProfile> getAvailableProfiles() {
+		return Collections.unmodifiableList(availableProfiles);
+	}
+
+	public void setAvailableProfiles(List<ConnectionProfile> availableProfiles) {
+		this.availableProfiles = new ArrayList<>();
+
+		if (availableProfiles != null) {
+			for (ConnectionProfile profile : availableProfiles) {
+				if (profile != null && !this.availableProfiles.contains(profile)) {
+					this.availableProfiles.add(profile);
+				}
+			}
+		}
+
+		ensureDefaultProfileAvailable();
+		ensureSelectedProfileAvailable();
+	}
+
+	private void ensureDefaultProfileAvailable() {
+		if (!availableProfiles.contains(DEFAULT_CONNECTION_PROFILE)) {
+			availableProfiles.add(DEFAULT_CONNECTION_PROFILE);
+		}
+	}
+
+	private void ensureSelectedProfileAvailable() {
+		if (connectionProfile == null) {
+			connectionProfile = DEFAULT_CONNECTION_PROFILE;
+		}
+		if (!availableProfiles.contains(connectionProfile)) {
+			availableProfiles.add(connectionProfile);
+		}
 	}
 }

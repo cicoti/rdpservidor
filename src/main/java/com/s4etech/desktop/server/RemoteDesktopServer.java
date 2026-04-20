@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.s4etech.desktop.config.ServerConfig;
 import com.s4etech.desktop.config.ServerConfigDialog;
 import com.s4etech.desktop.config.ServerConfigManager;
+import com.s4etech.desktop.help.HelpDialog;
 import com.s4etech.desktop.path.ApplicationPaths;
 
 public class RemoteDesktopServer {
@@ -262,12 +263,17 @@ public class RemoteDesktopServer {
 				MenuItem configItem = new MenuItem("Configuração");
 				configItem.addActionListener(e -> openConfigurationDialog());
 
+				MenuItem helpItem = new MenuItem("Ajuda");
+				helpItem.addActionListener(e -> openHelpDialog());
+
 				MenuItem exitItem = new MenuItem("Sair");
 				exitItem.addActionListener(e -> shutdownApplication());
 
 				popupMenu.add(statusItem);
 				popupMenu.addSeparator();
 				popupMenu.add(configItem);
+				popupMenu.addSeparator();
+				popupMenu.add(helpItem);
 				popupMenu.addSeparator();
 				popupMenu.add(exitItem);
 
@@ -316,6 +322,15 @@ public class RemoteDesktopServer {
 
 		} catch (Exception e) {
 			logger.error("Erro ao abrir tela de configuração", e);
+		}
+	}
+
+	private static void openHelpDialog() {
+		try {
+			logger.info("Abrindo tela de ajuda");
+			HelpDialog.showHelpDialog();
+		} catch (Exception e) {
+			logger.error("Erro ao abrir tela de ajuda", e);
 		}
 	}
 

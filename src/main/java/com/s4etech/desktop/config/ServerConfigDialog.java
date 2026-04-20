@@ -8,18 +8,20 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
@@ -32,15 +34,21 @@ public class ServerConfigDialog extends JDialog {
 
 	private final JTextField handshakeField;
 	private final JTextField controlField;
+	private final JComboBox<ConnectionProfile> profileComboBox;
 
-	private final JRadioButton satellite1Radio;
-	private final JRadioButton satellite2Radio;
-	private final JRadioButton satellite3Radio;
-	private final JRadioButton wifiRadio;
-	private final JRadioButton lanRadio;
+	private final JLabel profileIdValueLabel;
+	private final JLabel profileDisplayNameValueLabel;
+	private final JLabel profileResolutionValueLabel;
+	private final JLabel profileFpsValueLabel;
+	private final JLabel profileBitrateValueLabel;
+	private final JLabel profileKeyIntValueLabel;
+	private final JLabel profilePresetValueLabel;
+	private final JLabel profileTuneValueLabel;
+	private final JLabel profileLeakyQueueValueLabel;
 
 	private final ServerConfigManager configManager;
 	private final ServerConfig currentConfig;
+	private final List<ConnectionProfile> availableProfiles;
 
 	private final int activeHandshakePort;
 	private final int activeControlPort;
@@ -55,18 +63,25 @@ public class ServerConfigDialog extends JDialog {
 		this.configManager = configManager;
 		this.activeHandshakePort = activeHandshakePort;
 		this.activeControlPort = activeControlPort;
+		this.availableProfiles = buildAvailableProfiles(currentConfig);
 
 		this.handshakeField = new JTextField(String.valueOf(currentConfig.getHandshakePort()), 14);
 		this.controlField = new JTextField(String.valueOf(currentConfig.getControlPort()), 14);
+		this.profileComboBox = new JComboBox<>(this.availableProfiles.toArray(new ConnectionProfile[0]));
 
-		this.satellite1Radio = new JRadioButton("Satélite 1");
-		this.satellite2Radio = new JRadioButton("Satélite 2");
-		this.satellite3Radio = new JRadioButton("Satélite 3");
-		this.wifiRadio = new JRadioButton("Wi-Fi");
-		this.lanRadio = new JRadioButton("Rede local - default");
+		this.profileIdValueLabel = createProfileValueLabel();
+		this.profileDisplayNameValueLabel = createProfileValueLabel();
+		this.profileResolutionValueLabel = createProfileValueLabel();
+		this.profileFpsValueLabel = createProfileValueLabel();
+		this.profileBitrateValueLabel = createProfileValueLabel();
+		this.profileKeyIntValueLabel = createProfileValueLabel();
+		this.profilePresetValueLabel = createProfileValueLabel();
+		this.profileTuneValueLabel = createProfileValueLabel();
+		this.profileLeakyQueueValueLabel = createProfileValueLabel();
 
 		buildUi();
 		selectCurrentProfile();
+		updateProfileDetails(getSelectedProfile());
 	}
 
 	private void buildUi() {
@@ -89,9 +104,9 @@ public class ServerConfigDialog extends JDialog {
 
 		add(contentPanel, BorderLayout.CENTER);
 
-		setPreferredSize(new Dimension(560, 620));
+		setPreferredSize(new Dimension(620, 700));
 		pack();
-		setMinimumSize(new Dimension(560, 620));
+		setMinimumSize(new Dimension(620, 700));
 		setResizable(true);
 		setLocationRelativeTo(getParent());
 	}
@@ -192,53 +207,80 @@ public class ServerConfigDialog extends JDialog {
 	}
 
 	private JPanel buildProfilePanel() {
-		JPanel panel = new JPanel(new GridBagLayout());
+		JPanel panel = new JPanel(new BorderLayout(12, 0));
 		panel.setAlignmentX(LEFT_ALIGNMENT);
 		panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(220, 220, 220)),
 				new EmptyBorder(16, 16, 16, 16)));
 
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.anchor = GridBagConstraints.WEST;
-		gbc.insets = new Insets(0, 0, 8, 0);
+		JPanel leftPanel = new JPanel();
+		leftPanel.setOpaque(false);
+		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 
 		JLabel profileLabel = new JLabel("Perfil de conexão");
 		profileLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 13));
-		panel.add(profileLabel, gbc);
+		profileLabel.setAlignmentX(LEFT_ALIGNMENT);
 
-		ButtonGroup buttonGroup = new ButtonGroup();
-		buttonGroup.add(satellite1Radio);
-		buttonGroup.add(satellite2Radio);
-		buttonGroup.add(satellite3Radio);
-		buttonGroup.add(wifiRadio);
-		buttonGroup.add(lanRadio);
+		profileComboBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+		profileComboBox.setAlignmentX(LEFT_ALIGNMENT);
+		profileComboBox.addActionListener(e -> updateProfileDetails(getSelectedProfile()));
 
-		gbc.gridy++;
-		panel.add(satellite1Radio, gbc);
+		leftPanel.add(profileLabel);
+		leftPanel.add(Box.createRigidArea(new Dimension(0, 8)));
+		leftPanel.add(profileComboBox);
 
-		gbc.gridy++;
-		panel.add(satellite2Radio, gbc);
-
-		gbc.gridy++;
-		panel.add(satellite3Radio, gbc);
-
-		gbc.gridy++;
-		panel.add(wifiRadio, gbc);
-
-		gbc.gridy++;
-		panel.add(lanRadio, gbc);
-
-		gbc.gridy++;
-		gbc.insets = new Insets(10, 0, 0, 0);
-
-		JLabel profileDesc = new JLabel(
-				"Selecione o perfil de rede que melhor representa o ambiente de conexão do servidor.");
-		profileDesc.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
-		profileDesc.setForeground(descriptionColor);
-		panel.add(profileDesc, gbc);
+		panel.add(leftPanel, BorderLayout.WEST);
+		panel.add(buildProfileDetailsPanel(), BorderLayout.CENTER);
 
 		return panel;
+	}
+
+	private JPanel buildProfileDetailsPanel() {
+		JPanel panel = new JPanel(new GridBagLayout());
+		panel.setOpaque(false);
+		panel.setBorder(new EmptyBorder(0, 12, 0, 0));
+
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.anchor = GridBagConstraints.NORTHWEST;
+		gbc.insets = new Insets(0, 0, 6, 12);
+
+		addProfileDetailRow(panel, gbc, "ID", profileIdValueLabel);
+		addProfileDetailRow(panel, gbc, "Nome", profileDisplayNameValueLabel);
+		addProfileDetailRow(panel, gbc, "Resolução", profileResolutionValueLabel);
+		addProfileDetailRow(panel, gbc, "FPS", profileFpsValueLabel);
+		addProfileDetailRow(panel, gbc, "Bitrate", profileBitrateValueLabel);
+		addProfileDetailRow(panel, gbc, "Key-int-max", profileKeyIntValueLabel);
+		addProfileDetailRow(panel, gbc, "Preset", profilePresetValueLabel);
+		addProfileDetailRow(panel, gbc, "Tune", profileTuneValueLabel);
+		addProfileDetailRow(panel, gbc, "Leaky queue", profileLeakyQueueValueLabel);
+
+		gbc.gridx = 0;
+		gbc.weighty = 1;
+		gbc.gridwidth = 2;
+		panel.add(Box.createVerticalGlue(), gbc);
+
+		return panel;
+	}
+
+	private void addProfileDetailRow(JPanel panel, GridBagConstraints gbc, String labelText, JLabel valueLabel) {
+		GridBagConstraints labelConstraints = (GridBagConstraints) gbc.clone();
+		labelConstraints.gridx = 0;
+		labelConstraints.weightx = 0;
+		labelConstraints.fill = GridBagConstraints.NONE;
+
+		JLabel label = new JLabel(labelText + ":");
+		label.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12));
+		panel.add(label, labelConstraints);
+
+		GridBagConstraints valueConstraints = (GridBagConstraints) gbc.clone();
+		valueConstraints.gridx = 1;
+		valueConstraints.weightx = 1;
+		valueConstraints.fill = GridBagConstraints.HORIZONTAL;
+		valueConstraints.insets = new Insets(0, 0, 6, 0);
+		panel.add(valueLabel, valueConstraints);
+
+		gbc.gridy++;
 	}
 
 	private JPanel buildInfoPanel() {
@@ -247,11 +289,10 @@ public class ServerConfigDialog extends JDialog {
 		panel.setAlignmentX(LEFT_ALIGNMENT);
 
 		JLabel infoLabel = new JLabel(
-		        "<html><span style='color:rgb(110,110,110);'>"
-		                + "As alterações salvas só serão aplicadas após reiniciar a aplicação."
-		                + "</span></html>",
-		        SwingConstants.LEFT
-		);
+				"<html><span style='color:rgb(110,110,110);'>"
+						+ "As alterações salvas só serão aplicadas após reiniciar a aplicação."
+						+ "</span></html>",
+				SwingConstants.LEFT);
 		infoLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
 
 		panel.add(infoLabel, BorderLayout.WEST);
@@ -263,8 +304,8 @@ public class ServerConfigDialog extends JDialog {
 		panel.setOpaque(false);
 		panel.setAlignmentX(LEFT_ALIGNMENT);
 		panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
-		panel.setPreferredSize(new Dimension(520, 44));
-		panel.setMinimumSize(new Dimension(520, 44));
+		panel.setPreferredSize(new Dimension(580, 44));
+		panel.setMinimumSize(new Dimension(580, 44));
 
 		JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		leftPanel.setOpaque(false);
@@ -297,47 +338,18 @@ public class ServerConfigDialog extends JDialog {
 
 	private void selectCurrentProfile() {
 		ConnectionProfile profile = currentConfig.getConnectionProfile();
-
-		switch (profile) {
-		case SATELLITE_1:
-			satellite1Radio.setSelected(true);
-			break;
-		case SATELLITE_2:
-			satellite2Radio.setSelected(true);
-			break;
-		case SATELLITE_3:
-			satellite3Radio.setSelected(true);
-			break;
-		case WIFI:
-			wifiRadio.setSelected(true);
-			break;
-		case LAN:
-		default:
-			lanRadio.setSelected(true);
-			break;
-		}
+		profileComboBox.setSelectedItem(profile);
 	}
 
 	private ConnectionProfile getSelectedProfile() {
-		if (satellite1Radio.isSelected()) {
-			return ConnectionProfile.SATELLITE_1;
-		}
-		if (satellite2Radio.isSelected()) {
-			return ConnectionProfile.SATELLITE_2;
-		}
-		if (satellite3Radio.isSelected()) {
-			return ConnectionProfile.SATELLITE_3;
-		}
-		if (wifiRadio.isSelected()) {
-			return ConnectionProfile.WIFI;
-		}
-		return ConnectionProfile.LAN;
+		ConnectionProfile selectedProfile = (ConnectionProfile) profileComboBox.getSelectedItem();
+		return selectedProfile != null ? selectedProfile : ServerConfig.DEFAULT_CONNECTION_PROFILE;
 	}
 
 	private void restoreDefaults() {
 		handshakeField.setText(String.valueOf(ServerConfig.DEFAULT_HANDSHAKE_PORT));
 		controlField.setText(String.valueOf(ServerConfig.DEFAULT_CONTROL_PORT));
-		lanRadio.setSelected(true);
+		selectProfileById(ConnectionProfile.DEFAULT_ID);
 		handshakeField.requestFocus();
 		handshakeField.selectAll();
 	}
@@ -368,7 +380,7 @@ public class ServerConfigDialog extends JDialog {
 
 		boolean changed = handshakePort != currentConfig.getHandshakePort()
 				|| controlPort != currentConfig.getControlPort()
-				|| selectedProfile != currentConfig.getConnectionProfile();
+				|| !selectedProfile.equals(currentConfig.getConnectionProfile());
 
 		boolean handshakeChangedAgainstActive = handshakePort != activeHandshakePort;
 		boolean controlChangedAgainstActive = controlPort != activeControlPort;
@@ -385,6 +397,7 @@ public class ServerConfigDialog extends JDialog {
 
 		try {
 			ServerConfig newConfig = new ServerConfig(handshakePort, controlPort, selectedProfile);
+			newConfig.setAvailableProfiles(availableProfiles);
 			configManager.save(newConfig);
 
 			if (changed) {
@@ -400,8 +413,49 @@ public class ServerConfigDialog extends JDialog {
 
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(this, "Erro ao salvar a configuração: " + e.getMessage(), "Erro",
-					JOptionPane.ERROR_MESSAGE);
+						JOptionPane.ERROR_MESSAGE);
 		}
+	}
+
+	private void updateProfileDetails(ConnectionProfile profile) {
+		ConnectionProfile selectedProfile = profile != null ? profile : ServerConfig.DEFAULT_CONNECTION_PROFILE;
+		profileIdValueLabel.setText(selectedProfile.getId());
+		profileDisplayNameValueLabel.setText(selectedProfile.getDisplayName());
+		profileResolutionValueLabel
+				.setText(selectedProfile.getWidth() + " x " + selectedProfile.getHeight());
+		profileFpsValueLabel.setText(selectedProfile.getFps() + " fps");
+		profileBitrateValueLabel.setText(selectedProfile.getBitrateKbps() + " kbps");
+		profileKeyIntValueLabel.setText(String.valueOf(selectedProfile.getKeyIntMax()));
+		profilePresetValueLabel.setText(selectedProfile.getEncoderPreset());
+		profileTuneValueLabel.setText(selectedProfile.getEncoderTune());
+		profileLeakyQueueValueLabel.setText(selectedProfile.isLeakyQueue() ? "Sim" : "Não");
+	}
+
+	private JLabel createProfileValueLabel() {
+		JLabel label = new JLabel("-");
+		label.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+		label.setForeground(descriptionColor);
+		return label;
+	}
+
+	private List<ConnectionProfile> buildAvailableProfiles(ServerConfig config) {
+		List<ConnectionProfile> profiles = new ArrayList<>(config.getAvailableProfiles());
+		if (profiles.isEmpty()) {
+			profiles.add(ServerConfig.DEFAULT_CONNECTION_PROFILE);
+		}
+		profiles.sort(Comparator.comparing(ConnectionProfile::getDisplayName, String.CASE_INSENSITIVE_ORDER));
+		return profiles;
+	}
+
+	private void selectProfileById(String profileId) {
+		for (int i = 0; i < profileComboBox.getItemCount(); i++) {
+			ConnectionProfile profile = profileComboBox.getItemAt(i);
+			if (profile != null && profile.getId().equalsIgnoreCase(profileId)) {
+				profileComboBox.setSelectedIndex(i);
+				return;
+			}
+		}
+		profileComboBox.setSelectedItem(ServerConfig.DEFAULT_CONNECTION_PROFILE);
 	}
 
 	private void showWarning(String message) {
