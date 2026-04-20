@@ -47,11 +47,9 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>src</sourceDirectory>
-
         <resources>
             <resource>
-                <directory>src/resources</directory>
+                <directory>src/main/resources</directory>
             </resource>
         </resources>
 
@@ -70,7 +68,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>br.com.ctech.remote.server.RemoteDesktopServerBootstrap</mainClass>
+                            <mainClass>com.s4etech.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
