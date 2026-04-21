@@ -15,175 +15,241 @@ import com.s4etech.desktop.path.ApplicationPaths;
 
 public class ServerConfigManager {
 
-	private static final Logger logger = LoggerFactory.getLogger(ServerConfigManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(ServerConfigManager.class);
 
-	private static final String FILE_NAME = "remote-desktop-server.properties";
-	private static final String KEY_HANDSHAKE_PORT = "handshake.port";
-	private static final String KEY_CONTROL_PORT = "control.port";
-	private static final String KEY_CONNECTION_PROFILE = "connection.profile";
-	private static final String KEY_CONNECTION_PROFILE_PREFIX = "connection.profile.";
+    private static final String FILE_NAME = "remote-desktop-server.properties";
+    private static final String KEY_HANDSHAKE_PORT = "handshake.port";
+    private static final String KEY_CONTROL_PORT = "control.port";
+    private static final String KEY_CONNECTION_PROFILE = "connection.profile";
+    private static final String KEY_CONNECTION_PROFILE_PREFIX = "connection.profile.";
 
-	private final File configFile;
+    private final File runtimeConfigFile;
+    private final File projectRootConfigFile;
+    private File activeConfigFile;
 
-	public ServerConfigManager() {
-		this.configFile = new File(ApplicationPaths.getApplicationBaseDirectory(), FILE_NAME);
-		logger.info("Gerenciador de configuração inicializado | arquivo={}", configFile.getAbsolutePath());
-	}
+    public ServerConfigManager() {
+        this.runtimeConfigFile = new File(ApplicationPaths.getRuntimeDirectory(), FILE_NAME);
+        this.projectRootConfigFile = new File(ApplicationPaths.getProjectRootDirectory(), FILE_NAME);
+        this.activeConfigFile = resolveConfigFileForLoad();
 
-	public ServerConfig load() {
-		ServerConfig config = new ServerConfig();
+        logger.info("Gerenciador de configuração inicializado | runtimeFile={} | projectFile={} | activeFile={}",
+                runtimeConfigFile.getAbsolutePath(),
+                projectRootConfigFile.getAbsolutePath(),
+                activeConfigFile.getAbsolutePath());
+    }
 
-		if (!configFile.exists()) {
-			logger.warn("Arquivo de configuração não encontrado. Usando valores padrão | arquivo={}",
-					configFile.getAbsolutePath());
-			return config;
-		}
+    public ServerConfig load() {
+        File configFile = resolveConfigFileForLoad();
+        this.activeConfigFile = configFile;
 
-		Properties properties = new Properties();
+        ServerConfig config = new ServerConfig();
 
-		try (FileInputStream fis = new FileInputStream(configFile)) {
-			logger.info("Carregando configuração | arquivo={}", configFile.getAbsolutePath());
+        if (!configFile.exists()) {
+            logger.warn("Arquivo de configuração não encontrado em nenhum local. Gerando arquivo padrão | arquivo={}",
+                    runtimeConfigFile.getAbsolutePath());
 
-			properties.load(fis);
+            try {
+                save(config, runtimeConfigFile);
+                this.activeConfigFile = runtimeConfigFile;
+                logger.info("Arquivo de configuração padrão gerado com sucesso | arquivo={}",
+                        runtimeConfigFile.getAbsolutePath());
+            } catch (Exception e) {
+                logger.error("Falha ao gerar arquivo de configuração padrão | arquivo={}",
+                        runtimeConfigFile.getAbsolutePath(), e);
+            }
 
-			int handshakePort = parsePort(KEY_HANDSHAKE_PORT, properties.getProperty(KEY_HANDSHAKE_PORT),
-					ServerConfig.DEFAULT_HANDSHAKE_PORT);
+            return config;
+        }
 
-			int controlPort = parsePort(KEY_CONTROL_PORT, properties.getProperty(KEY_CONTROL_PORT),
-					ServerConfig.DEFAULT_CONTROL_PORT);
+        Properties properties = new Properties();
 
-			List<ConnectionProfile> availableProfiles = parseAvailableProfiles(properties);
-			ConnectionProfile defaultProfile = findDefaultProfile(availableProfiles);
-			ConnectionProfile connectionProfile = parseConnectionProfile(properties.getProperty(KEY_CONNECTION_PROFILE),
-					availableProfiles, defaultProfile);
+        try (FileInputStream fis = new FileInputStream(configFile)) {
+            logger.info("Carregando configuração | arquivo={}", configFile.getAbsolutePath());
 
-			config.setHandshakePort(handshakePort);
-			config.setControlPort(controlPort);
-			config.setAvailableProfiles(availableProfiles);
-			config.setConnectionProfile(connectionProfile);
+            properties.load(fis);
 
-			logger.info("Configuração carregada com sucesso | handshake={} | controle={} | perfil={} | perfis={}",
-					handshakePort, controlPort, connectionProfile.getId(), availableProfiles.size());
+            int handshakePort = parsePort(KEY_HANDSHAKE_PORT, properties.getProperty(KEY_HANDSHAKE_PORT),
+                    ServerConfig.DEFAULT_HANDSHAKE_PORT);
 
-		} catch (Exception e) {
-			logger.error("Falha ao carregar configuração. Usando valores padrão | arquivo={}",
-					configFile.getAbsolutePath(), e);
-		}
+            int controlPort = parsePort(KEY_CONTROL_PORT, properties.getProperty(KEY_CONTROL_PORT),
+                    ServerConfig.DEFAULT_CONTROL_PORT);
 
-		return config;
-	}
+            List<ConnectionProfile> availableProfiles = parseAvailableProfiles(properties);
+            ConnectionProfile defaultProfile = findDefaultProfile(availableProfiles);
+            ConnectionProfile connectionProfile = parseConnectionProfile(properties.getProperty(KEY_CONNECTION_PROFILE),
+                    availableProfiles, defaultProfile);
 
-	public void save(ServerConfig config) throws Exception {
-		Properties properties = new Properties();
-		properties.setProperty(KEY_HANDSHAKE_PORT, String.valueOf(config.getHandshakePort()));
-		properties.setProperty(KEY_CONTROL_PORT, String.valueOf(config.getControlPort()));
-		properties.setProperty(KEY_CONNECTION_PROFILE, config.getConnectionProfile().getId());
+            config.setHandshakePort(handshakePort);
+            config.setControlPort(controlPort);
+            config.setAvailableProfiles(availableProfiles);
+            config.setConnectionProfile(connectionProfile);
 
-		List<ConnectionProfile> availableProfiles = new ArrayList<>(config.getAvailableProfiles());
-		availableProfiles.sort(Comparator.comparing(ConnectionProfile::getId, String.CASE_INSENSITIVE_ORDER));
+            logger.info("Configuração carregada com sucesso | arquivo={} | handshake={} | controle={} | perfil={} | perfis={}",
+                    configFile.getAbsolutePath(), handshakePort, controlPort, connectionProfile.getId(),
+                    availableProfiles.size());
 
-		for (ConnectionProfile profile : availableProfiles) {
-			properties.setProperty(KEY_CONNECTION_PROFILE_PREFIX + profile.getId(), profile.toPropertyValue());
-		}
+        } catch (Exception e) {
+            logger.error("Falha ao carregar configuração. Usando valores padrão | arquivo={}",
+                    configFile.getAbsolutePath(), e);
+        }
 
-		logger.info("Salvando configuração | arquivo={} | handshake={} | controle={} | perfil={} | perfis={}",
-				configFile.getAbsolutePath(), config.getHandshakePort(), config.getControlPort(),
-				config.getConnectionProfile().getId(), availableProfiles.size());
+        return config;
+    }
 
-		try (FileOutputStream fos = new FileOutputStream(configFile)) {
-			properties.store(fos,
-					"formato:\nid,displayName,width,height,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue\n\nRemote Desktop Server configuration");
-			logger.info("Configuração salva com sucesso | arquivo={}", configFile.getAbsolutePath());
-		} catch (Exception e) {
-			logger.error("Erro ao salvar configuração | arquivo={}", configFile.getAbsolutePath(), e);
-			throw e;
-		}
-	}
+    public void save(ServerConfig config) throws Exception {
+        File targetFile = resolveConfigFileForSave();
+        save(config, targetFile);
+        this.activeConfigFile = targetFile;
+    }
 
-	private int parsePort(String key, String value, int defaultValue) {
-		if (value == null || value.trim().isEmpty()) {
-			logger.warn("Chave de configuração ausente ou vazia. Usando valor padrão | chave={} | valorPadrao={}", key,
-					defaultValue);
-			return defaultValue;
-		}
+    private void save(ServerConfig config, File targetFile) throws Exception {
+        Properties properties = new Properties();
+        properties.setProperty(KEY_HANDSHAKE_PORT, String.valueOf(config.getHandshakePort()));
+        properties.setProperty(KEY_CONTROL_PORT, String.valueOf(config.getControlPort()));
+        properties.setProperty(KEY_CONNECTION_PROFILE, config.getConnectionProfile().getId());
 
-		try {
-			int port = Integer.parseInt(value.trim());
+        List<ConnectionProfile> availableProfiles = new ArrayList<>(config.getAvailableProfiles());
+        availableProfiles.sort(Comparator.comparing(ConnectionProfile::getId, String.CASE_INSENSITIVE_ORDER));
 
-			if (port >= 1 && port <= 65535) {
-				return port;
-			}
+        for (ConnectionProfile profile : availableProfiles) {
+            properties.setProperty(KEY_CONNECTION_PROFILE_PREFIX + profile.getId(), profile.toPropertyValue());
+        }
 
-			logger.warn(
-					"Porta fora do intervalo válido. Usando valor padrão | chave={} | valorInformado={} | valorPadrao={}",
-					key, value, defaultValue);
-		} catch (Exception e) {
-			logger.warn(
-					"Valor inválido para porta. Usando valor padrão | chave={} | valorInformado={} | valorPadrao={}",
-					key, value, defaultValue);
-		}
+        File parent = targetFile.getParentFile();
+        if (parent != null && !parent.exists()) {
+            parent.mkdirs();
+        }
 
-		return defaultValue;
-	}
+        logger.info("Salvando configuração | arquivo={} | handshake={} | controle={} | perfil={} | perfis={}",
+                targetFile.getAbsolutePath(), config.getHandshakePort(), config.getControlPort(),
+                config.getConnectionProfile().getId(), availableProfiles.size());
 
-	private List<ConnectionProfile> parseAvailableProfiles(Properties properties) {
-		List<ConnectionProfile> profiles = new ArrayList<>();
+        try (FileOutputStream fos = new FileOutputStream(targetFile)) {
+            properties.store(fos,
+                    "formato:\nid,displayName,width,height,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue\n\nRemote Desktop Server configuration");
+            logger.info("Configuração salva com sucesso | arquivo={}", targetFile.getAbsolutePath());
+        } catch (Exception e) {
+            logger.error("Erro ao salvar configuração | arquivo={}", targetFile.getAbsolutePath(), e);
+            throw e;
+        }
+    }
 
-		for (String propertyName : properties.stringPropertyNames()) {
-			if (!propertyName.startsWith(KEY_CONNECTION_PROFILE_PREFIX)) {
-				continue;
-			}
+    private File resolveConfigFileForLoad() {
+        if (runtimeConfigFile.exists()) {
+            logger.info("Arquivo de configuração encontrado no diretório da aplicação | arquivo={}",
+                    runtimeConfigFile.getAbsolutePath());
+            return runtimeConfigFile;
+        }
 
-			String propertyValue = properties.getProperty(propertyName);
+        if (projectRootConfigFile.exists()) {
+            logger.info("Arquivo de configuração encontrado na raiz do projeto | arquivo={}",
+                    projectRootConfigFile.getAbsolutePath());
+            return projectRootConfigFile;
+        }
 
-			try {
-				ConnectionProfile profile = ConnectionProfile.fromPropertyValue(propertyValue);
-				if (!profiles.contains(profile)) {
-					profiles.add(profile);
-				}
-			} catch (Exception e) {
-				logger.warn("Perfil de conexão inválido ignorado | chave={} | valor={}", propertyName, propertyValue);
-			}
-		}
+        logger.warn("Arquivo de configuração não encontrado nem no diretório da aplicação nem na raiz do projeto");
+        return runtimeConfigFile;
+    }
 
-		if (profiles.isEmpty()) {
-			logger.warn("Nenhum perfil de conexão encontrado no arquivo. Usando perfil padrão.");
-			profiles.add(ServerConfig.DEFAULT_CONNECTION_PROFILE);
-		}
+    private File resolveConfigFileForSave() {
+        if (activeConfigFile != null) {
+            return activeConfigFile;
+        }
+        return runtimeConfigFile;
+    }
 
-		profiles.sort(Comparator.comparing(ConnectionProfile::getId, String.CASE_INSENSITIVE_ORDER));
-		return profiles;
-	}
+    private int parsePort(String key, String value, int defaultValue) {
+        if (value == null || value.trim().isEmpty()) {
+            logger.warn("Chave de configuração ausente ou vazia. Usando valor padrão | chave={} | valorPadrao={}", key,
+                    defaultValue);
+            return defaultValue;
+        }
 
-	private ConnectionProfile findDefaultProfile(List<ConnectionProfile> profiles) {
-		for (ConnectionProfile profile : profiles) {
-			if (ConnectionProfile.DEFAULT_ID.equalsIgnoreCase(profile.getId())) {
-				return profile;
-			}
-		}
-		return ServerConfig.DEFAULT_CONNECTION_PROFILE;
-	}
+        try {
+            int port = Integer.parseInt(value.trim());
 
-	private ConnectionProfile parseConnectionProfile(String value, List<ConnectionProfile> availableProfiles,
-			ConnectionProfile defaultValue) {
-		if (value == null || value.trim().isEmpty()) {
-			logger.warn("Perfil de conexão ausente ou vazio. Usando valor padrão | valorPadrao={}",
-					defaultValue.getId());
-			return defaultValue;
-		}
+            if (port >= 1 && port <= 65535) {
+                return port;
+            }
 
-		for (ConnectionProfile profile : availableProfiles) {
-			if (profile.getId().equalsIgnoreCase(value.trim())) {
-				return profile;
-			}
-		}
+            logger.warn(
+                    "Porta fora do intervalo válido. Usando valor padrão | chave={} | valorInformado={} | valorPadrao={}",
+                    key, value, defaultValue);
+        } catch (Exception e) {
+            logger.warn(
+                    "Valor inválido para porta. Usando valor padrão | chave={} | valorInformado={} | valorPadrao={}",
+                    key, value, defaultValue);
+        }
 
-		logger.warn("Perfil de conexão inválido. Usando valor padrão | valorInformado={} | valorPadrao={}", value,
-				defaultValue.getId());
-		return defaultValue;
-	}
+        return defaultValue;
+    }
 
-	public File getConfigFile() {
-		return configFile;
-	}
+    private List<ConnectionProfile> parseAvailableProfiles(Properties properties) {
+        List<ConnectionProfile> profiles = new ArrayList<>();
+
+        for (String propertyName : properties.stringPropertyNames()) {
+            if (!propertyName.startsWith(KEY_CONNECTION_PROFILE_PREFIX)) {
+                continue;
+            }
+
+            String propertyValue = properties.getProperty(propertyName);
+
+            try {
+                ConnectionProfile profile = ConnectionProfile.fromPropertyValue(propertyValue);
+                if (!profiles.contains(profile)) {
+                    profiles.add(profile);
+                }
+            } catch (Exception e) {
+                logger.warn("Perfil de conexão inválido ignorado | chave={} | valor={}", propertyName, propertyValue);
+            }
+        }
+
+        if (profiles.isEmpty()) {
+            logger.warn("Nenhum perfil de conexão encontrado no arquivo. Usando perfil padrão.");
+            profiles.add(ServerConfig.DEFAULT_CONNECTION_PROFILE);
+        }
+
+        profiles.sort(Comparator.comparing(ConnectionProfile::getId, String.CASE_INSENSITIVE_ORDER));
+        return profiles;
+    }
+
+    private ConnectionProfile findDefaultProfile(List<ConnectionProfile> profiles) {
+        for (ConnectionProfile profile : profiles) {
+            if (ConnectionProfile.DEFAULT_ID.equalsIgnoreCase(profile.getId())) {
+                return profile;
+            }
+        }
+        return ServerConfig.DEFAULT_CONNECTION_PROFILE;
+    }
+
+    private ConnectionProfile parseConnectionProfile(String value, List<ConnectionProfile> availableProfiles,
+            ConnectionProfile defaultValue) {
+        if (value == null || value.trim().isEmpty()) {
+            logger.warn("Perfil de conexão ausente ou vazio. Usando valor padrão | valorPadrao={}",
+                    defaultValue.getId());
+            return defaultValue;
+        }
+
+        for (ConnectionProfile profile : availableProfiles) {
+            if (profile.getId().equalsIgnoreCase(value.trim())) {
+                return profile;
+            }
+        }
+
+        logger.warn("Perfil de conexão inválido. Usando valor padrão | valorInformado={} | valorPadrao={}", value,
+                defaultValue.getId());
+        return defaultValue;
+    }
+
+    public File getConfigFile() {
+        return activeConfigFile;
+    }
+
+    public File getRuntimeConfigFile() {
+        return runtimeConfigFile;
+    }
+
+    public File getProjectRootConfigFile() {
+        return projectRootConfigFile;
+    }
 }

@@ -28,6 +28,7 @@ Name: "brazilianportuguese"; MessagesFile: "compiler:Languages\BrazilianPortugue
 [Files]
 Source: "C:\projetos\ctech\s4etech\remotedesktop\executavel\rdpservidor.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\projetos\ctech\s4etech\remotedesktop\executavel\icon_remote_server.ico"; DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
+Source: "C:\projetos\ctech\s4etech\remotedesktop\executavel\remote-desktop-server.properties"; DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
 
 ; GStreamer saindo da pasta do empacotamento e indo para dentro da instalação
 Source: "C:\projetos\ctech\s4etech\remotedesktop\executavel\gstreamer\1.0\msvc_x86_64\bin\*"; DestDir: "{app}\gstreamer\1.0\msvc_x86_64\bin"; Flags: ignoreversion recursesubdirs createallsubdirs

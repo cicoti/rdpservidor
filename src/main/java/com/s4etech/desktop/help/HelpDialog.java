@@ -44,11 +44,14 @@ public final class HelpDialog {
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
-
+	
 	private static File ensureHelpFileExists() {
 		File helpFile = new File(ApplicationPaths.getApplicationBaseDirectory(), HELP_FILE_PATH);
 
+		logger.info("Verificando arquivo de ajuda | destino={}", helpFile.getAbsolutePath());
+
 		if (helpFile.exists()) {
+			logger.info("Arquivo de ajuda já existe | caminho={}", helpFile.getAbsolutePath());
 			return helpFile;
 		}
 
@@ -58,21 +61,35 @@ public final class HelpDialog {
 			return helpFile;
 		}
 
-		try (InputStream inputStream = HelpDialog.class.getClassLoader().getResourceAsStream(HELP_RESOURCE_PATH)) {
-			if (inputStream == null) {
-				logger.warn("Recurso de ajuda não encontrado no classpath | recurso={}", HELP_RESOURCE_PATH);
+		String[] resourcePaths = {
+				HELP_RESOURCE_PATH,
+				"resources/" + HELP_RESOURCE_PATH
+		};
+
+		for (String resourcePath : resourcePaths) {
+			try (InputStream inputStream = HelpDialog.class.getClassLoader().getResourceAsStream(resourcePath)) {
+				if (inputStream == null) {
+					logger.warn("Recurso de ajuda não encontrado no classpath | recurso={}", resourcePath);
+					continue;
+				}
+
+				try (FileOutputStream outputStream = new FileOutputStream(helpFile)) {
+					inputStream.transferTo(outputStream);
+				}
+
+				logger.info("Arquivo de ajuda copiado com sucesso | origem={} | destino={}",
+						resourcePath, helpFile.getAbsolutePath());
 				return helpFile;
-			}
 
-			try (FileOutputStream outputStream = new FileOutputStream(helpFile)) {
-				inputStream.transferTo(outputStream);
+			} catch (Exception e) {
+				logger.error("Erro ao copiar arquivo de ajuda | recurso={} | destino={}",
+						resourcePath, helpFile.getAbsolutePath(), e);
 			}
-
-			logger.info("Arquivo de ajuda copiado com sucesso | caminho={}", helpFile.getAbsolutePath());
-		} catch (Exception e) {
-			logger.error("Erro ao copiar arquivo de ajuda para a pasta da aplicação", e);
 		}
 
+		logger.warn("Nenhum recurso de ajuda válido foi encontrado no classpath");
 		return helpFile;
 	}
+
+
 }

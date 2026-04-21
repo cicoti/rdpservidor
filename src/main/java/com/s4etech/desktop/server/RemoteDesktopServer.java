@@ -345,28 +345,33 @@ public class RemoteDesktopServer {
 	private static Image loadTrayImage() {
 		logger.info("Carregando ícone do system tray");
 
-		try (java.io.InputStream is = RemoteDesktopServer.class.getClassLoader()
-				.getResourceAsStream("icon_remote_server.png")) {
+		String[] caminhos = { "icon_remote_server.png", "resources/icon_remote_server.png" };
 
-			if (is == null) {
-				logger.warn("Arquivo icon_remote_server.png não encontrado no classpath");
-				return null;
+		for (String caminho : caminhos) {
+			try (java.io.InputStream is = RemoteDesktopServer.class.getClassLoader().getResourceAsStream(caminho)) {
+
+				if (is == null) {
+					logger.warn("Arquivo {} não encontrado no classpath", caminho);
+					continue;
+				}
+
+				java.awt.image.BufferedImage image = javax.imageio.ImageIO.read(is);
+
+				if (image == null) {
+					logger.warn("Falha ao ler {}", caminho);
+					continue;
+				}
+
+				logger.info("Ícone do system tray carregado com sucesso | caminho={}", caminho);
+				return image;
+
+			} catch (Exception e) {
+				logger.error("Erro ao carregar ícone do system tray | caminho={}", caminho, e);
 			}
-
-			java.awt.image.BufferedImage image = javax.imageio.ImageIO.read(is);
-
-			if (image == null) {
-				logger.warn("Falha ao ler icon_remote_server.png");
-				return null;
-			}
-
-			logger.info("Ícone do system tray carregado com sucesso");
-			return image;
-
-		} catch (Exception e) {
-			logger.error("Erro ao carregar ícone do system tray", e);
-			return null;
 		}
+
+		logger.warn("Nenhum ícone válido foi encontrado no classpath");
+		return null;
 	}
 
 	private static void showTrayMessage(String title, String message, MessageType type) {
