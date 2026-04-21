@@ -2,11 +2,14 @@
 
 Os perfis de conexão definem como o servidor transmite a imagem da área de trabalho para o cliente.
 
-Cada perfil é configurado no arquivo `remote-desktop-server.properties`.
+A aplicação trabalha com dois tipos de perfil:
+
+- **Perfis protegidos do sistema**: `LAN` e `WIFI`
+- **Perfis customizados**: criados e mantidos pelo usuário
 
 ---
 
-## Estrutura
+## Estrutura geral
 
 O perfil ativo é definido por:
 
@@ -14,17 +17,81 @@ O perfil ativo é definido por:
 connection.profile=LAN
 ```
 
-Os perfis disponíveis são definidos assim:
+Os perfis customizados gravados no arquivo são definidos assim:
 
 ```properties
 connection.profile.<ID>=id,displayName,width,height,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue
 ```
 
-Exemplo:
+Exemplo de perfil customizado:
 
 ```properties
-connection.profile.LAN=LAN,Rede local,1920,1080,30,6000,30,ultrafast,zerolatency,false
+connection.profile.SATELLITE_1=SATELLITE_1,Satélite 1,1024,576,10,1000,20,veryfast,zerolatency,true
 ```
+
+---
+
+## Perfis protegidos do sistema
+
+A aplicação sempre possui dois perfis protegidos:
+
+- `LAN`
+- `WIFI`
+
+### Regras desses perfis
+
+- são definidos no código
+- sempre existem
+- não são lidos do arquivo de propriedades
+- não são gravados no arquivo de propriedades
+- não podem ser excluídos
+- não podem ser sobrescritos por perfis customizados
+
+### Observação importante
+
+O valor de `connection.profile` pode apontar para um perfil protegido do sistema ou para um perfil customizado.
+
+Exemplos válidos:
+
+```properties
+connection.profile=LAN
+```
+
+```properties
+connection.profile=WIFI
+```
+
+```properties
+connection.profile=SATELLITE_1
+```
+
+---
+
+## Perfis customizados
+
+Perfis customizados são criados pela interface da aplicação.
+
+### Regras dos perfis customizados
+
+- podem ser criados a partir da duplicação de um perfil existente
+- podem ser editados
+- podem ser excluídos
+- são gravados no arquivo `remote-desktop-server.properties`
+- o ID é gerado automaticamente a partir do nome informado na interface
+
+### Regras do ID
+
+- o usuário informa apenas o nome do perfil
+- o sistema gera o ID automaticamente
+- o ID é convertido para um formato interno sem acentos e em maiúsculas
+- os IDs `LAN` e `WIFI` são reservados e não podem ser usados por perfis customizados
+- se o ID gerado já existir, o sistema cria um sufixo incremental automaticamente
+
+Exemplos:
+
+- `Rede Escritório` → `REDE_ESCRITORIO`
+- `Wi Fi Filial 1` → `WI_FI_FILIAL_1`
+- `Satélite 1` → `SATELITE_1`
 
 ---
 
@@ -67,11 +134,6 @@ Exemplos:
 ### 3. `width`
 Largura da imagem transmitida.
 
-Exemplos:
-- `1024`
-- `1280`
-- `1920`
-
 **Impacto:**
 - quanto maior, melhor definição horizontal
 - quanto maior, maior consumo de banda
@@ -81,11 +143,6 @@ Exemplos:
 
 ### 4. `height`
 Altura da imagem transmitida.
-
-Exemplos:
-- `576`
-- `720`
-- `1080`
 
 **Impacto:**
 - quanto maior, melhor definição vertical
@@ -97,11 +154,12 @@ Exemplos:
 ### 5. `fps`
 Frames por segundo.
 
-Exemplos:
+Exemplos comuns:
 - `10`
 - `12`
 - `15`
 - `20`
+- `24`
 - `30`
 
 **Impacto:**
@@ -115,11 +173,16 @@ Exemplos:
 ### 6. `bitrateKbps`
 Taxa de bits do vídeo em kbps.
 
-Exemplos:
+Exemplos comuns:
+- `600`
+- `800`
 - `1000`
+- `1200`
 - `1400`
 - `1800`
 - `2500`
+- `3000`
+- `4000`
 - `6000`
 
 **Impacto:**
@@ -131,10 +194,13 @@ Exemplos:
 ### 7. `keyIntMax`
 Intervalo máximo entre quadros-chave do encoder.
 
-Exemplos:
+Exemplos comuns:
+- `10`
+- `15`
 - `20`
 - `24`
 - `30`
+- `60`
 
 **Impacto:**
 - valores menores recuperam a imagem mais rápido em redes instáveis
@@ -196,17 +262,29 @@ Valores:
 
 ---
 
-## Perfis de exemplo
+## Perfis padrão do sistema
 
-### Rede local
+### LAN
+Perfil protegido para rede cabeada local.
+
+Configuração de referência:
+
 ```properties
-connection.profile.LAN=LAN,Rede local,1920,1080,30,6000,30,ultrafast,zerolatency,false
+LAN,Rede local,1920,1080,30,6000,30,ultrafast,zerolatency,false
 ```
 
-### Wi-Fi
+### WIFI
+Perfil protegido para uso em rede Wi-Fi.
+
+Configuração de referência:
+
 ```properties
-connection.profile.WIFI=WIFI,Wi-Fi,1280,720,20,2500,30,veryfast,zerolatency,true
+WIFI,Wi-Fi,1280,720,20,2500,30,veryfast,zerolatency,true
 ```
+
+---
+
+## Perfis customizados de exemplo
 
 ### Satélite 1
 ```properties
@@ -225,12 +303,76 @@ connection.profile.SATELLITE_3=SATELLITE_3,Satélite 3,1280,720,15,1800,30,veryf
 
 ---
 
+## Estrutura esperada do arquivo
+
+O arquivo `remote-desktop-server.properties` deve conter apenas:
+
+- `connection.profile`
+- perfis customizados
+- `control.port`
+- `handshake.port`
+
+Exemplo:
+
+```properties
+#formato:
+#id,displayName,width,height,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue
+#
+#Remote Desktop Server configuration
+#Mon Apr 20 13:44:15 BRT 2026
+connection.profile=LAN
+connection.profile.SATELLITE_1=SATELLITE_1,Sat\u00E9lite 1,1024,576,10,1000,20,veryfast,zerolatency,true
+control.port=5000
+handshake.port=7000
+```
+
+### Observações
+
+- `LAN` e `WIFI` não devem ser gravados no arquivo
+- o arquivo armazena apenas perfis customizados
+- ao salvar alterações, o arquivo deve ser regenerado por completo
+
+---
+
 ## Regras importantes
 
 - o perfil ativo definido em `connection.profile` deve existir
-- todos os campos devem ser preenchidos
+- o perfil ativo pode ser protegido do sistema ou customizado
+- todos os campos do perfil devem ser preenchidos
 - os campos numéricos devem ser positivos
 - `leakyQueue` deve ser `true` ou `false`
+- `LAN` e `WIFI` são IDs reservados
+- qualquer definição de `connection.profile.LAN` ou `connection.profile.WIFI` no arquivo deve ser ignorada
+
+---
+
+## Uso pela interface
+
+Na interface de configuração, o usuário pode:
+
+- selecionar um perfil existente
+- duplicar um perfil para criar um novo perfil customizado
+- editar o nome e os parâmetros de um perfil customizado
+- excluir perfis customizados
+- salvar e ativar o perfil selecionado
+
+### Comportamento dos perfis protegidos
+
+Quando o perfil selecionado for `LAN` ou `WIFI`:
+
+- os campos aparecem preenchidos
+- os campos ficam bloqueados para edição
+- o perfil não pode ser excluído
+- o perfil pode ser duplicado
+- ao salvar, ele apenas se torna o perfil ativo
+
+### Comportamento dos perfis customizados
+
+Quando o perfil selecionado for customizado:
+
+- os campos ficam editáveis
+- o perfil pode ser excluído
+- ao salvar, o perfil é gravado no arquivo e se torna o perfil ativo
 
 ---
 

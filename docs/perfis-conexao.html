@@ -51,16 +51,59 @@
     <div class="container">
         <h1>Perfis de conexão</h1>
         <p>Os perfis de conexão definem como o servidor transmite a imagem da área de trabalho para o cliente.</p>
-        <p>Cada perfil é configurado no arquivo <code>remote-desktop-server.properties</code>.</p>
+        <p>A aplicação trabalha com dois tipos de perfil: perfis protegidos do sistema e perfis customizados.</p>
 
         <div class="section">
-            <h2>Estrutura</h2>
+            <h2>Estrutura geral</h2>
             <p>O perfil ativo é definido por:</p>
             <pre><code>connection.profile=LAN</code></pre>
-            <p>Os perfis disponíveis são definidos assim:</p>
+            <p>Os perfis customizados gravados no arquivo são definidos assim:</p>
             <pre><code>connection.profile.&lt;ID&gt;=id,displayName,width,height,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue</code></pre>
-            <p>Exemplo:</p>
-            <pre><code>connection.profile.LAN=LAN,Rede local,1920,1080,30,6000,30,ultrafast,zerolatency,false</code></pre>
+            <p>Exemplo de perfil customizado:</p>
+            <pre><code>connection.profile.SATELLITE_1=SATELLITE_1,Satélite 1,1024,576,10,1000,20,veryfast,zerolatency,true</code></pre>
+        </div>
+
+        <div class="section">
+            <h2>Perfis protegidos do sistema</h2>
+            <p>A aplicação sempre possui dois perfis protegidos:</p>
+            <ul>
+                <li><code>LAN</code></li>
+                <li><code>WIFI</code></li>
+            </ul>
+            <p>Regras desses perfis:</p>
+            <ul>
+                <li>São definidos no código</li>
+                <li>Sempre existem</li>
+                <li>Não são lidos do arquivo de propriedades</li>
+                <li>Não são gravados no arquivo de propriedades</li>
+                <li>Não podem ser excluídos</li>
+                <li>Não podem ser sobrescritos por perfis customizados</li>
+            </ul>
+            <div class="note">O valor de <code>connection.profile</code> pode apontar para um perfil protegido do sistema ou para um perfil customizado.</div>
+        </div>
+
+        <div class="section">
+            <h2>Perfis customizados</h2>
+            <p>Perfis customizados são criados pela interface da aplicação.</p>
+            <ul>
+                <li>Podem ser criados a partir da duplicação de um perfil existente</li>
+                <li>Podem ser editados</li>
+                <li>Podem ser excluídos</li>
+                <li>São gravados no arquivo <code>remote-desktop-server.properties</code></li>
+                <li>O ID é gerado automaticamente a partir do nome informado na interface</li>
+            </ul>
+
+            <h3>Regras do ID</h3>
+            <ul>
+                <li>O usuário informa apenas o nome do perfil</li>
+                <li>O sistema gera o ID automaticamente</li>
+                <li>O ID é convertido para um formato interno sem acentos e em maiúsculas</li>
+                <li>Os IDs <code>LAN</code> e <code>WIFI</code> são reservados</li>
+                <li>Se o ID gerado já existir, o sistema cria um sufixo incremental automaticamente</li>
+            </ul>
+            <pre><code>Rede Escritório  -> REDE_ESCRITORIO
+Wi Fi Filial 1   -> WI_FI_FILIAL_1
+Satélite 1       -> SATELITE_1</code></pre>
         </div>
 
         <div class="section">
@@ -85,39 +128,41 @@
             <h3>3. width</h3>
             <p>Largura da imagem transmitida.</p>
             <ul>
-                <li>Exemplos: <code>1024</code>, <code>1280</code>, <code>1920</code></li>
                 <li>Quanto maior, melhor definição horizontal</li>
-                <li>Quanto maior, maior consumo de banda e CPU</li>
+                <li>Quanto maior, maior consumo de banda</li>
+                <li>Quanto maior, maior uso de CPU para captura e codificação</li>
             </ul>
 
             <h3>4. height</h3>
             <p>Altura da imagem transmitida.</p>
             <ul>
-                <li>Exemplos: <code>576</code>, <code>720</code>, <code>1080</code></li>
                 <li>Quanto maior, melhor definição vertical</li>
-                <li>Quanto maior, maior consumo de banda e CPU</li>
+                <li>Quanto maior, maior consumo de banda</li>
+                <li>Quanto maior, maior uso de CPU</li>
             </ul>
 
             <h3>5. fps</h3>
             <p>Frames por segundo.</p>
             <ul>
-                <li>Exemplos: <code>10</code>, <code>12</code>, <code>15</code>, <code>20</code>, <code>30</code></li>
+                <li>Exemplos comuns: <code>10</code>, <code>12</code>, <code>15</code>, <code>20</code>, <code>24</code>, <code>30</code></li>
                 <li>Quanto maior, mais fluidez</li>
-                <li>Quanto maior, maior uso de banda e CPU</li>
+                <li>Quanto maior, maior uso de banda</li>
+                <li>Quanto maior, maior uso de CPU</li>
+                <li>Valores baixos deixam a navegação mais travada, mas economizam rede</li>
             </ul>
 
             <h3>6. bitrateKbps</h3>
             <p>Taxa de bits do vídeo em kbps.</p>
             <ul>
-                <li>Exemplos: <code>1000</code>, <code>1400</code>, <code>1800</code>, <code>2500</code>, <code>6000</code></li>
-                <li>Bitrate baixo reduz consumo de banda, mas piora a qualidade</li>
+                <li>Exemplos comuns: <code>600</code>, <code>800</code>, <code>1000</code>, <code>1200</code>, <code>1400</code>, <code>1800</code>, <code>2500</code>, <code>3000</code>, <code>4000</code>, <code>6000</code></li>
+                <li>Bitrate baixo reduz consumo de banda, mas piora a qualidade visual</li>
                 <li>Bitrate alto melhora a qualidade, mas aumenta o consumo de banda</li>
             </ul>
 
             <h3>7. keyIntMax</h3>
             <p>Intervalo máximo entre quadros-chave do encoder.</p>
             <ul>
-                <li>Exemplos: <code>20</code>, <code>24</code>, <code>30</code></li>
+                <li>Exemplos comuns: <code>10</code>, <code>15</code>, <code>20</code>, <code>24</code>, <code>30</code>, <code>60</code></li>
                 <li>Valores menores recuperam a imagem mais rápido em redes instáveis</li>
                 <li>Valores maiores melhoram a compressão em redes estáveis</li>
             </ul>
@@ -145,15 +190,23 @@
                 <li><code>true</code>: descarta frames antigos para reduzir atraso</li>
                 <li><code>false</code>: mantém mais frames, podendo aumentar latência</li>
             </ul>
+            <div class="note">Rede instável ou lenta: <code>true</code>. Rede local ou estável: <code>false</code>.</div>
         </div>
 
         <div class="section">
-            <h2>Perfis de exemplo</h2>
-            <h3>Rede local</h3>
-            <pre><code>connection.profile.LAN=LAN,Rede local,1920,1080,30,6000,30,ultrafast,zerolatency,false</code></pre>
+            <h2>Perfis padrão do sistema</h2>
 
-            <h3>Wi-Fi</h3>
-            <pre><code>connection.profile.WIFI=WIFI,Wi-Fi,1280,720,20,2500,30,veryfast,zerolatency,true</code></pre>
+            <h3>LAN</h3>
+            <p>Perfil protegido para rede cabeada local.</p>
+            <pre><code>LAN,Rede local,1920,1080,30,6000,30,ultrafast,zerolatency,false</code></pre>
+
+            <h3>WIFI</h3>
+            <p>Perfil protegido para uso em rede Wi-Fi.</p>
+            <pre><code>WIFI,Wi-Fi,1280,720,20,2500,30,veryfast,zerolatency,true</code></pre>
+        </div>
+
+        <div class="section">
+            <h2>Perfis customizados de exemplo</h2>
 
             <h3>Satélite 1</h3>
             <pre><code>connection.profile.SATELLITE_1=SATELLITE_1,Satélite 1,1024,576,10,1000,20,veryfast,zerolatency,true</code></pre>
@@ -166,12 +219,69 @@
         </div>
 
         <div class="section">
+            <h2>Estrutura esperada do arquivo</h2>
+            <p>O arquivo <code>remote-desktop-server.properties</code> deve conter apenas:</p>
+            <ul>
+                <li><code>connection.profile</code></li>
+                <li>Perfis customizados</li>
+                <li><code>control.port</code></li>
+                <li><code>handshake.port</code></li>
+            </ul>
+            <pre><code>#formato:
+#id,displayName,width,height,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue
+#
+#Remote Desktop Server configuration
+#Mon Apr 20 13:44:15 BRT 2026
+connection.profile=LAN
+connection.profile.SATELLITE_1=SATELLITE_1,Sat\u00E9lite 1,1024,576,10,1000,20,veryfast,zerolatency,true
+control.port=5000
+handshake.port=7000</code></pre>
+            <div class="note">
+                <strong>Observações:</strong><br>
+                LAN e WIFI não devem ser gravados no arquivo.<br>
+                O arquivo armazena apenas perfis customizados.<br>
+                Ao salvar alterações, o arquivo deve ser regenerado por completo.
+            </div>
+        </div>
+
+        <div class="section">
             <h2>Regras importantes</h2>
             <ul>
                 <li>O perfil ativo definido em <code>connection.profile</code> deve existir</li>
-                <li>Todos os campos devem ser preenchidos</li>
+                <li>O perfil ativo pode ser protegido do sistema ou customizado</li>
+                <li>Todos os campos do perfil devem ser preenchidos</li>
                 <li>Os campos numéricos devem ser positivos</li>
                 <li><code>leakyQueue</code> deve ser <code>true</code> ou <code>false</code></li>
+                <li><code>LAN</code> e <code>WIFI</code> são IDs reservados</li>
+                <li>Qualquer definição de <code>connection.profile.LAN</code> ou <code>connection.profile.WIFI</code> no arquivo deve ser ignorada</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Uso pela interface</h2>
+            <p>Na interface de configuração, o usuário pode:</p>
+            <ul>
+                <li>Selecionar um perfil existente</li>
+                <li>Duplicar um perfil para criar um novo perfil customizado</li>
+                <li>Editar o nome e os parâmetros de um perfil customizado</li>
+                <li>Excluir perfis customizados</li>
+                <li>Salvar e ativar o perfil selecionado</li>
+            </ul>
+
+            <h3>Comportamento dos perfis protegidos</h3>
+            <ul>
+                <li>Os campos aparecem preenchidos</li>
+                <li>Os campos ficam bloqueados para edição</li>
+                <li>O perfil não pode ser excluído</li>
+                <li>O perfil pode ser duplicado</li>
+                <li>Ao salvar, ele apenas se torna o perfil ativo</li>
+            </ul>
+
+            <h3>Comportamento dos perfis customizados</h3>
+            <ul>
+                <li>Os campos ficam editáveis</li>
+                <li>O perfil pode ser excluído</li>
+                <li>Ao salvar, o perfil é gravado no arquivo e se torna o perfil ativo</li>
             </ul>
         </div>
 

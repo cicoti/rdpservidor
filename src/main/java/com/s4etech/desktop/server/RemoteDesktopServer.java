@@ -66,9 +66,10 @@ public class RemoteDesktopServer {
 		configManager = new ServerConfigManager();
 		currentConfig = configManager.load();
 
-		logger.info("Configuração carregada com sucesso | handshake={} | controle={} | perfil={}",
+		logger.info("Configuração carregada com sucesso | handshake={} | controle={} | perfil={} ({})",
 				currentConfig.getHandshakePort(), currentConfig.getControlPort(),
-				currentConfig.getConnectionProfile().getId());
+				currentConfig.getConnectionProfile().getId(),
+				currentConfig.getConnectionProfile().getDisplayName());
 
 		screenServer = new ScreenStreamServer(currentConfig.getHandshakePort(), currentConfig.getConnectionProfile());
 		mouseServer = new MouseControlServer(currentConfig.getControlPort());

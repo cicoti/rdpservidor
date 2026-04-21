@@ -74,7 +74,8 @@ public class ServerConfigManager {
             int controlPort = parsePort(KEY_CONTROL_PORT, properties.getProperty(KEY_CONTROL_PORT),
                     ServerConfig.DEFAULT_CONTROL_PORT);
 
-            List<ConnectionProfile> availableProfiles = parseAvailableProfiles(properties);
+            List<ConnectionProfile> customProfiles = parseCustomProfiles(properties);
+            List<ConnectionProfile> availableProfiles = buildAvailableProfiles(customProfiles);
             ConnectionProfile defaultProfile = findDefaultProfile(availableProfiles);
             ConnectionProfile connectionProfile = parseConnectionProfile(properties.getProperty(KEY_CONNECTION_PROFILE),
                     availableProfiles, defaultProfile);
@@ -104,14 +105,14 @@ public class ServerConfigManager {
 
     private void save(ServerConfig config, File targetFile) throws Exception {
         Properties properties = new Properties();
-        properties.setProperty(KEY_HANDSHAKE_PORT, String.valueOf(config.getHandshakePort()));
-        properties.setProperty(KEY_CONTROL_PORT, String.valueOf(config.getControlPort()));
         properties.setProperty(KEY_CONNECTION_PROFILE, config.getConnectionProfile().getId());
+        properties.setProperty(KEY_CONTROL_PORT, String.valueOf(config.getControlPort()));
+        properties.setProperty(KEY_HANDSHAKE_PORT, String.valueOf(config.getHandshakePort()));
 
-        List<ConnectionProfile> availableProfiles = new ArrayList<>(config.getAvailableProfiles());
-        availableProfiles.sort(Comparator.comparing(ConnectionProfile::getId, String.CASE_INSENSITIVE_ORDER));
+        List<ConnectionProfile> customProfiles = extractCustomProfiles(config.getAvailableProfiles());
+        customProfiles.sort(Comparator.comparing(ConnectionProfile::getId, String.CASE_INSENSITIVE_ORDER));
 
-        for (ConnectionProfile profile : availableProfiles) {
+        for (ConnectionProfile profile : customProfiles) {
             properties.setProperty(KEY_CONNECTION_PROFILE_PREFIX + profile.getId(), profile.toPropertyValue());
         }
 
@@ -120,9 +121,9 @@ public class ServerConfigManager {
             parent.mkdirs();
         }
 
-        logger.info("Salvando configuração | arquivo={} | handshake={} | controle={} | perfil={} | perfis={}",
+        logger.info("Salvando configuração | arquivo={} | handshake={} | controle={} | perfil={} | perfisCustomizados={}",
                 targetFile.getAbsolutePath(), config.getHandshakePort(), config.getControlPort(),
-                config.getConnectionProfile().getId(), availableProfiles.size());
+                config.getConnectionProfile().getId(), customProfiles.size());
 
         try (FileOutputStream fos = new FileOutputStream(targetFile)) {
             properties.store(fos,
@@ -184,7 +185,7 @@ public class ServerConfigManager {
         return defaultValue;
     }
 
-    private List<ConnectionProfile> parseAvailableProfiles(Properties properties) {
+    private List<ConnectionProfile> parseCustomProfiles(Properties properties) {
         List<ConnectionProfile> profiles = new ArrayList<>();
 
         for (String propertyName : properties.stringPropertyNames()) {
@@ -196,6 +197,11 @@ public class ServerConfigManager {
 
             try {
                 ConnectionProfile profile = ConnectionProfile.fromPropertyValue(propertyValue);
+                if (ConnectionProfile.isReservedId(profile.getId())) {
+                    logger.warn("Perfil protegido encontrado no arquivo e ignorado | chave={} | id={}", propertyName,
+                            profile.getId());
+                    continue;
+                }
                 if (!profiles.contains(profile)) {
                     profiles.add(profile);
                 }
@@ -204,22 +210,53 @@ public class ServerConfigManager {
             }
         }
 
-        if (profiles.isEmpty()) {
-            logger.warn("Nenhum perfil de conexão encontrado no arquivo. Usando perfil padrão.");
-            profiles.add(ServerConfig.DEFAULT_CONNECTION_PROFILE);
-        }
-
         profiles.sort(Comparator.comparing(ConnectionProfile::getId, String.CASE_INSENSITIVE_ORDER));
         return profiles;
     }
 
+    private List<ConnectionProfile> buildAvailableProfiles(List<ConnectionProfile> customProfiles) {
+        List<ConnectionProfile> profiles = new ArrayList<>();
+        profiles.add(ConnectionProfile.LAN);
+        profiles.add(ConnectionProfile.WIFI);
+
+        if (customProfiles != null) {
+            for (ConnectionProfile profile : customProfiles) {
+                if (profile == null || ConnectionProfile.isReservedId(profile.getId())) {
+                    continue;
+                }
+                if (!profiles.contains(profile)) {
+                    profiles.add(profile);
+                }
+            }
+        }
+
+        return profiles;
+    }
+
+    private List<ConnectionProfile> extractCustomProfiles(List<ConnectionProfile> availableProfiles) {
+        List<ConnectionProfile> customProfiles = new ArrayList<>();
+        if (availableProfiles == null) {
+            return customProfiles;
+        }
+
+        for (ConnectionProfile profile : availableProfiles) {
+            if (profile == null || profile.isSystemProfile() || ConnectionProfile.isReservedId(profile.getId())) {
+                continue;
+            }
+            if (!customProfiles.contains(profile)) {
+                customProfiles.add(profile);
+            }
+        }
+        return customProfiles;
+    }
+
     private ConnectionProfile findDefaultProfile(List<ConnectionProfile> profiles) {
         for (ConnectionProfile profile : profiles) {
-            if (ConnectionProfile.DEFAULT_ID.equalsIgnoreCase(profile.getId())) {
+            if (ConnectionProfile.DEFAULT.getId().equalsIgnoreCase(profile.getId())) {
                 return profile;
             }
         }
-        return ServerConfig.DEFAULT_CONNECTION_PROFILE;
+        return ConnectionProfile.DEFAULT;
     }
 
     private ConnectionProfile parseConnectionProfile(String value, List<ConnectionProfile> availableProfiles,
