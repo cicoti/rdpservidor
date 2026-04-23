@@ -37,11 +37,8 @@ public class ServerConfigDialog extends JDialog {
 
     private static final String[] RESOLUTION_OPTIONS = {
             "640 x 360",
-            "768 x 432",
             "854 x 480",
             "960 x 540",
-            "1024 x 576",
-            "1152 x 648",
             "1280 x 720",
             "1366 x 768",
             "1600 x 900",
