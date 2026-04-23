@@ -385,6 +385,10 @@ public class RemoteDesktopServer {
 		}
 	}
 
+	public static void requestShutdown() {
+		shutdownApplication();
+	}
+	
 	private static void shutdownApplication() {
 		logger.info("Solicitação de encerramento da aplicação recebida");
 		performShutdown(true);

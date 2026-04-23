@@ -28,6 +28,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import com.s4etech.desktop.server.RemoteDesktopServer;
 import com.s4etech.desktop.validador.PortValidator;
 
 public class ServerConfigDialog extends JDialog {
@@ -571,11 +572,18 @@ public class ServerConfigDialog extends JDialog {
             newConfig.setAvailableProfiles(new ArrayList<>(availableProfiles));
             configManager.save(newConfig);
 
-            JOptionPane.showMessageDialog(this,
-                    "Configuração salva com sucesso.\nReinicie a aplicação para aplicar as novas configurações.",
-                    "Configuração salva", JOptionPane.INFORMATION_MESSAGE);
+            int option = JOptionPane.showConfirmDialog(
+                    this,
+                    "Configuração salva com sucesso.\nDeseja encerrar a aplicação agora para aplicar as novas configurações?",
+                    "Configuração salva",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
 
             dispose();
+
+            if (option == JOptionPane.YES_OPTION) {
+                RemoteDesktopServer.requestShutdown();
+            }
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro ao salvar a configuração: " + e.getMessage(), "Erro",
