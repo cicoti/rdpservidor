@@ -47,13 +47,11 @@ public class ServerConfigDialog extends JDialog {
             "1920 x 1080"
     };
 
-    private static final Integer[] FPS_OPTIONS = { 10, 12, 15, 20, 24, 30 };
-    private static final Integer[] BITRATE_OPTIONS = { 600, 800,1000, 1200, 1400, 1800, 2500, 3000, 4000, 6000 };
-    private static final Integer[] KEY_INT_OPTIONS = { 10, 15, 20, 24, 30, 60 };
-    private static final String[] PRESET_OPTIONS = { "ultrafast", "superfast", "veryfast", "faster", "fast",
-            "medium", "slow" };
-    private static final String[] TUNE_OPTIONS = { "zerolatency", "film", "animation", "grain", "stillimage",
-            "fastdecode" };
+    private static final Integer[] FPS_OPTIONS = { 10, 12, 15, 20, 24 };
+    private static final Integer[] BITRATE_OPTIONS = { 600, 800, 1000, 1200, 1400, 1800, 2500, 3000 };
+    private static final Integer[] KEY_INT_OPTIONS = { 10, 15, 20, 24, 30 };
+    private static final String[] PRESET_OPTIONS = { "ultrafast", "superfast", "veryfast", "faster" };
+    private static final String[] TUNE_OPTIONS = { "zerolatency", "fastdecode" };
     private static final Boolean[] LEAKY_QUEUE_OPTIONS = { Boolean.TRUE, Boolean.FALSE };
 
     private final JTextField handshakeField;

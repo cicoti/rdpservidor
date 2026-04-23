@@ -131,49 +131,54 @@ Exemplos:
 
 ---
 
-### 3. `width`
-Largura da imagem transmitida.
+### 3. `width` e `height`
+Largura e altura da imagem transmitida.
+
+**Resoluções disponíveis na interface**
+- `640 x 360`
+- `768 x 432`
+- `854 x 480`
+- `960 x 540`
+- `1024 x 576`
+- `1152 x 648`
+- `1280 x 720`
+- `1366 x 768`
+- `1600 x 900`
+- `1920 x 1080`
+
+**Observação importante:**
+- a interface foi limitada a resoluções widescreen de uso prático, priorizando o comportamento estável do cliente
+- resoluções fora desse conjunto não devem ser utilizadas como referência da documentação atual
 
 **Impacto:**
-- quanto maior, melhor definição horizontal
-- quanto maior, maior consumo de banda
-- quanto maior, maior uso de CPU para captura e codificação
+- quanto maior a resolução, melhor definição
+- quanto maior a resolução, maior consumo de banda
+- quanto maior a resolução, maior uso de CPU para captura e codificação
 
 ---
 
-### 4. `height`
-Altura da imagem transmitida.
-
-**Impacto:**
-- quanto maior, melhor definição vertical
-- quanto maior, maior consumo de banda
-- quanto maior, maior uso de CPU
-
----
-
-### 5. `fps`
+### 4. `fps`
 Frames por segundo.
 
-Exemplos comuns:
+**Valores disponíveis na interface:**
 - `10`
 - `12`
 - `15`
 - `20`
 - `24`
-- `30`
 
 **Impacto:**
 - quanto maior, mais fluidez
 - quanto maior, maior uso de banda
 - quanto maior, maior uso de CPU
-- valores baixos deixam a navegação mais travada, mas economizam rede
+- valores baixos deixam a navegação menos fluida, mas economizam rede
 
 ---
 
-### 6. `bitrateKbps`
+### 5. `bitrateKbps`
 Taxa de bits do vídeo em kbps.
 
-Exemplos comuns:
+**Valores disponíveis na interface:**
 - `600`
 - `800`
 - `1000`
@@ -182,8 +187,6 @@ Exemplos comuns:
 - `1800`
 - `2500`
 - `3000`
-- `4000`
-- `6000`
 
 **Impacto:**
 - bitrate baixo reduz consumo de banda, mas piora a qualidade visual
@@ -191,61 +194,58 @@ Exemplos comuns:
 
 ---
 
-### 7. `keyIntMax`
+### 6. `keyIntMax`
 Intervalo máximo entre quadros-chave do encoder.
 
-Exemplos comuns:
+**Valores disponíveis na interface:**
 - `10`
 - `15`
 - `20`
 - `24`
 - `30`
-- `60`
 
 **Impacto:**
 - valores menores recuperam a imagem mais rápido em redes instáveis
-- valores maiores melhoram a compressão em redes estáveis
+- valores maiores melhoram a compressão em redes estáveis, mas podem aumentar o tempo de recuperação visual
 
 ---
 
-### 8. `encoderPreset`
+### 7. `encoderPreset`
 Preset do encoder H.264.
 
-Exemplos comuns:
+**Valores disponíveis na interface:**
 - `ultrafast`
 - `superfast`
 - `veryfast`
 - `faster`
-- `fast`
-- `medium`
-- `slow`
 
 **Impacto:**
 - presets mais rápidos usam menos CPU, mas comprimem pior
-- presets mais lentos usam mais CPU, mas comprimem melhor
+- presets menos agressivos comprimem melhor, mas exigem mais processamento
 
 **Recomendação:**
-- para desktop remoto, normalmente usar `ultrafast` ou `veryfast`
+- para desktop remoto interativo, os presets mais coerentes são `superfast`, `veryfast` e `faster`
+- `ultrafast` pode ser útil quando a prioridade máxima for reduzir carga de codificação
 
 ---
 
-### 9. `encoderTune`
+### 8. `encoderTune`
 Ajuste fino do encoder.
 
-Exemplos comuns:
+**Valores disponíveis na interface:**
 - `zerolatency`
-- `film`
-- `animation`
-- `grain`
-- `stillimage`
 - `fastdecode`
 
 **Impacto:**
-- para acesso remoto interativo, o recomendado é `zerolatency`
+- `zerolatency` é o ajuste principal para acesso remoto interativo
+- `fastdecode` pode ser usado quando a prioridade for facilitar a decodificação no cliente
+
+**Recomendação:**
+- para acesso remoto interativo, o recomendado padrão é `zerolatency`
 
 ---
 
-### 10. `leakyQueue`
+### 9. `leakyQueue`
 Controla o comportamento da fila quando há acúmulo de frames.
 
 Valores:
@@ -257,7 +257,7 @@ Valores:
 - `false`: mantém mais frames, podendo aumentar latência
 
 **Recomendação:**
-- rede instável ou lenta: `true`
+- rede instável ou limitada: `true`
 - rede local ou estável: `false`
 
 ---
@@ -270,7 +270,7 @@ Perfil protegido para rede cabeada local.
 Configuração de referência:
 
 ```properties
-LAN,Rede local,1920,1080,30,6000,30,ultrafast,zerolatency,false
+LAN,Rede local,1920,1080,24,3000,30,superfast,zerolatency,false
 ```
 
 ### WIFI
@@ -279,8 +279,10 @@ Perfil protegido para uso em rede Wi-Fi.
 Configuração de referência:
 
 ```properties
-WIFI,Wi-Fi,1280,720,20,2500,30,veryfast,zerolatency,true
+WIFI,Wi-Fi,1280,720,15,1800,24,veryfast,zerolatency,true
 ```
+
+> Observação: os perfis padrão acima devem refletir a estratégia atual do produto. Se os valores reais em `ConnectionProfile` forem diferentes, a documentação deve acompanhar exatamente o que estiver no código-fonte oficial.
 
 ---
 
@@ -298,7 +300,7 @@ connection.profile.SATELLITE_2=SATELLITE_2,Satélite 2,1280,720,12,1400,24,veryf
 
 ### Satélite 3
 ```properties
-connection.profile.SATELLITE_3=SATELLITE_3,Satélite 3,1280,720,15,1800,30,veryfast,zerolatency,true
+connection.profile.SATELLITE_3=SATELLITE_3,Satélite 3,1280,720,15,1800,30,faster,zerolatency,true
 ```
 
 ---
@@ -382,14 +384,14 @@ Quando o perfil selecionado for customizado:
 Use algo próximo de:
 
 ```properties
-1280,720,12~20,1400~2500,20~30,veryfast,zerolatency,true
+1280,720,12~20,1200~2500,20~30,veryfast ou faster,zerolatency,true
 ```
 
-### Melhor imagem
+### Melhor equilíbrio entre fluidez e consumo
 Use algo próximo de:
 
 ```properties
-1920,1080,30,6000+,30,ultrafast ou fast,zerolatency,false
+1280,720,15~24,1400~3000,24~30,superfast ou veryfast,zerolatency,true
 ```
 
 ### Rede muito limitada
@@ -397,4 +399,11 @@ Use algo próximo de:
 
 ```properties
 1024,576,10,800~1200,20,veryfast,zerolatency,true
+```
+
+### Rede local estável
+Use algo próximo de:
+
+```properties
+1600,900 ou 1920,1080,20~24,2500~3000,24~30,superfast,zerolatency,false
 ```
