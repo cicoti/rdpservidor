@@ -35,6 +35,7 @@ public class RemoteDesktopServer {
 	private static final Logger logger = LoggerFactory.getLogger(RemoteDesktopServer.class);
 
 	private static final String APP_NAME = "Remote Desktop Server";
+	private static final String APP_VERSION = "1.2.0";
 	private static final String LOCK_FILE_NAME = "remote_desktop_server.lock";
 
 	private static TrayIcon trayIcon;
@@ -336,11 +337,12 @@ public class RemoteDesktopServer {
 	}
 
 	private static String buildStatusMessage() {
-		return "Vídeo: " + ((screenServer != null && screenServer.isRunning()) ? "ativo" : "parado") + " | Mouse: "
-				+ ((mouseServer != null && mouseServer.isRunning()) ? "ativo" : "parado") + " | Handshake: "
-				+ (currentConfig != null ? currentConfig.getHandshakePort() : "-") + " | Controle: "
-				+ (currentConfig != null ? currentConfig.getControlPort() : "-") + " | Perfil: "
-				+ (currentConfig != null ? currentConfig.getConnectionProfile().getDisplayName() : "-");
+		return "Vídeo: " + ((screenServer != null && screenServer.isRunning()) ? "ativo" : "parado")
+				+ " | Mouse: " + ((mouseServer != null && mouseServer.isRunning()) ? "ativo" : "parado")
+				+ " | Handshake: " + (currentConfig != null ? currentConfig.getHandshakePort() : "-")
+				+ " | Controle: " + (currentConfig != null ? currentConfig.getControlPort() : "-")
+				+ " | Perfil: " + (currentConfig != null ? currentConfig.getConnectionProfile().getDisplayName() : "-")
+				+ " | Versão: " + APP_VERSION;
 	}
 
 	private static Image loadTrayImage() {
