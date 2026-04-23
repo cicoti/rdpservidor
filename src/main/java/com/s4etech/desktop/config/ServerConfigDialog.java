@@ -39,6 +39,7 @@ public class ServerConfigDialog extends JDialog {
             "640 x 360",
             "854 x 480",
             "960 x 540",
+            "1024 x 576",
             "1280 x 720",
             "1366 x 768",
             "1600 x 900",
