@@ -35,9 +35,16 @@ public class ServerConfigDialog extends JDialog {
     private static final long serialVersionUID = 1L;
 
     private static final String[] RESOLUTION_OPTIONS = {
-            "640 x 360", "640 x 480", "720 x 480", "720 x 576", "768 x 432", "800 x 600", "854 x 480",
-            "960 x 540", "1024 x 576", "1024 x 768", "1152 x 648", "1280 x 720", "1280 x 800", "1366 x 768",
-            "1440 x 900", "1600 x 900", "1680 x 1050", "1920 x 1080"
+            "640 x 360",
+            "768 x 432",
+            "854 x 480",
+            "960 x 540",
+            "1024 x 576",
+            "1152 x 648",
+            "1280 x 720",
+            "1366 x 768",
+            "1600 x 900",
+            "1920 x 1080"
     };
 
     private static final Integer[] FPS_OPTIONS = { 10, 12, 15, 20, 24, 30 };
