@@ -1,5 +1,5 @@
 #define MyAppName "S4ETech-RDP-Server"
-#define MyAppVersion "1.1.0"
+#define MyAppVersion "1.2.0"
 #define MyAppPublisher "s4etech"
 #define MyAppURL "https://www.s4e.tech/br/"
 
@@ -14,7 +14,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName=C:\{#MyAppName}
 DefaultGroupName={#MyAppName}
 OutputDir=C:\Users\silvi\OneDrive\Desktop
-OutputBaseFilename=s4etech-rdp-server-instalador-110
+OutputBaseFilename=s4etech-rdp-server-instalador-120
 SetupIconFile=C:\projetos\ctech\s4etech\remotedesktop\executavel\icon_remote_server.ico
 Compression=lzma
 SolidCompression=yes
