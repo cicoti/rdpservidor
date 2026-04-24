@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajuda - Perfis de conexão</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 24px;
+            background: #f7f7f7;
+            color: #222;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 980px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 32px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        h1, h2, h3 {
+            color: #1f3b5b;
+        }
+        code, pre {
+            font-family: Consolas, Monaco, monospace;
+        }
+        pre {
+            background: #f1f3f5;
+            padding: 14px;
+            border-radius: 6px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .note, blockquote {
+            background: #eef6ff;
+            border-left: 4px solid #4a90e2;
+            padding: 12px 14px;
+            margin: 16px 0;
+        }
+        ul {
+            padding-left: 22px;
+        }
+        .section {
+            margin-top: 28px;
+        }
+        hr { border: 0; border-top: 1px solid #e0e0e0; margin: 28px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+<h1>Perfis de conexão</h1>
+
+<p>Os perfis de conexão definem como o servidor transmite a imagem da área de trabalho para o cliente.</p>
+
+<p>A aplicação trabalha com dois tipos de perfil:</p>
+
+<ul>
+<li>Perfis protegidos do sistema: `LAN` e `WIFI`</li>
+<li>Perfis customizados: criados e mantidos pelo usuário</li>
+</ul>
+
+<hr>
+
+<h2>Estrutura geral</h2>
+
+<p>O perfil ativo é definido por:</p>
+
+<pre><code>
+connection.profile=LAN
+</code></pre>
+
+<p>Os perfis customizados gravados no arquivo são definidos assim:</p>
+
+<pre><code>
+connection.profile.&lt;ID&gt;=id,displayName,width,height,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue
+</code></pre>
+
+<p>Exemplo de perfil customizado:</p>
+
+<pre><code>
+connection.profile.SATELLITE_1=SATELLITE_1,Satélite 1,1024,576,10,1000,20,veryfast,zerolatency,true
+</code></pre>
+
+<hr>
+
+<h2>Perfis protegidos do sistema</h2>
+
+<p>A aplicação sempre possui dois perfis protegidos:</p>
+
+<ul>
+<li>`LAN`</li>
+<li>`WIFI`</li>
+</ul>
+
+<h3>Regras desses perfis</h3>
+
+<ul>
+<li>são definidos no código</li>
+<li>sempre existem</li>
+<li>não são lidos do arquivo de propriedades</li>
+<li>não são gravados no arquivo de propriedades</li>
+<li>não podem ser excluídos</li>
+<li>não podem ser sobrescritos por perfis customizados</li>
+</ul>
+
+<h3>Observação importante</h3>
+
+<p>O valor de <code>connection.profile</code> pode apontar para um perfil protegido do sistema ou para um perfil customizado.</p>
+
+<p>Exemplos válidos:</p>
+
+<pre><code>
+connection.profile=LAN
+</code></pre>
+
+<pre><code>
+connection.profile=WIFI
+</code></pre>
+
+<pre><code>
+connection.profile=SATELLITE_1
+</code></pre>
+
+<hr>
+
+<h2>Perfis customizados</h2>
+
+<p>Perfis customizados são criados pela interface da aplicação.</p>
+
+<h3>Regras dos perfis customizados</h3>
+
+<ul>
+<li>podem ser criados a partir da duplicação de um perfil existente</li>
+<li>podem ser editados</li>
+<li>podem ser excluídos</li>
+<li>são gravados no arquivo `remote-desktop-server.properties`</li>
+<li>o ID é gerado automaticamente a partir do nome informado na interface</li>
+</ul>
+
+<h3>Regras do ID</h3>
+
+<ul>
+<li>o usuário informa apenas o nome do perfil</li>
+<li>o sistema gera o ID automaticamente</li>
+<li>o ID é convertido para um formato interno sem acentos e em maiúsculas</li>
+<li>os IDs `LAN` e `WIFI` são reservados e não podem ser usados por perfis customizados</li>
+<li>se o ID gerado já existir, o sistema cria um sufixo incremental automaticamente</li>
+</ul>
+
+<p>Exemplos:</p>
+
+<ul>
+<li>`Rede Escritório` → `REDE_ESCRITORIO`</li>
+<li>`Wi Fi Filial 1` → `WI_FI_FILIAL_1`</li>
+<li>`Satélite 1` → `SATELITE_1`</li>
+</ul>
+
+<hr>
+
+<h2>Campos do perfil</h2>
+
+<p>Formato:</p>
+
+<pre><code>
+id,displayName,width,height,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue
+</code></pre>
+
+<h3>1. `id`</h3>
+<p>Identificador interno do perfil.</p>
+
+<p>Exemplos:</p>
+<ul>
+<li>`LAN`</li>
+<li>`SATELLITE_1`</li>
+<li>`WIFI`</li>
+</ul>
+
+<p><strong>Impacto:</strong></p>
+<ul>
+<li>não altera qualidade nem desempenho</li>
+<li>serve apenas como chave de identificação</li>
+</ul>
+
+<hr>
+
+<h3>2. `displayName`</h3>
+<p>Nome exibido na interface.</p>
+
+<p>Exemplos:</p>
+<ul>
+<li>`Rede local`</li>
+<li>`Satélite 1`</li>
+<li>`Wi-Fi`</li>
+</ul>
+
+<p><strong>Impacto:</strong></p>
+<ul>
+<li>não altera transmissão</li>
+<li>afeta apenas o texto mostrado ao usuário</li>
+</ul>
+
+<hr>
+
+<h3>3. `width` e `height`</h3>
+<p>Largura e altura da imagem transmitida.</p>
+
+<p><strong>Resoluções disponíveis na interface</strong></p>
+<ul>
+<li>`640 x 360`</li>
+<li>`768 x 432`</li>
+<li>`854 x 480`</li>
+<li>`960 x 540`</li>
+<li>`1024 x 576`</li>
+<li>`1152 x 648`</li>
+<li>`1280 x 720`</li>
+<li>`1366 x 768`</li>
+<li>`1600 x 900`</li>
+<li>`1920 x 1080`</li>
+</ul>
+
+<p><strong>Observação importante:</strong></p>
+<ul>
+<li>a interface foi limitada a resoluções widescreen de uso prático, priorizando o comportamento estável do cliente</li>
+<li>resoluções fora desse conjunto não devem ser utilizadas como referência da documentação atual</li>
+</ul>
+
+<p><strong>Impacto:</strong></p>
+<ul>
+<li>quanto maior a resolução, melhor definição</li>
+<li>quanto maior a resolução, maior consumo de banda</li>
+<li>quanto maior a resolução, maior uso de CPU para captura e codificação</li>
+</ul>
+
+<hr>
+
+<h3>4. `fps`</h3>
+<p>Frames por segundo.</p>
+
+<p><strong>Valores disponíveis na interface:</strong></p>
+<ul>
+<li>`10`</li>
+<li>`12`</li>
+<li>`15`</li>
+<li>`20`</li>
+<li>`24`</li>
+</ul>
+
+<p><strong>Impacto:</strong></p>
+<ul>
+<li>quanto maior, mais fluidez</li>
+<li>quanto maior, maior uso de banda</li>
+<li>quanto maior, maior uso de CPU</li>
+<li>valores baixos deixam a navegação menos fluida, mas economizam rede</li>
+</ul>
+
+<hr>
+
+<h3>5. `bitrateKbps`</h3>
+<p>Taxa de bits do vídeo em kbps.</p>
+
+<p><strong>Valores disponíveis na interface:</strong></p>
+<ul>
+<li>`600`</li>
+<li>`800`</li>
+<li>`1000`</li>
+<li>`1200`</li>
+<li>`1400`</li>
+<li>`1800`</li>
+<li>`2500`</li>
+<li>`3000`</li>
+</ul>
+
+<p><strong>Impacto:</strong></p>
+<ul>
+<li>bitrate baixo reduz consumo de banda, mas piora a qualidade visual</li>
+<li>bitrate alto melhora a qualidade, mas aumenta o consumo de banda</li>
+</ul>
+
+<hr>
+
+<h3>6. `keyIntMax`</h3>
+<p>Intervalo máximo entre quadros-chave do encoder.</p>
+
+<p><strong>Valores disponíveis na interface:</strong></p>
+<ul>
+<li>`10`</li>
+<li>`15`</li>
+<li>`20`</li>
+<li>`24`</li>
+<li>`30`</li>
+</ul>
+
+<p><strong>Impacto:</strong></p>
+<ul>
+<li>valores menores recuperam a imagem mais rápido em redes instáveis</li>
+<li>valores maiores melhoram a compressão em redes estáveis, mas podem aumentar o tempo de recuperação visual</li>
+</ul>
+
+<hr>
+
+<h3>7. `encoderPreset`</h3>
+<p>Preset do encoder H.264.</p>
+
+<p><strong>Valores disponíveis na interface:</strong></p>
+<ul>
+<li>`ultrafast`</li>
+<li>`superfast`</li>
+<li>`veryfast`</li>
+<li>`faster`</li>
+</ul>
+
+<p><strong>Impacto:</strong></p>
+<ul>
+<li>presets mais rápidos usam menos CPU, mas comprimem pior</li>
+<li>presets menos agressivos comprimem melhor, mas exigem mais processamento</li>
+</ul>
+
+<p><strong>Recomendação:</strong></p>
+<ul>
+<li>para desktop remoto interativo, os presets mais coerentes são `superfast`, `veryfast` e `faster`</li>
+<li>`ultrafast` pode ser útil quando a prioridade máxima for reduzir carga de codificação</li>
+</ul>
+
+<hr>
+
+<h3>8. `encoderTune`</h3>
+<p>Ajuste fino do encoder.</p>
+
+<p><strong>Valores disponíveis na interface:</strong></p>
+<ul>
+<li>`zerolatency`</li>
+<li>`fastdecode`</li>
+</ul>
+
+<p><strong>Impacto:</strong></p>
+<ul>
+<li>`zerolatency` é o ajuste principal para acesso remoto interativo</li>
+<li>`fastdecode` pode ser usado quando a prioridade for facilitar a decodificação no cliente</li>
+</ul>
+
+<p><strong>Recomendação:</strong></p>
+<ul>
+<li>para acesso remoto interativo, o recomendado padrão é `zerolatency`</li>
+</ul>
+
+<hr>
+
+<h3>9. `leakyQueue`</h3>
+<p>Controla o comportamento da fila quando há acúmulo de frames.</p>
+
+<p>Valores:</p>
+<ul>
+<li>`true`</li>
+<li>`false`</li>
+</ul>
+
+<p><strong>Impacto:</strong></p>
+<ul>
+<li>`true`: descarta frames antigos para reduzir atraso</li>
+<li>`false`: mantém mais frames, podendo aumentar latência</li>
+</ul>
+
+<p><strong>Recomendação:</strong></p>
+<ul>
+<li>rede instável ou limitada: `true`</li>
+<li>rede local ou estável: `false`</li>
+</ul>
+
+<hr>
+
+<h2>Perfis padrão do sistema</h2>
+
+<h3>LAN</h3>
+<p>Perfil protegido para rede cabeada local.</p>
+
+<p>Configuração de referência:</p>
+
+<pre><code>
+LAN,Rede local,1920,1080,24,3000,30,superfast,zerolatency,false
+</code></pre>
+
+<h3>WIFI</h3>
+<p>Perfil protegido para uso em rede Wi-Fi.</p>
+
+<p>Configuração de referência:</p>
+
+<pre><code>
+WIFI,Wi-Fi,1280,720,15,1800,24,veryfast,zerolatency,true
+</code></pre>
+
+<blockquote>Observação: os perfis padrão acima devem refletir a estratégia atual do produto. Se os valores reais em `ConnectionProfile` forem diferentes, a documentação deve acompanhar exatamente o que estiver no código-fonte oficial.</blockquote>
+
+<hr>
+
+<h2>Perfis customizados de exemplo</h2>
+
+<h3>Satélite 1</h3>
+<pre><code>
+connection.profile.SATELLITE_1=SATELLITE_1,Satélite 1,1024,576,10,1000,20,veryfast,zerolatency,true
+</code></pre>
+
+<h3>Satélite 2</h3>
+<pre><code>
+connection.profile.SATELLITE_2=SATELLITE_2,Satélite 2,1280,720,12,1400,24,veryfast,zerolatency,true
+</code></pre>
+
+<h3>Satélite 3</h3>
+<pre><code>
+connection.profile.SATELLITE_3=SATELLITE_3,Satélite 3,1280,720,15,1800,30,faster,zerolatency,true
+</code></pre>
+
+<hr>
+
+<h2>Estrutura esperada do arquivo</h2>
+
+<p>O arquivo <code>remote-desktop-server.properties</code> deve conter apenas:</p>
+
+<ul>
+<li>`connection.profile`</li>
+<li>perfis customizados</li>
+<li>`control.port`</li>
+<li>`handshake.port`</li>
+</ul>
+
+<p>Exemplo:</p>
+
+<pre><code>
+#formato:
+#id,displayName,width,height,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue
+#
+#Remote Desktop Server configuration
+#Mon Apr 20 13:44:15 BRT 2026
+connection.profile=LAN
+connection.profile.SATELLITE_1=SATELLITE_1,Sat\u00E9lite 1,1024,576,10,1000,20,veryfast,zerolatency,true
+control.port=5000
+handshake.port=7000
+</code></pre>
+
+<h3>Observações</h3>
+
+<ul>
+<li>`LAN` e `WIFI` não devem ser gravados no arquivo</li>
+<li>o arquivo armazena apenas perfis customizados</li>
+<li>ao salvar alterações, o arquivo deve ser regenerado por completo</li>
+</ul>
+
+<hr>
+
+<h2>Regras importantes</h2>
+
+<ul>
+<li>o perfil ativo definido em `connection.profile` deve existir</li>
+<li>o perfil ativo pode ser protegido do sistema ou customizado</li>
+<li>todos os campos do perfil devem ser preenchidos</li>
+<li>os campos numéricos devem ser positivos</li>
+<li>`leakyQueue` deve ser `true` ou `false`</li>
+<li>`LAN` e `WIFI` são IDs reservados</li>
+<li>qualquer definição de `connection.profile.LAN` ou `connection.profile.WIFI` no arquivo deve ser ignorada</li>
+</ul>
+
+<hr>
+
+<h2>Uso pela interface</h2>
+
+<p>Na interface de configuração, o usuário pode:</p>
+
+<ul>
+<li>selecionar um perfil existente</li>
+<li>duplicar um perfil para criar um novo perfil customizado</li>
+<li>editar o nome e os parâmetros de um perfil customizado</li>
+<li>excluir perfis customizados</li>
+<li>salvar e ativar o perfil selecionado</li>
+</ul>
+
+<h3>Comportamento dos perfis protegidos</h3>
+
+<p>Quando o perfil selecionado for <code>LAN</code> ou <code>WIFI</code>:</p>
+
+<ul>
+<li>os campos aparecem preenchidos</li>
+<li>os campos ficam bloqueados para edição</li>
+<li>o perfil não pode ser excluído</li>
+<li>o perfil pode ser duplicado</li>
+<li>ao salvar, ele apenas se torna o perfil ativo</li>
+</ul>
+
+<h3>Comportamento dos perfis customizados</h3>
+
+<p>Quando o perfil selecionado for customizado:</p>
+
+<ul>
+<li>os campos ficam editáveis</li>
+<li>o perfil pode ser excluído</li>
+<li>ao salvar, o perfil é gravado no arquivo e se torna o perfil ativo</li>
+</ul>
+
+<hr>
+
+<h2>Recomendações rápidas</h2>
+
+<h3>Menor atraso</h3>
+<p>Use algo próximo de:</p>
+
+<pre><code>
+1280,720,12~20,1200~2500,20~30,veryfast ou faster,zerolatency,true
+</code></pre>
+
+<h3>Melhor equilíbrio entre fluidez e consumo</h3>
+<p>Use algo próximo de:</p>
+
+<pre><code>
+1280,720,15~24,1400~3000,24~30,superfast ou veryfast,zerolatency,true
+</code></pre>
+
+<h3>Rede muito limitada</h3>
+<p>Use algo próximo de:</p>
+
+<pre><code>
+1024,576,10,800~1200,20,veryfast,zerolatency,true
+</code></pre>
+
+<h3>Rede local estável</h3>
+<p>Use algo próximo de:</p>
+
+<pre><code>
+1600,900 ou 1920,1080,20~24,2500~3000,24~30,superfast,zerolatency,false
+</code></pre>
+    </div>
+</body>
+</html>

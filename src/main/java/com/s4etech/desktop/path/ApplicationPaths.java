@@ -10,7 +10,7 @@ public final class ApplicationPaths {
     private ApplicationPaths() {
     }
 
-    public static File getApplicationBaseDirectory() {
+    public static File getRuntimeDirectory() {
         try {
             File location = new File(
                     ApplicationPaths.class.getProtectionDomain()
@@ -20,13 +20,33 @@ public final class ApplicationPaths {
             );
 
             if (location.isFile()) {
-                return location.getParentFile();
+                File parent = location.getParentFile();
+                if (parent != null) {
+                    return parent;
+                }
             }
+
+            return location;
+
+        } catch (URISyntaxException e) {
+            return new File(System.getProperty("user.dir"));
+        }
+    }
+
+    public static File getProjectRootDirectory() {
+        try {
+            File location = new File(
+                    ApplicationPaths.class.getProtectionDomain()
+                            .getCodeSource()
+                            .getLocation()
+                            .toURI()
+            );
 
             String normalizedPath = normalizePath(location);
 
             if (normalizedPath.endsWith("/target/classes")) {
-                File projectDir = location.getParentFile() != null ? location.getParentFile().getParentFile() : null;
+                File parent = location.getParentFile();
+                File projectDir = parent != null ? parent.getParentFile() : null;
                 if (projectDir != null) {
                     return projectDir;
                 }
@@ -39,6 +59,13 @@ public final class ApplicationPaths {
                 }
             }
 
+            if (location.isFile()) {
+                File parent = location.getParentFile();
+                if (parent != null) {
+                    return parent;
+                }
+            }
+
             return location;
 
         } catch (URISyntaxException e) {
@@ -46,16 +73,20 @@ public final class ApplicationPaths {
         }
     }
 
+    public static File getApplicationBaseDirectory() {
+        return getRuntimeDirectory();
+    }
+
     public static File getLockFile() {
-        return new File(getApplicationBaseDirectory(), LOCK_FILE_NAME);
+        return new File(getRuntimeDirectory(), LOCK_FILE_NAME);
     }
 
     public static File getLogsDirectory() {
-        return new File(getApplicationBaseDirectory(), "logs");
+        return new File(getRuntimeDirectory(), "logs");
     }
 
     public static File getConfigFile(String fileName) {
-        return new File(getApplicationBaseDirectory(), fileName);
+        return new File(getRuntimeDirectory(), fileName);
     }
 
     private static String normalizePath(File file) {
