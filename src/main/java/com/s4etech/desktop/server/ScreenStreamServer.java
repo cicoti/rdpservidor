@@ -9,269 +9,286 @@ import org.freedesktop.gstreamer.Pipeline;
 
 import com.s4etech.desktop.config.ConnectionProfile;
 import com.s4etech.desktop.listener.ServerHandshakeListener;
+import com.s4etech.desktop.session.ActiveSessionContext;
 
 public class ScreenStreamServer {
 
-	private static final AtomicBoolean GST_INITIALIZED = new AtomicBoolean(false);
+    private static final AtomicBoolean GST_INITIALIZED = new AtomicBoolean(false);
 
-	private final int handshakePort;
-	private final ConnectionProfile connectionProfile;
+    private final int handshakePort;
+    private final ConnectionProfile connectionProfile;
+    private final ActiveSessionContext activeSessionContext;
 
-	private volatile boolean running;
-	private volatile boolean streaming;
+    private volatile boolean running;
+    private volatile boolean streaming;
 
-	private volatile Thread serverThread;
-	private volatile Thread handshakeThread;
+    private volatile Thread serverThread;
+    private volatile Thread handshakeThread;
 
-	private volatile ServerHandshakeListener handshakeListener;
-	private volatile Pipeline pipeline;
+    private volatile ServerHandshakeListener handshakeListener;
+    private volatile Pipeline pipeline;
 
-	private volatile InetAddress clientIp;
-	private volatile int videoPort;
-	private volatile long sessionId = -1;
+    private volatile InetAddress clientIp;
+    private volatile int videoPort;
+    private volatile long sessionId = -1;
 
-	public ScreenStreamServer() {
-		this(7000, ConnectionProfile.DEFAULT);
-	}
+    public ScreenStreamServer() {
+        this(7000, ConnectionProfile.DEFAULT, new ActiveSessionContext());
+    }
 
-	public ScreenStreamServer(int handshakePort) {
-		this(handshakePort, ConnectionProfile.DEFAULT);
-	}
+    public ScreenStreamServer(int handshakePort) {
+        this(handshakePort, ConnectionProfile.DEFAULT, new ActiveSessionContext());
+    }
 
-	public ScreenStreamServer(int handshakePort, ConnectionProfile connectionProfile) {
-		this.handshakePort = handshakePort;
-		this.connectionProfile = connectionProfile != null ? connectionProfile : ConnectionProfile.DEFAULT;
-	}
+    public ScreenStreamServer(int handshakePort, ConnectionProfile connectionProfile) {
+        this(handshakePort, connectionProfile, new ActiveSessionContext());
+    }
 
-	public synchronized void start() {
-		if (running) {
-			return;
-		}
+    public ScreenStreamServer(int handshakePort, ConnectionProfile connectionProfile, ActiveSessionContext activeSessionContext) {
+        this.handshakePort = handshakePort;
+        this.connectionProfile = connectionProfile != null ? connectionProfile : ConnectionProfile.DEFAULT;
+        this.activeSessionContext = activeSessionContext != null ? activeSessionContext : new ActiveSessionContext();
+    }
 
-		initGStreamerOnce();
+    public synchronized void start() {
+        if (running) {
+            return;
+        }
 
-		running = true;
-		serverThread = new Thread(this::runServer, "ScreenStreamServer");
-		serverThread.start();
-	}
+        initGStreamerOnce();
 
-	public synchronized void stop() {
-		if (!running && serverThread == null) {
-			return;
-		}
+        running = true;
+        serverThread = new Thread(this::runServer, "ScreenStreamServer");
+        serverThread.start();
+    }
 
-		running = false;
-		streaming = false;
+    public synchronized void stop() {
+        if (!running && serverThread == null) {
+            return;
+        }
 
-		stopPipeline();
-		stopHandshakeListener();
+        running = false;
+        streaming = false;
 
-		Thread localServerThread = serverThread;
+        stopPipeline();
+        stopHandshakeListener();
 
-		if (localServerThread != null) {
-			localServerThread.interrupt();
-			joinQuietly(localServerThread, 2000);
+        Thread localServerThread = serverThread;
 
-			if (localServerThread.isAlive()) {
-				System.err.println("A thread principal do ScreenStreamServer não encerrou no tempo esperado.");
-			} else {
-				if (serverThread == localServerThread) {
-					serverThread = null;
-				}
-			}
-		}
+        if (localServerThread != null) {
+            localServerThread.interrupt();
+            joinQuietly(localServerThread, 2000);
 
-		clientIp = null;
-		videoPort = 0;
-		sessionId = -1;
-	}
+            if (localServerThread.isAlive()) {
+                System.err.println("A thread principal do ScreenStreamServer não encerrou no tempo esperado.");
+            } else {
+                if (serverThread == localServerThread) {
+                    serverThread = null;
+                }
+            }
+        }
 
-	public synchronized void restart() {
-		stop();
-		start();
-	}
+        clearCurrentSession();
+    }
 
-	public boolean isRunning() {
-		return running;
-	}
+    public synchronized void restart() {
+        stop();
+        start();
+    }
 
-	public boolean isStreaming() {
-		return streaming;
-	}
+    public boolean isRunning() {
+        return running;
+    }
 
-	public InetAddress getClientIp() {
-		return clientIp;
-	}
+    public boolean isStreaming() {
+        return streaming;
+    }
 
-	public int getVideoPort() {
-		return videoPort;
-	}
+    public InetAddress getClientIp() {
+        return clientIp;
+    }
 
-	public long getSessionId() {
-		return sessionId;
-	}
+    public int getVideoPort() {
+        return videoPort;
+    }
 
-	public ConnectionProfile getConnectionProfile() {
-		return connectionProfile;
-	}
+    public long getSessionId() {
+        return sessionId;
+    }
 
-	private void runServer() {
-		try {
-			handshakeListener = new ServerHandshakeListener(handshakePort);
-			handshakeThread = new Thread(handshakeListener, "handshake-listener");
-			handshakeThread.start();
+    public ConnectionProfile getConnectionProfile() {
+        return connectionProfile;
+    }
 
-			while (running) {
-				ServerHandshakeListener.HandshakeSession newSession = handshakeListener.consumePendingSession();
+    private void runServer() {
+        try {
+            handshakeListener = new ServerHandshakeListener(handshakePort);
+            handshakeThread = new Thread(handshakeListener, "handshake-listener");
+            handshakeThread.start();
 
-				if (newSession != null) {
-					activateSession(newSession);
-				}
+            while (running) {
+                ServerHandshakeListener.HandshakeSession newSession = handshakeListener.consumePendingSession();
 
-				Thread.sleep(200);
-			}
+                if (newSession != null) {
+                    activateSession(newSession);
+                }
 
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		} catch (Exception e) {
-			System.err.println("Erro no ScreenStreamServer: " + e.getMessage());
-			e.printStackTrace();
-		} finally {
-			streaming = false;
-			stopPipeline();
-			stopHandshakeListener();
-			running = false;
-			clientIp = null;
-			videoPort = 0;
-			sessionId = -1;
+                Thread.sleep(200);
+            }
 
-			if (Thread.currentThread() == serverThread) {
-				serverThread = null;
-			}
-		}
-	}
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            System.err.println("Erro no ScreenStreamServer: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            streaming = false;
+            stopPipeline();
+            stopHandshakeListener();
+            running = false;
+            clearCurrentSession();
 
-	private synchronized void activateSession(ServerHandshakeListener.HandshakeSession session) {
-		if (!running) {
-			return;
-		}
+            if (Thread.currentThread() == serverThread) {
+                serverThread = null;
+            }
+        }
+    }
 
-		this.sessionId = session.getSessionId();
-		this.clientIp = session.getClientAddress();
-		this.videoPort = session.getClientVideoPort();
+    private synchronized void activateSession(ServerHandshakeListener.HandshakeSession session) {
+        if (!running || session == null || session.getClientAddress() == null || session.getClientVideoPort() <= 0) {
+            return;
+        }
 
-		System.out.println("Ativando sessão " + sessionId + " para " + clientIp.getHostAddress() + ":" + videoPort
-				+ " | perfil=" + connectionProfile.getDisplayName());
+        this.sessionId = session.getSessionId();
+        this.clientIp = session.getClientAddress();
+        this.videoPort = session.getClientVideoPort();
 
-		restartPipelineForCurrentSession();
-	}
+        activeSessionContext.activate(
+                session.getSessionId(),
+                session.getClientAddress(),
+                session.getClientVideoPort(),
+                session.getClientControlPort()
+        );
 
-	private void restartPipelineForCurrentSession() {
-		stopPipeline();
+        System.out.println("Ativando sessão " + sessionId + " para " + clientIp.getHostAddress() + ":" + videoPort
+                + " | perfil=" + connectionProfile.getDisplayName());
 
-		String pipelineStr = buildPipeline(clientIp, videoPort);
+        restartPipelineForCurrentSession();
+    }
 
-		pipeline = (Pipeline) Gst.parseLaunch(pipelineStr);
+    private void restartPipelineForCurrentSession() {
+        stopPipeline();
 
-		pipeline.getBus().connect((Bus.MESSAGE) (bus, msg) -> {
-			System.out.println(msg);
-		});
+        String pipelineStr = buildPipeline(clientIp, videoPort);
 
-		System.out.println("Servidor de tela enviando para " + clientIp.getHostAddress() + ":" + videoPort
-				+ " | perfil=" + connectionProfile.getDisplayName() + " | " + connectionProfile.getWidth() + "x"
-				+ connectionProfile.getHeight() + " @" + connectionProfile.getFps() + "fps" + " bitrate="
-				+ connectionProfile.getBitrateKbps() + "kbps");
+        pipeline = (Pipeline) Gst.parseLaunch(pipelineStr);
 
-		pipeline.play();
-		streaming = true;
-	}
+        pipeline.getBus().connect((Bus.MESSAGE) (bus, msg) -> {
+            System.out.println(msg);
+        });
 
-	private String buildPipeline(InetAddress clientIp, int videoPort) {
-	    String queueSegment = connectionProfile.isLeakyQueue()
-	            ? "queue leaky=downstream max-size-buffers=2 ! "
-	            : "queue ! ";
+        System.out.println("Servidor de tela enviando para " + clientIp.getHostAddress() + ":" + videoPort
+                + " | perfil=" + connectionProfile.getDisplayName() + " | " + connectionProfile.getWidth() + "x"
+                + connectionProfile.getHeight() + " @" + connectionProfile.getFps() + "fps" + " bitrate="
+                + connectionProfile.getBitrateKbps() + "kbps");
 
-	    return "dx9screencapsrc monitor=0 cursor=false ! "
-	            + queueSegment
-	            + "videoconvert ! videoscale ! "
-	            + "video/x-raw,format=I420,width=" + connectionProfile.getWidth()
-	            + ",height=" + connectionProfile.getHeight()
-	            + ",framerate=" + connectionProfile.getFps() + "/1 ! "
-	            + "x264enc tune=" + connectionProfile.getEncoderTune()
-	            + " speed-preset=" + connectionProfile.getEncoderPreset()
-	            + " bitrate=" + connectionProfile.getBitrateKbps()
-	            + " key-int-max=" + connectionProfile.getKeyIntMax()
-	            + " ! h264parse ! rtph264pay pt=96 config-interval=1 ! "
-	            + "udpsink host=" + clientIp.getHostAddress()
-	            + " port=" + videoPort
-	            + " sync=false async=false";
-	}
+        pipeline.play();
+        streaming = true;
+    }
 
-	private void stopPipeline() {
-		Pipeline localPipeline = pipeline;
-		pipeline = null;
+    private String buildPipeline(InetAddress clientIp, int videoPort) {
+        String queueSegment = connectionProfile.isLeakyQueue()
+                ? "queue leaky=downstream max-size-buffers=2 ! "
+                : "queue ! ";
 
-		if (localPipeline != null) {
-			try {
-				localPipeline.stop();
-			} catch (Exception e) {
-				System.err.println("Falha ao parar pipeline: " + e.getMessage());
-			}
+        return "dx9screencapsrc monitor=0 cursor=false ! "
+                + queueSegment
+                + "videoconvert ! videoscale ! "
+                + "video/x-raw,format=I420,width=" + connectionProfile.getWidth()
+                + ",height=" + connectionProfile.getHeight()
+                + ",framerate=" + connectionProfile.getFps() + "/1 ! "
+                + "x264enc tune=" + connectionProfile.getEncoderTune()
+                + " speed-preset=" + connectionProfile.getEncoderPreset()
+                + " bitrate=" + connectionProfile.getBitrateKbps()
+                + " key-int-max=" + connectionProfile.getKeyIntMax()
+                + " ! h264parse ! rtph264pay pt=96 config-interval=1 ! "
+                + "udpsink host=" + clientIp.getHostAddress()
+                + " port=" + videoPort
+                + " sync=false async=false";
+    }
 
-			try {
-				localPipeline.dispose();
-			} catch (Exception e) {
-				System.err.println("Falha ao liberar pipeline: " + e.getMessage());
-			}
-		}
+    private void stopPipeline() {
+        Pipeline localPipeline = pipeline;
+        pipeline = null;
 
-		streaming = false;
-	}
+        if (localPipeline != null) {
+            try {
+                localPipeline.stop();
+            } catch (Exception e) {
+                System.err.println("Falha ao parar pipeline: " + e.getMessage());
+            }
 
-	private void stopHandshakeListener() {
-		ServerHandshakeListener localHandshakeListener = handshakeListener;
-		Thread localHandshakeThread = handshakeThread;
+            try {
+                localPipeline.dispose();
+            } catch (Exception e) {
+                System.err.println("Falha ao liberar pipeline: " + e.getMessage());
+            }
+        }
 
-		handshakeListener = null;
+        streaming = false;
+    }
 
-		if (localHandshakeListener != null) {
-			localHandshakeListener.stop();
-		}
+    private void stopHandshakeListener() {
+        ServerHandshakeListener localHandshakeListener = handshakeListener;
+        Thread localHandshakeThread = handshakeThread;
 
-		if (localHandshakeThread != null) {
-			localHandshakeThread.interrupt();
-			joinQuietly(localHandshakeThread, 1000);
+        handshakeListener = null;
 
-			if (!localHandshakeThread.isAlive()) {
-				if (handshakeThread == localHandshakeThread) {
-					handshakeThread = null;
-				}
-			}
-		} else {
-			handshakeThread = null;
-		}
-	}
+        if (localHandshakeListener != null) {
+            localHandshakeListener.stop();
+        }
 
-	private static void initGStreamerOnce() {
-		if (GST_INITIALIZED.compareAndSet(false, true)) {
-			Gst.init("ScreenStreamServer", new String[0]);
-		}
-	}
+        if (localHandshakeThread != null) {
+            localHandshakeThread.interrupt();
+            joinQuietly(localHandshakeThread, 1000);
 
-	private static void joinQuietly(Thread thread, long timeoutMillis) {
-		try {
-			thread.join(timeoutMillis);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		}
-	}
+            if (!localHandshakeThread.isAlive()) {
+                if (handshakeThread == localHandshakeThread) {
+                    handshakeThread = null;
+                }
+            }
+        } else {
+            handshakeThread = null;
+        }
+    }
 
-	public static void main(String[] args) throws Exception {
-		ScreenStreamServer server = new ScreenStreamServer();
-		server.start();
+    private void clearCurrentSession() {
+        clientIp = null;
+        videoPort = 0;
+        sessionId = -1;
+        activeSessionContext.clear();
+    }
 
-		Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
+    private static void initGStreamerOnce() {
+        if (GST_INITIALIZED.compareAndSet(false, true)) {
+            Gst.init("ScreenStreamServer", new String[0]);
+        }
+    }
 
-		Thread.currentThread().join();
-	}
+    private static void joinQuietly(Thread thread, long timeoutMillis) {
+        try {
+            thread.join(timeoutMillis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        ScreenStreamServer server = new ScreenStreamServer();
+        server.start();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
+
+        Thread.currentThread().join();
+    }
 }

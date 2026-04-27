@@ -29,6 +29,7 @@ import com.s4etech.desktop.config.ServerConfigDialog;
 import com.s4etech.desktop.config.ServerConfigManager;
 import com.s4etech.desktop.help.HelpDialog;
 import com.s4etech.desktop.path.ApplicationPaths;
+import com.s4etech.desktop.session.ActiveSessionContext;
 
 public class RemoteDesktopServer {
 
@@ -46,6 +47,7 @@ public class RemoteDesktopServer {
 
 	private static ScreenStreamServer screenServer;
 	private static MouseControlServer mouseServer;
+	private static ActiveSessionContext activeSessionContext;
 
 	private static ServerConfigManager configManager;
 	private static ServerConfig currentConfig;
@@ -72,8 +74,9 @@ public class RemoteDesktopServer {
 				currentConfig.getConnectionProfile().getId(),
 				currentConfig.getConnectionProfile().getDisplayName());
 
-		screenServer = new ScreenStreamServer(currentConfig.getHandshakePort(), currentConfig.getConnectionProfile());
-		mouseServer = new MouseControlServer(currentConfig.getControlPort());
+		activeSessionContext = new ActiveSessionContext();
+		screenServer = new ScreenStreamServer(currentConfig.getHandshakePort(), currentConfig.getConnectionProfile(), activeSessionContext);
+		mouseServer = new MouseControlServer(currentConfig.getControlPort(), activeSessionContext);
 
 		logger.info("Servidores criados com sucesso");
 
