@@ -13,6 +13,8 @@ import com.s4etech.desktop.session.ActiveSessionContext;
 public class ScreenStreamServer {
 
     private static final AtomicBoolean GST_INITIALIZED = new AtomicBoolean(false);
+    private static final int MAX_PIPELINE_START_ATTEMPTS = 3;
+    private static final long PIPELINE_RETRY_DELAY_MS = 1000L;
 
     private final int handshakePort;
     private final ConnectionProfile connectionProfile;
@@ -213,6 +215,43 @@ public class ScreenStreamServer {
     private void restartPipelineForCurrentSession() {
         stopPipeline();
 
+        boolean started = tryStartPipelineWithRetry();
+        if (!started) {
+            System.err.println("Falha definitiva ao iniciar pipeline para "
+                    + clientIp.getHostAddress() + ":" + videoPort + " | sessionId=" + sessionId);
+            streaming = false;
+        }
+    }
+
+    private boolean tryStartPipelineWithRetry() {
+        for (int attempt = 1; attempt <= MAX_PIPELINE_START_ATTEMPTS; attempt++) {
+            if (!running || clientIp == null || !isValidPort(videoPort)) {
+                return false;
+            }
+
+            try {
+                startPipelineOnce();
+                System.out.println("Pipeline iniciado com sucesso | tentativa=" + attempt
+                        + " | destino=" + clientIp.getHostAddress() + ":" + videoPort);
+                return true;
+            } catch (Exception e) {
+                streaming = false;
+                stopPipeline();
+
+                System.err.println("Falha ao iniciar pipeline | tentativa=" + attempt
+                        + " | destino=" + clientIp.getHostAddress() + ":" + videoPort
+                        + " | erro=" + e.getMessage());
+
+                if (attempt < MAX_PIPELINE_START_ATTEMPTS) {
+                    sleepQuietly(PIPELINE_RETRY_DELAY_MS);
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private void startPipelineOnce() {
         String pipelineStr = buildPipeline(clientIp, videoPort);
 
         pipeline = (Pipeline) Gst.parseLaunch(pipelineStr);
@@ -324,6 +363,14 @@ public class ScreenStreamServer {
     private static void joinQuietly(Thread thread, long timeoutMillis) {
         try {
             thread.join(timeoutMillis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private static void sleepQuietly(long millis) {
+        try {
+            Thread.sleep(millis);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
