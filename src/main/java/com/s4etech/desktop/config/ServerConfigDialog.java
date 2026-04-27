@@ -49,8 +49,8 @@ public class ServerConfigDialog extends JDialog {
             "1920 x 1080"   // 1080.0 / 1920.0 = 0.5625
     };
 
-    private static final Integer[] FPS_OPTIONS = { 10, 12, 15, 20, 24 };
-    private static final Integer[] BITRATE_OPTIONS = { 600, 800, 1000, 1200, 1400, 1800, 2500, 3000 };
+    private static final Integer[] FPS_OPTIONS = { 10, 12, 15, 20, 24, 30 };
+    private static final Integer[] BITRATE_OPTIONS = { 600, 800, 1000, 1200, 1400, 1800, 2500, 3000, 6000 };
     private static final Integer[] KEY_INT_OPTIONS = { 10, 15, 20, 24, 30 };
     private static final String[] PRESET_OPTIONS = { "ultrafast", "superfast", "veryfast", "faster" };
     private static final String[] TUNE_OPTIONS = { "zerolatency", "fastdecode" };
@@ -423,8 +423,18 @@ public class ServerConfigDialog extends JDialog {
 
     private void loadSelectedProfileIntoForm() {
         ConnectionProfile profile = getSelectedProfile();
+        String resolution = profile.getWidth() + " x " + profile.getHeight();
+
+        ensureComboContains(resolutionComboBox, resolution);
+        ensureComboContains(fpsComboBox, profile.getFps());
+        ensureComboContains(bitrateComboBox, profile.getBitrateKbps());
+        ensureComboContains(keyIntComboBox, profile.getKeyIntMax());
+        ensureComboContains(presetComboBox, profile.getEncoderPreset());
+        ensureComboContains(tuneComboBox, profile.getEncoderTune());
+        ensureComboContains(leakyQueueComboBox, profile.isLeakyQueue());
+
         profileNameField.setText(profile.getDisplayName());
-        resolutionComboBox.setSelectedItem(profile.getWidth() + " x " + profile.getHeight());
+        resolutionComboBox.setSelectedItem(resolution);
         fpsComboBox.setSelectedItem(profile.getFps());
         bitrateComboBox.setSelectedItem(profile.getBitrateKbps());
         keyIntComboBox.setSelectedItem(profile.getKeyIntMax());
@@ -444,6 +454,21 @@ public class ServerConfigDialog extends JDialog {
         deleteButton.setEnabled(!systemProfile);
         duplicateButton.setEnabled(true);
         profileStatusLabel.setText(systemProfile ? "Perfil protegido do sistema" : "Perfil customizado editável");
+    }
+
+    private <T> void ensureComboContains(JComboBox<T> comboBox, T value) {
+        if (comboBox == null || value == null) {
+            return;
+        }
+
+        for (int i = 0; i < comboBox.getItemCount(); i++) {
+            T item = comboBox.getItemAt(i);
+            if (value.equals(item)) {
+                return;
+            }
+        }
+
+        comboBox.addItem(value);
     }
 
     private void restoreDefaults() {
