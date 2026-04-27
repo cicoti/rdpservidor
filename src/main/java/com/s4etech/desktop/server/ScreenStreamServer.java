@@ -183,10 +183,6 @@ public class ScreenStreamServer {
 
         pipeline = (Pipeline) Gst.parseLaunch(pipelineStr);
 
-        pipeline.getBus().connect((Bus.MESSAGE) (bus, msg) -> {
-            System.out.println(msg);
-        });
-
         System.out.println("Servidor de tela enviando para " + clientIp.getHostAddress() + ":" + videoPort
                 + " | perfil=" + connectionProfile.getDisplayName() + " | " + connectionProfile.getWidth() + "x"
                 + connectionProfile.getHeight() + " @" + connectionProfile.getFps() + "fps" + " bitrate="
@@ -222,14 +218,18 @@ public class ScreenStreamServer {
         pipeline = null;
 
         if (localPipeline != null) {
+            System.out.println("stopPipeline: iniciando parada do pipeline");
+
             try {
                 localPipeline.stop();
+                System.out.println("stopPipeline: pipeline parado com sucesso");
             } catch (Exception e) {
                 System.err.println("Falha ao parar pipeline: " + e.getMessage());
             }
 
             try {
                 localPipeline.dispose();
+                System.out.println("stopPipeline: pipeline liberado com sucesso");
             } catch (Exception e) {
                 System.err.println("Falha ao liberar pipeline: " + e.getMessage());
             }
@@ -272,6 +272,18 @@ public class ScreenStreamServer {
     private static void initGStreamerOnce() {
         if (GST_INITIALIZED.compareAndSet(false, true)) {
             Gst.init("ScreenStreamServer", new String[0]);
+        }
+    }
+
+    public static void shutdownGStreamer() {
+        if (GST_INITIALIZED.compareAndSet(true, false)) {
+            try {
+                System.out.println("shutdownGStreamer: iniciando Gst.deinit()");
+                Gst.deinit();
+                System.out.println("shutdownGStreamer: Gst.deinit() executado com sucesso");
+            } catch (Exception e) {
+                System.err.println("Falha ao finalizar GStreamer: " + e.getMessage());
+            }
         }
     }
 

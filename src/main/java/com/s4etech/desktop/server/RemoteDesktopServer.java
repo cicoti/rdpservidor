@@ -195,7 +195,9 @@ public class RemoteDesktopServer {
 		if (screenServer != null) {
 			if (screenServer.isRunning()) {
 				logger.info("Parando ScreenStreamServer");
+				long start = System.currentTimeMillis();
 				screenServer.stop();
+				logger.info("ScreenStreamServer finalizado | duracaoMs={}", System.currentTimeMillis() - start);
 			} else {
 				logger.info("ScreenStreamServer já estava parado");
 			}
@@ -206,7 +208,9 @@ public class RemoteDesktopServer {
 		if (mouseServer != null) {
 			if (mouseServer.isRunning()) {
 				logger.info("Parando MouseControlServer");
+				long start = System.currentTimeMillis();
 				mouseServer.stop();
+				logger.info("MouseControlServer finalizado | duracaoMs={}", System.currentTimeMillis() - start);
 			} else {
 				logger.info("MouseControlServer já estava parado");
 			}
@@ -272,7 +276,10 @@ public class RemoteDesktopServer {
 				helpItem.addActionListener(e -> openHelpDialog());
 
 				MenuItem exitItem = new MenuItem("Sair");
-				exitItem.addActionListener(e -> shutdownApplication());
+				exitItem.addActionListener(e -> {
+					logger.info("Clique no menu Sair recebido pelo system tray");
+					shutdownApplication();
+				});
 
 				popupMenu.add(statusItem);
 				popupMenu.addSeparator();
@@ -399,26 +406,40 @@ public class RemoteDesktopServer {
 
 	private static void performShutdown(boolean exitJvm) {
 		if (!shuttingDown.compareAndSet(false, true)) {
-			// logger.warn("Shutdown já está em andamento");
+			logger.info("Shutdown já está em andamento | exitJvm={}", exitJvm);
 			return;
 		}
 
-		logger.info("Iniciando encerramento da aplicação");
+		logger.info("Iniciando encerramento da aplicação | exitJvm={}", exitJvm);
 
 		try {
+			logger.info("Etapa shutdown: stopServers - início");
 			stopServers();
+			logger.info("Etapa shutdown: stopServers - fim");
 		} catch (Exception e) {
 			logger.error("Erro ao parar servidores durante encerramento", e);
 		}
 
 		try {
+			logger.info("Etapa shutdown: removeTrayIcon - início");
 			removeTrayIcon();
+			logger.info("Etapa shutdown: removeTrayIcon - fim");
 		} catch (Exception e) {
 			logger.error("Erro ao remover system tray durante encerramento", e);
 		}
 
 		try {
+			logger.info("Etapa shutdown: shutdownGStreamer - início");
+			ScreenStreamServer.shutdownGStreamer();
+			logger.info("Etapa shutdown: shutdownGStreamer - fim");
+		} catch (Exception e) {
+			logger.error("Erro ao finalizar GStreamer durante encerramento", e);
+		}
+
+		try {
+			logger.info("Etapa shutdown: releaseSingleInstance - início");
 			releaseSingleInstance();
+			logger.info("Etapa shutdown: releaseSingleInstance - fim");
 		} catch (Exception e) {
 			logger.error("Erro ao liberar lock da aplicação durante encerramento", e);
 		}
@@ -426,8 +447,25 @@ public class RemoteDesktopServer {
 		logger.info("Encerramento da aplicação concluído");
 
 		if (exitJvm) {
-			logger.info("JVM Finalizanda");
+			logLiveThreadsBeforeExit();
+			logger.info("JVM Finalizanda | chamando System.exit(0)");
 			System.exit(0);
+		}
+	}
+
+	private static void logLiveThreadsBeforeExit() {
+		try {
+			Thread.getAllStackTraces().keySet().stream()
+					.sorted((a, b) -> a.getName().compareToIgnoreCase(b.getName()))
+					.forEach(thread -> logger.info(
+							"Thread ativa antes do exit | name={} | state={} | daemon={} | alive={}",
+							thread.getName(),
+							thread.getState(),
+							thread.isDaemon(),
+							thread.isAlive()
+					));
+		} catch (Exception e) {
+			logger.error("Erro ao listar threads antes do encerramento", e);
 		}
 	}
 
