@@ -13,6 +13,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
+import com.s4etech.desktop.session.ActiveSessionContext;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.BaseTSD;
 import com.sun.jna.platform.win32.User32;
@@ -31,6 +32,7 @@ public class MouseControlServer {
     private static final byte EVT_KEY_TYPED = 12;
 
     private final int port;
+    private final ActiveSessionContext activeSessionContext;
 
     private volatile boolean running;
     private volatile Thread serverThread;
@@ -46,13 +48,13 @@ public class MouseControlServer {
 
     private static native boolean SetProcessDPIAware();
 
-    public MouseControlServer(int port) {
+    public MouseControlServer(int port, ActiveSessionContext activeSessionContext) {
         this.port = port;
+        this.activeSessionContext = activeSessionContext;
     }
 
     public synchronized void start() {
         if (running) {
-            //System.out.println("MouseControlServer já está em execução.");
             return;
         }
 
@@ -66,8 +68,6 @@ public class MouseControlServer {
             return;
         }
 
-        //System.out.println("Parando MouseControlServer...");
-
         running = false;
         closeSocket();
 
@@ -80,14 +80,11 @@ public class MouseControlServer {
             if (localServerThread.isAlive()) {
                 System.err.println("A thread principal do MouseControlServer não encerrou no tempo esperado.");
             } else {
-                //System.out.println("Thread principal do MouseControlServer encerrada com sucesso.");
                 if (serverThread == localServerThread) {
                     serverThread = null;
                 }
             }
         }
-
-        //System.out.println("Estado final do MouseControlServer | running=" + running);
     }
 
     public synchronized void restart() {
@@ -106,7 +103,6 @@ public class MouseControlServer {
             detectScreenConfiguration();
 
             socket = new DatagramSocket(port);
-            //System.out.println("MouseControlServer rodando na porta " + port);
 
             while (running) {
                 byte[] buf = new byte[32];
@@ -139,8 +135,6 @@ public class MouseControlServer {
             if (Thread.currentThread() == serverThread) {
                 serverThread = null;
             }
-
-            //System.out.println("Loop principal do MouseControlServer finalizado.");
         }
     }
 
@@ -163,9 +157,6 @@ public class MouseControlServer {
         AffineTransform tx = gc.getDefaultTransform();
         scaleX = tx.getScaleX();
         scaleY = tx.getScaleY();
-
-        //System.out.println("DPI scale X=" + scaleX + " Y=" + scaleY);
-        //System.out.println("Resolucao detectada: " + screenW + " x " + screenH);
     }
 
     private static void enableDPIAwareness() {
@@ -179,6 +170,14 @@ public class MouseControlServer {
 
     private void processPacket(DatagramPacket packet) throws Exception {
         if (packet == null || packet.getLength() <= 0) {
+            return;
+        }
+
+        if (activeSessionContext == null || !activeSessionContext.hasActiveSession()) {
+            return;
+        }
+
+        if (!packet.getAddress().equals(activeSessionContext.getClientAddress())) {
             return;
         }
 
