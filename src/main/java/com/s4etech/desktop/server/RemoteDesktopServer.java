@@ -60,6 +60,7 @@ public class RemoteDesktopServer {
 		System.setProperty("app.base.dir", ApplicationPaths.getApplicationBaseDirectory().getAbsolutePath());
 
 		logger.info("Aplicação iniciando");
+		logGStreamerEnvironment();
 
 		if (!isSingleInstance()) {
 			showAlreadyRunningMessage();
@@ -226,6 +227,17 @@ public class RemoteDesktopServer {
 		String mouseState = (mouseServer != null && mouseServer.isRunning()) ? "ativo" : "parado";
 
 		logger.info("{} | vídeo={} | mouse={}", context, videoState, mouseState);
+	}
+
+	private static void logGStreamerEnvironment() {
+		try {
+			logger.info("Ambiente GStreamer | GSTREAMER_1_0_ROOT_X86_64={}", System.getenv("GSTREAMER_1_0_ROOT_X86_64"));
+			logger.info("Ambiente GStreamer | GST_PLUGIN_PATH={}", System.getenv("GST_PLUGIN_PATH"));
+			logger.info("Ambiente GStreamer | java.library.path={}", System.getProperty("java.library.path"));
+			logger.info("Ambiente GStreamer | PATH={}", System.getenv("PATH"));
+		} catch (Exception e) {
+			logger.error("Erro ao registrar ambiente do GStreamer", e);
+		}
 	}
 
 	private static void logDpiScale() {

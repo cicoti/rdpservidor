@@ -543,7 +543,7 @@ public class ServerConfigDialog extends JDialog {
 
             String generatedId = generateUniqueProfileId(displayName, selectedProfile);
             profileToActivate = new ConnectionProfile(generatedId, displayName, resolution.width(), resolution.height(),
-                    fps, bitrate, keyInt, preset, tune, leakyQueue, false);
+                    fps, bitrate, keyInt, preset, tune, leakyQueue, ConnectionProfile.DEFAULT_CAPTURE_SOURCE, false);
 
             availableProfiles.remove(selectedProfile);
             availableProfiles.add(profileToActivate);
