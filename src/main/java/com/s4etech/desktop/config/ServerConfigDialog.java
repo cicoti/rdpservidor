@@ -82,7 +82,7 @@ public class ServerConfigDialog extends JDialog {
 
     public ServerConfigDialog(JFrame parent, ServerConfig currentConfig, ServerConfigManager configManager,
             int activeHandshakePort, int activeControlPort) {
-        super(parent, "Configuração de Portas | S4eTech - RemoteDesktopServer - v1.0", true);
+        super(parent, "Configuração do Servidor | S4eTech - RemoteDesktopServer", true);
 
         this.currentConfig = currentConfig;
         this.configManager = configManager;

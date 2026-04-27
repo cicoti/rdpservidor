@@ -35,7 +35,7 @@ public class RemoteDesktopServer {
 	private static final Logger logger = LoggerFactory.getLogger(RemoteDesktopServer.class);
 
 	private static final String APP_NAME = "Remote Desktop Server";
-	private static final String APP_VERSION = "1.2.0";
+	private static final String APP_VERSION = "1.3.0";
 	private static final String LOCK_FILE_NAME = "remote_desktop_server.lock";
 
 	private static TrayIcon trayIcon;
