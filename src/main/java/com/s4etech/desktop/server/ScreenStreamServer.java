@@ -3,7 +3,6 @@ package com.s4etech.desktop.server;
 import java.net.InetAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.freedesktop.gstreamer.Bus;
 import org.freedesktop.gstreamer.Gst;
 import org.freedesktop.gstreamer.Pipeline;
 
@@ -155,25 +154,60 @@ public class ScreenStreamServer {
     }
 
     private synchronized void activateSession(ServerHandshakeListener.HandshakeSession session) {
-        if (!running || session == null || session.getClientAddress() == null || session.getClientVideoPort() <= 0) {
+        if (!isValidSession(session)) {
+            System.out.println("Sessão de handshake ignorada por ser inválida.");
             return;
         }
 
-        this.sessionId = session.getSessionId();
-        this.clientIp = session.getClientAddress();
-        this.videoPort = session.getClientVideoPort();
+        InetAddress newClientIp = session.getClientAddress();
+        int newVideoPort = session.getClientVideoPort();
+        int newControlPort = session.getClientControlPort();
+        long newSessionId = session.getSessionId();
 
-        activeSessionContext.activate(
-                session.getSessionId(),
-                session.getClientAddress(),
-                session.getClientVideoPort(),
-                session.getClientControlPort()
-        );
+        if (isSameStreamingTarget(newClientIp, newVideoPort)) {
+            this.sessionId = newSessionId;
+            activeSessionContext.activate(newSessionId, newClientIp, newVideoPort, newControlPort);
+
+            System.out.println("Sessão redundante detectada e reaproveitada | sessionId=" + newSessionId
+                    + " | destino=" + newClientIp.getHostAddress() + ":" + newVideoPort);
+            return;
+        }
+
+        if (clientIp != null && !clientIp.equals(newClientIp)) {
+            System.out.println("Nova sessão assumindo transmissão | anterior=" + clientIp.getHostAddress() + ":"
+                    + videoPort + " | nova=" + newClientIp.getHostAddress() + ":" + newVideoPort
+                    + " | sessionId=" + newSessionId);
+        }
+
+        this.sessionId = newSessionId;
+        this.clientIp = newClientIp;
+        this.videoPort = newVideoPort;
+
+        activeSessionContext.activate(newSessionId, newClientIp, newVideoPort, newControlPort);
 
         System.out.println("Ativando sessão " + sessionId + " para " + clientIp.getHostAddress() + ":" + videoPort
                 + " | perfil=" + connectionProfile.getDisplayName());
 
         restartPipelineForCurrentSession();
+    }
+
+    private boolean isValidSession(ServerHandshakeListener.HandshakeSession session) {
+        return running
+                && session != null
+                && session.getClientAddress() != null
+                && isValidPort(session.getClientVideoPort())
+                && isValidPort(session.getClientControlPort());
+    }
+
+    private boolean isSameStreamingTarget(InetAddress newClientIp, int newVideoPort) {
+        return streaming
+                && clientIp != null
+                && clientIp.equals(newClientIp)
+                && videoPort == newVideoPort;
+    }
+
+    private boolean isValidPort(int port) {
+        return port > 0 && port <= 65535;
     }
 
     private void restartPipelineForCurrentSession() {
