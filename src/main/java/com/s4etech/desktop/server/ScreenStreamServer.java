@@ -187,16 +187,24 @@ public class ScreenStreamServer {
 	}
 
 	private String buildPipeline(InetAddress clientIp, int videoPort) {
-		String queueSegment = connectionProfile.isLeakyQueue() ? "queue leaky=downstream max-size-buffers=2 ! "
-				: "queue ! ";
+	    String queueSegment = connectionProfile.isLeakyQueue()
+	            ? "queue leaky=downstream max-size-buffers=2 ! "
+	            : "queue ! ";
 
-		return "d3d11screencapturesrc ! " + queueSegment + "d3d11convert ! d3d11download ! videoconvert ! videoscale ! "
-				+ "video/x-raw,width=" + connectionProfile.getWidth() + ",height=" + connectionProfile.getHeight()
-				+ ",framerate=" + connectionProfile.getFps() + "/1 ! " + "x264enc tune="
-				+ connectionProfile.getEncoderTune() + " speed-preset=" + connectionProfile.getEncoderPreset()
-				+ " bitrate=" + connectionProfile.getBitrateKbps() + " key-int-max=" + connectionProfile.getKeyIntMax()
-				+ " ! " + "h264parse ! rtph264pay pt=96 config-interval=1 ! " + "udpsink host="
-				+ clientIp.getHostAddress() + " port=" + videoPort + " sync=false async=false";
+	    return "dx9screencapsrc monitor=0 cursor=false ! "
+	            + queueSegment
+	            + "videoconvert ! videoscale ! "
+	            + "video/x-raw,format=I420,width=" + connectionProfile.getWidth()
+	            + ",height=" + connectionProfile.getHeight()
+	            + ",framerate=" + connectionProfile.getFps() + "/1 ! "
+	            + "x264enc tune=" + connectionProfile.getEncoderTune()
+	            + " speed-preset=" + connectionProfile.getEncoderPreset()
+	            + " bitrate=" + connectionProfile.getBitrateKbps()
+	            + " key-int-max=" + connectionProfile.getKeyIntMax()
+	            + " ! h264parse ! rtph264pay pt=96 config-interval=1 ! "
+	            + "udpsink host=" + clientIp.getHostAddress()
+	            + " port=" + videoPort
+	            + " sync=false async=false";
 	}
 
 	private void stopPipeline() {
