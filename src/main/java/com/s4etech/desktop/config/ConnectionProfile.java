@@ -8,7 +8,7 @@ public class ConnectionProfile {
 	public static final String DEFAULT_ENCODER_PRESET = "ultrafast";
 	public static final String DEFAULT_ENCODER_TUNE = "zerolatency";
 	public static final boolean DEFAULT_LEAKY_QUEUE = false;
-	public static final String DEFAULT_CAPTURE_SOURCE = "dx9"; //"dx9";
+	public static final String DEFAULT_CAPTURE_SOURCE = "d3d11";
 
 	public static final String LAN_ID = "LAN";
 	public static final String LAN_DISPLAY_NAME = "Rede local";
@@ -187,7 +187,6 @@ public class ConnectionProfile {
 		String normalized = normalizeText(value, DEFAULT_CAPTURE_SOURCE).toLowerCase(Locale.ROOT);
 		return switch (normalized) {
 			case "d3d11" -> "d3d11";
-			case "dx9" -> "dx9";
 			default -> DEFAULT_CAPTURE_SOURCE;
 		};
 	}
