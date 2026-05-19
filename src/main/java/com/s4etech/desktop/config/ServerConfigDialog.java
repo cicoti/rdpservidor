@@ -36,17 +36,22 @@ public class ServerConfigDialog extends JDialog {
     private static final long serialVersionUID = 1L;
 
     private static final String[] RESOLUTION_OPTIONS = {
-            "640 x 360",    // 360.0 / 640.0 = 0.5625
-            "768 x 432",    // 432.0 / 768.0 = 0.5625
-            "800 x 450",    // 450.0 / 800.0 = 0.5625
-            "896 x 504",    // 504.0 / 896.0 = 0.5625
-            "960 x 540",    // 540.0 / 960.0 = 0.5625
-            "1024 x 576",   // 576.0 / 1024.0 = 0.5625
-            "1152 x 648",   // 648.0 / 1152.0 = 0.5625
-            "1280 x 720",   // 720.0 / 1280.0 = 0.5625
-            "1536 x 864",   // 864.0 / 1536.0 = 0.5625
-            "1600 x 900",   // 900.0 / 1600.0 = 0.5625
-            "1920 x 1080"   // 1080.0 / 1920.0 = 0.5625
+            "1920 x 1080",  // 16:9 - Widescreen
+            "1680 x 1050",  // 8:5 - 16:10
+            "1600 x 900",   // 16:9 - Widescreen
+            "1440 x 900",   // 8:5 - 16:10
+            "1400 x 1050",  // 4:3 - Classico
+            "1366 x 768",   // 683:384 - Quase 16:9
+            "1360 x 768",   // 85:48 - Quase 16:9
+            "1280 x 1024",  // 5:4 - Classico corporativo
+            "1280 x 960",   // 4:3 - Classico
+            "1280 x 800",   // 8:5 - 16:10
+            "1280 x 768",   // 5:3 - Widescreen antigo
+            "1280 x 720",   // 16:9 - HD
+            "1280 x 600",   // 32:15 - Ultrawide leve
+            "1152 x 864",   // 4:3 - Classico
+            "1024 x 768",   // 4:3 - Classico
+            "800 x 600"     // 4:3 - Classico
     };
 
     private static final Integer[] FPS_OPTIONS = { 10, 12, 15, 20, 24, 30 };
