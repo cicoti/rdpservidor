@@ -1,5 +1,5 @@
 #define MyAppName "S4ETech-RDP-Server"
-#define MyAppVersion "1.3.0"
+#define MyAppVersion "1.3.1"
 #define MyAppPublisher "s4etech"
 #define MyAppURL "https://www.s4e.tech/br/"
 #define GStreamerMsiName "gstreamer-1.0-msvc-x86_64-1.24.13.msi"
@@ -15,7 +15,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName=C:\{#MyAppName}
 DefaultGroupName={#MyAppName}
 OutputDir=C:\Users\silvi\OneDrive\Desktop
-OutputBaseFilename=s4etech-rdp-server-instalador-130
+OutputBaseFilename=s4etech-rdp-server-instalador-131
 SetupIconFile=C:\projetos\ctech\s4etech\remotedesktop\executavel\icon_remote_server.ico
 Compression=lzma
 SolidCompression=yes
