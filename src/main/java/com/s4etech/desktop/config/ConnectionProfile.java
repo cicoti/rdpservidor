@@ -139,6 +139,11 @@ public class ConnectionProfile {
 				encoderTune, leakyQueue, captureSource, false);
 	}
 
+	public ConnectionProfile withResolution(int width, int height) {
+		return new ConnectionProfile(id, displayName, width, height, fps, bitrateKbps, keyIntMax, encoderPreset,
+				encoderTune, leakyQueue, captureSource, systemProfile);
+	}
+
 	public static ConnectionProfile fromPropertyValue(String value) {
 		if (value == null || value.trim().isEmpty()) {
 			throw new IllegalArgumentException("Valor do perfil de conexão ausente.");

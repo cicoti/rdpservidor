@@ -13,7 +13,7 @@
   <stayAlive>false</stayAlive>
   <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
-  <icon>C:\projetos\ctech\s4etech\remotedesktop\executavel\icon_remote_server.ico</icon>
+  <icon>C:\projetos\ctech\s4etech\workspace\RDPServidor\src\main\resources\icon_remote_server.ico</icon>
   <jre>
     <path>%JAVA_HOME%;%PATH%</path>
     <requiresJdk>false</requiresJdk>
