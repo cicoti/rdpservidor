@@ -3,6 +3,7 @@
 #define MyAppPublisher "s4etech"
 #define MyAppURL "https://www.s4e.tech/br/"
 #define GStreamerMsiName "gstreamer-1.0-msvc-x86_64-1.24.13.msi"
+#define AppIconFile "C:\projetos\ctech\s4etech\workspace\RDPServidor\src\main\resources\icon_remote_server.ico"
 
 [Setup]
 AppId={{8D6E4F1A-2B77-4D91-9A4C-7F22D8A11001}
@@ -16,7 +17,7 @@ DefaultDirName=C:\{#MyAppName}
 DefaultGroupName={#MyAppName}
 OutputDir=C:\Users\silvi\OneDrive\Desktop
 OutputBaseFilename=s4etech-rdp-server-instalador-131
-SetupIconFile=C:\projetos\ctech\s4etech\remotedesktop\executavel\icon_remote_server.ico
+SetupIconFile={#AppIconFile}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -29,7 +30,7 @@ Name: "brazilianportuguese"; MessagesFile: "compiler:Languages\BrazilianPortugue
 
 [Files]
 Source: "C:\projetos\ctech\s4etech\remotedesktop\executavel\rdpservidor.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\projetos\ctech\s4etech\remotedesktop\executavel\icon_remote_server.ico"; DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
+Source: "{#AppIconFile}"; DestDir: "{app}"; Flags: ignoreversion
 
 Source: "C:\projetos\ctech\s4etech\remotedesktop\executavel\{#GStreamerMsiName}"; DestDir: "{tmp}"; Flags: deleteafterinstall; Check: NeedsGStreamerInstall
 

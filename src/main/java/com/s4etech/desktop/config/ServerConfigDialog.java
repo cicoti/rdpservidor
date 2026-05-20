@@ -428,7 +428,7 @@ public class ServerConfigDialog extends JDialog {
 
     private void loadSelectedProfileIntoForm() {
         ConnectionProfile profile = getSelectedProfile();
-        String resolution = profile.getWidth() + " x " + profile.getHeight();
+        String resolution = ScreenResolution.current().toDisplayText();
 
         ensureComboContains(resolutionComboBox, resolution);
         ensureComboContains(fpsComboBox, profile.getFps());
@@ -449,7 +449,7 @@ public class ServerConfigDialog extends JDialog {
 
         boolean systemProfile = profile.isSystemProfile();
         profileNameField.setEditable(!systemProfile);
-        resolutionComboBox.setEnabled(!systemProfile);
+        resolutionComboBox.setEnabled(false);
         fpsComboBox.setEnabled(!systemProfile);
         bitrateComboBox.setEnabled(!systemProfile);
         keyIntComboBox.setEnabled(!systemProfile);
@@ -544,18 +544,14 @@ public class ServerConfigDialog extends JDialog {
         }
 
         ConnectionProfile selectedProfile = getSelectedProfile();
-        ConnectionProfile profileToActivate = selectedProfile;
+        ScreenResolution.Resolution currentResolution = ScreenResolution.current();
+        ConnectionProfile profileToActivate = selectedProfile.withResolution(currentResolution.width(),
+                currentResolution.height());
 
         if (!selectedProfile.isSystemProfile()) {
             String displayName = profileNameField.getText() != null ? profileNameField.getText().trim() : "";
             if (displayName.isEmpty()) {
                 showWarning("Informe o nome do perfil.");
-                return;
-            }
-
-            Resolution resolution = parseResolution((String) resolutionComboBox.getSelectedItem());
-            if (resolution == null) {
-                showWarning("Selecione uma resolução válida.");
                 return;
             }
 
@@ -572,8 +568,9 @@ public class ServerConfigDialog extends JDialog {
             }
 
             String generatedId = generateUniqueProfileId(displayName, selectedProfile);
-            profileToActivate = new ConnectionProfile(generatedId, displayName, resolution.width(), resolution.height(),
-                    fps, bitrate, keyInt, preset, tune, leakyQueue, ConnectionProfile.DEFAULT_CAPTURE_SOURCE, false);
+            profileToActivate = new ConnectionProfile(generatedId, displayName, currentResolution.width(),
+                    currentResolution.height(), fps, bitrate, keyInt, preset, tune, leakyQueue,
+                    ConnectionProfile.DEFAULT_CAPTURE_SOURCE, false);
 
             availableProfiles.remove(selectedProfile);
             availableProfiles.add(profileToActivate);
@@ -706,25 +703,6 @@ public class ServerConfigDialog extends JDialog {
         return helpLabel;
     }
 
-    private Resolution parseResolution(String value) {
-        if (value == null || value.trim().isEmpty()) {
-            return null;
-        }
-
-        String[] parts = value.toLowerCase().split("x");
-        if (parts.length != 2) {
-            return null;
-        }
-
-        try {
-            int width = Integer.parseInt(parts[0].trim());
-            int height = Integer.parseInt(parts[1].trim());
-            return new Resolution(width, height);
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
     private JLabel createProfileStatusLabel() {
         JLabel label = new JLabel(" ");
         label.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
@@ -770,6 +748,4 @@ public class ServerConfigDialog extends JDialog {
         JOptionPane.showMessageDialog(this, message, "Validação", JOptionPane.WARNING_MESSAGE);
     }
 
-    private record Resolution(int width, int height) {
-    }
 }
