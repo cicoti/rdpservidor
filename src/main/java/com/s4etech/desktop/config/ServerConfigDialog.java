@@ -24,6 +24,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
@@ -60,6 +61,8 @@ public class ServerConfigDialog extends JDialog {
     private static final String[] PRESET_OPTIONS = { "ultrafast", "superfast", "veryfast", "faster" };
     private static final String[] TUNE_OPTIONS = { "zerolatency", "fastdecode" };
     private static final Boolean[] LEAKY_QUEUE_OPTIONS = { Boolean.TRUE, Boolean.FALSE };
+    private static final Dimension INITIAL_WINDOW_SIZE = new Dimension(720, 760);
+    private static final Dimension MINIMUM_WINDOW_SIZE = new Dimension(560, 480);
 
     private final JTextField handshakeField;
     private final JTextField controlField;
@@ -130,14 +133,18 @@ public class ServerConfigDialog extends JDialog {
         contentPanel.add(buildProfilePanel());
         contentPanel.add(Box.createRigidArea(new Dimension(0, 12)));
         contentPanel.add(buildInfoPanel());
-        contentPanel.add(Box.createRigidArea(new Dimension(0, 16)));
-        contentPanel.add(buildButtonPanel());
 
-        add(contentPanel, BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(contentPanel);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-        setPreferredSize(new Dimension(720, 760));
+        add(scrollPane, BorderLayout.CENTER);
+        add(buildButtonPanel(), BorderLayout.SOUTH);
+
+        setPreferredSize(INITIAL_WINDOW_SIZE);
         pack();
-        setMinimumSize(new Dimension(720, 760));
+        setMinimumSize(MINIMUM_WINDOW_SIZE);
         setResizable(true);
         setLocationRelativeTo(getParent());
     }
@@ -384,8 +391,8 @@ public class ServerConfigDialog extends JDialog {
         panel.setOpaque(false);
         panel.setAlignmentX(LEFT_ALIGNMENT);
         panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
-        panel.setPreferredSize(new Dimension(680, 44));
-        panel.setMinimumSize(new Dimension(680, 44));
+        panel.setPreferredSize(new Dimension(0, 44));
+        panel.setBorder(new EmptyBorder(12, 4, 0, 4));
 
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         leftPanel.setOpaque(false);
