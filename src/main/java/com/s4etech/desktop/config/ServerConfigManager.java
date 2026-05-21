@@ -58,7 +58,6 @@ public class ServerConfigManager {
                         runtimeConfigFile.getAbsolutePath(), e);
             }
 
-            applyCurrentScreenResolution(config);
             return config;
         }
 
@@ -85,8 +84,6 @@ public class ServerConfigManager {
             config.setControlPort(controlPort);
             config.setAvailableProfiles(availableProfiles);
             config.setConnectionProfile(connectionProfile);
-            applyCurrentScreenResolution(config);
-
             logger.info("Configuração carregada com sucesso | arquivo={} | handshake={} | controle={} | perfil={} | perfis={}",
                     configFile.getAbsolutePath(), handshakePort, controlPort, config.getConnectionProfile().getId(),
                     config.getAvailableProfiles().size());
@@ -94,7 +91,6 @@ public class ServerConfigManager {
         } catch (Exception e) {
             logger.error("Falha ao carregar configuração. Usando valores padrão | arquivo={}",
                     configFile.getAbsolutePath(), e);
-            applyCurrentScreenResolution(config);
         }
 
         return config;
@@ -221,6 +217,7 @@ public class ServerConfigManager {
         List<ConnectionProfile> profiles = new ArrayList<>();
         profiles.add(ConnectionProfile.LAN);
         profiles.add(ConnectionProfile.WIFI);
+        profiles.add(ConnectionProfile.STARLINK);
 
         if (customProfiles != null) {
             for (ConnectionProfile profile : customProfiles) {
@@ -279,46 +276,6 @@ public class ServerConfigManager {
         logger.warn("Perfil de conexão inválido. Usando valor padrão | valorInformado={} | valorPadrao={}", value,
                 defaultValue.getId());
         return defaultValue;
-    }
-
-    private void applyCurrentScreenResolution(ServerConfig config) {
-        if (config == null) {
-            return;
-        }
-
-        ScreenResolution.Resolution resolution = ScreenResolution.current();
-        ConnectionProfile selectedProfile = config.getConnectionProfile();
-        if (selectedProfile == null) {
-            selectedProfile = ServerConfig.DEFAULT_CONNECTION_PROFILE;
-        }
-
-        ConnectionProfile adjustedSelectedProfile = selectedProfile.withResolution(resolution.width(),
-                resolution.height());
-        List<ConnectionProfile> adjustedProfiles = new ArrayList<>();
-        boolean selectedProfileUpdated = false;
-
-        for (ConnectionProfile profile : config.getAvailableProfiles()) {
-            if (profile == null) {
-                continue;
-            }
-
-            if (profile.equals(selectedProfile)) {
-                adjustedProfiles.add(adjustedSelectedProfile);
-                selectedProfileUpdated = true;
-            } else {
-                adjustedProfiles.add(profile);
-            }
-        }
-
-        if (!selectedProfileUpdated) {
-            adjustedProfiles.add(adjustedSelectedProfile);
-        }
-
-        config.setAvailableProfiles(adjustedProfiles);
-        config.setConnectionProfile(adjustedSelectedProfile);
-
-        logger.info("Resolucao do perfil ajustada para a tela atual | perfil={} | resolucao={}x{}",
-                adjustedSelectedProfile.getId(), resolution.width(), resolution.height());
     }
 
     public File getConfigFile() {

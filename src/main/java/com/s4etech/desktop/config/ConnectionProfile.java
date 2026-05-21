@@ -34,6 +34,18 @@ public class ConnectionProfile {
 	public static final boolean WIFI_LEAKY_QUEUE = true;
 	public static final String WIFI_CAPTURE_SOURCE = DEFAULT_CAPTURE_SOURCE;
 
+	public static final String STARLINK_ID = "STARLINK";
+	public static final String STARLINK_DISPLAY_NAME = "Starlink";
+	public static final int STARLINK_WIDTH = 1280;
+	public static final int STARLINK_HEIGHT = 800;
+	public static final int STARLINK_FPS = 12;
+	public static final int STARLINK_BITRATE_KBPS = 1400;
+	public static final int STARLINK_KEY_INT_MAX = 24;
+	public static final String STARLINK_ENCODER_PRESET = "veryfast";
+	public static final String STARLINK_ENCODER_TUNE = "zerolatency";
+	public static final boolean STARLINK_LEAKY_QUEUE = true;
+	public static final String STARLINK_CAPTURE_SOURCE = DEFAULT_CAPTURE_SOURCE;
+
 	public static final ConnectionProfile LAN = new ConnectionProfile(LAN_ID, LAN_DISPLAY_NAME, LAN_WIDTH, LAN_HEIGHT,
 			LAN_FPS, LAN_BITRATE_KBPS, LAN_KEY_INT_MAX, LAN_ENCODER_PRESET, LAN_ENCODER_TUNE, LAN_LEAKY_QUEUE,
 			LAN_CAPTURE_SOURCE, true);
@@ -41,6 +53,10 @@ public class ConnectionProfile {
 	public static final ConnectionProfile WIFI = new ConnectionProfile(WIFI_ID, WIFI_DISPLAY_NAME, WIFI_WIDTH,
 			WIFI_HEIGHT, WIFI_FPS, WIFI_BITRATE_KBPS, WIFI_KEY_INT_MAX, WIFI_ENCODER_PRESET, WIFI_ENCODER_TUNE,
 			WIFI_LEAKY_QUEUE, WIFI_CAPTURE_SOURCE, true);
+
+	public static final ConnectionProfile STARLINK = new ConnectionProfile(STARLINK_ID, STARLINK_DISPLAY_NAME,
+			STARLINK_WIDTH, STARLINK_HEIGHT, STARLINK_FPS, STARLINK_BITRATE_KBPS, STARLINK_KEY_INT_MAX,
+			STARLINK_ENCODER_PRESET, STARLINK_ENCODER_TUNE, STARLINK_LEAKY_QUEUE, STARLINK_CAPTURE_SOURCE, true);
 
 	public static final ConnectionProfile DEFAULT = LAN;
 
@@ -174,7 +190,8 @@ public class ConnectionProfile {
 
 	public static boolean isReservedId(String id) {
 		String normalized = normalizeId(id);
-		return LAN_ID.equalsIgnoreCase(normalized) || WIFI_ID.equalsIgnoreCase(normalized);
+		return LAN_ID.equalsIgnoreCase(normalized) || WIFI_ID.equalsIgnoreCase(normalized)
+				|| STARLINK_ID.equalsIgnoreCase(normalized);
 	}
 
 	public static String normalizeId(String value) {

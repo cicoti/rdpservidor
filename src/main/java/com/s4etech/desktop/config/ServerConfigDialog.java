@@ -61,8 +61,8 @@ public class ServerConfigDialog extends JDialog {
     private static final String[] PRESET_OPTIONS = { "ultrafast", "superfast", "veryfast", "faster" };
     private static final String[] TUNE_OPTIONS = { "zerolatency", "fastdecode" };
     private static final Boolean[] LEAKY_QUEUE_OPTIONS = { Boolean.TRUE, Boolean.FALSE };
-    private static final Dimension INITIAL_WINDOW_SIZE = new Dimension(720, 760);
-    private static final Dimension MINIMUM_WINDOW_SIZE = new Dimension(560, 480);
+    private static final Dimension INITIAL_WINDOW_SIZE = new Dimension(600, 780);
+    private static final Dimension MINIMUM_WINDOW_SIZE = new Dimension(600, 390);
 
     private final JTextField handshakeField;
     private final JTextField controlField;
@@ -390,9 +390,9 @@ public class ServerConfigDialog extends JDialog {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setOpaque(false);
         panel.setAlignmentX(LEFT_ALIGNMENT);
-        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
-        panel.setPreferredSize(new Dimension(0, 44));
-        panel.setBorder(new EmptyBorder(12, 4, 0, 4));
+        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 58));
+        panel.setPreferredSize(new Dimension(0, 58));
+        panel.setBorder(new EmptyBorder(12, 4, 8, 4));
 
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         leftPanel.setOpaque(false);
@@ -435,7 +435,7 @@ public class ServerConfigDialog extends JDialog {
 
     private void loadSelectedProfileIntoForm() {
         ConnectionProfile profile = getSelectedProfile();
-        String resolution = ScreenResolution.current().toDisplayText();
+        String resolution = toResolutionText(profile.getWidth(), profile.getHeight());
 
         ensureComboContains(resolutionComboBox, resolution);
         ensureComboContains(fpsComboBox, profile.getFps());
@@ -456,7 +456,7 @@ public class ServerConfigDialog extends JDialog {
 
         boolean systemProfile = profile.isSystemProfile();
         profileNameField.setEditable(!systemProfile);
-        resolutionComboBox.setEnabled(false);
+        resolutionComboBox.setEnabled(!systemProfile);
         fpsComboBox.setEnabled(!systemProfile);
         bitrateComboBox.setEnabled(!systemProfile);
         keyIntComboBox.setEnabled(!systemProfile);
@@ -551,9 +551,14 @@ public class ServerConfigDialog extends JDialog {
         }
 
         ConnectionProfile selectedProfile = getSelectedProfile();
-        ScreenResolution.Resolution currentResolution = ScreenResolution.current();
-        ConnectionProfile profileToActivate = selectedProfile.withResolution(currentResolution.width(),
-                currentResolution.height());
+        ScreenResolution.Resolution selectedResolution = parseSelectedResolution();
+        if (selectedResolution == null) {
+            showWarning("Selecione uma resoluÃ§Ã£o vÃ¡lida.");
+            return;
+        }
+
+        ConnectionProfile profileToActivate = selectedProfile.withResolution(selectedResolution.width(),
+                selectedResolution.height());
 
         if (!selectedProfile.isSystemProfile()) {
             String displayName = profileNameField.getText() != null ? profileNameField.getText().trim() : "";
@@ -575,8 +580,8 @@ public class ServerConfigDialog extends JDialog {
             }
 
             String generatedId = generateUniqueProfileId(displayName, selectedProfile);
-            profileToActivate = new ConnectionProfile(generatedId, displayName, currentResolution.width(),
-                    currentResolution.height(), fps, bitrate, keyInt, preset, tune, leakyQueue,
+            profileToActivate = new ConnectionProfile(generatedId, displayName, selectedResolution.width(),
+                    selectedResolution.height(), fps, bitrate, keyInt, preset, tune, leakyQueue,
                     ConnectionProfile.DEFAULT_CAPTURE_SOURCE, false);
 
             availableProfiles.remove(selectedProfile);
@@ -624,6 +629,34 @@ public class ServerConfigDialog extends JDialog {
             JOptionPane.showMessageDialog(this, "Erro ao salvar a configuração: " + e.getMessage(), "Erro",
                     JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private String toResolutionText(int width, int height) {
+        return width + " x " + height;
+    }
+
+    private ScreenResolution.Resolution parseSelectedResolution() {
+        Object selectedItem = resolutionComboBox.getSelectedItem();
+        if (!(selectedItem instanceof String resolutionText)) {
+            return null;
+        }
+
+        String[] parts = resolutionText.trim().toLowerCase().split("\\s*x\\s*");
+        if (parts.length != 2) {
+            return null;
+        }
+
+        try {
+            int width = Integer.parseInt(parts[0]);
+            int height = Integer.parseInt(parts[1]);
+            if (width > 0 && height > 0) {
+                return new ScreenResolution.Resolution(width, height);
+            }
+        } catch (NumberFormatException e) {
+            return null;
+        }
+
+        return null;
     }
 
     private void refreshProfileComboBox(ConnectionProfile selectedProfile) {
@@ -722,10 +755,12 @@ public class ServerConfigDialog extends JDialog {
         if (profiles.isEmpty()) {
             profiles.add(ConnectionProfile.LAN);
             profiles.add(ConnectionProfile.WIFI);
+            profiles.add(ConnectionProfile.STARLINK);
         }
         profiles.sort(Comparator.comparing(ConnectionProfile::getDisplayName, String.CASE_INSENSITIVE_ORDER));
         profiles.removeIf(profile -> profile == null);
-        profiles.removeIf(profile -> profile.isSystemProfile() && !(ConnectionProfile.LAN.equals(profile) || ConnectionProfile.WIFI.equals(profile)));
+        profiles.removeIf(profile -> profile.isSystemProfile() && !(ConnectionProfile.LAN.equals(profile)
+                || ConnectionProfile.WIFI.equals(profile) || ConnectionProfile.STARLINK.equals(profile)));
         sortProfilesList(profiles);
         return profiles;
     }
@@ -733,13 +768,7 @@ public class ServerConfigDialog extends JDialog {
     private void sortProfilesList(List<ConnectionProfile> profiles) {
         profiles.sort((a, b) -> {
             if (a.isSystemProfile() && b.isSystemProfile()) {
-                if (ConnectionProfile.LAN_ID.equalsIgnoreCase(a.getId())) {
-                    return -1;
-                }
-                if (ConnectionProfile.LAN_ID.equalsIgnoreCase(b.getId())) {
-                    return 1;
-                }
-                return a.getDisplayName().compareToIgnoreCase(b.getDisplayName());
+                return Integer.compare(systemProfileOrder(a), systemProfileOrder(b));
             }
             if (a.isSystemProfile()) {
                 return -1;
@@ -749,6 +778,19 @@ public class ServerConfigDialog extends JDialog {
             }
             return a.getDisplayName().compareToIgnoreCase(b.getDisplayName());
         });
+    }
+
+    private int systemProfileOrder(ConnectionProfile profile) {
+        if (ConnectionProfile.LAN_ID.equalsIgnoreCase(profile.getId())) {
+            return 0;
+        }
+        if (ConnectionProfile.WIFI_ID.equalsIgnoreCase(profile.getId())) {
+            return 1;
+        }
+        if (ConnectionProfile.STARLINK_ID.equalsIgnoreCase(profile.getId())) {
+            return 2;
+        }
+        return 3;
     }
 
     private void showWarning(String message) {

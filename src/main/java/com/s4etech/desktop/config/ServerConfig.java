@@ -20,7 +20,7 @@ public class ServerConfig {
 		this.controlPort = DEFAULT_CONTROL_PORT;
 		this.connectionProfile = DEFAULT_CONNECTION_PROFILE;
 		this.availableProfiles = new ArrayList<>();
-		this.availableProfiles.add(DEFAULT_CONNECTION_PROFILE);
+		ensureSystemProfilesAvailable();
 	}
 
 	public ServerConfig(int handshakePort, int controlPort) {
@@ -33,7 +33,7 @@ public class ServerConfig {
 		this.connectionProfile = connectionProfile != null ? connectionProfile : DEFAULT_CONNECTION_PROFILE;
 		this.availableProfiles = new ArrayList<>();
 		this.availableProfiles.add(this.connectionProfile);
-		ensureDefaultProfileAvailable();
+		ensureSystemProfilesAvailable();
 	}
 
 	public int getHandshakePort() {
@@ -76,13 +76,19 @@ public class ServerConfig {
 			}
 		}
 
-		ensureDefaultProfileAvailable();
+		ensureSystemProfilesAvailable();
 		ensureSelectedProfileAvailable();
 	}
 
-	private void ensureDefaultProfileAvailable() {
-		if (!availableProfiles.contains(DEFAULT_CONNECTION_PROFILE)) {
-			availableProfiles.add(DEFAULT_CONNECTION_PROFILE);
+	private void ensureSystemProfilesAvailable() {
+		if (!availableProfiles.contains(ConnectionProfile.LAN)) {
+			availableProfiles.add(ConnectionProfile.LAN);
+		}
+		if (!availableProfiles.contains(ConnectionProfile.WIFI)) {
+			availableProfiles.add(ConnectionProfile.WIFI);
+		}
+		if (!availableProfiles.contains(ConnectionProfile.STARLINK)) {
+			availableProfiles.add(ConnectionProfile.STARLINK);
 		}
 	}
 
