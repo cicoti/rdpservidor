@@ -343,7 +343,7 @@ public class ScreenStreamServer {
 				+ connectionProfile.getFps() + "/1 ! " + "x264enc tune=" + connectionProfile.getEncoderTune()
 				+ " speed-preset=" + connectionProfile.getEncoderPreset() + " bitrate="
 				+ connectionProfile.getBitrateKbps() + " key-int-max=" + connectionProfile.getKeyIntMax()
-				+ " bframes=0 byte-stream=true aud=true ! h264parse ! rtph264pay pt=96 config-interval=1 ! "
+				+ " bframes=0 byte-stream=true aud=true ! h264parse ! rtph264pay pt=96 config-interval=1 mtu=1200 ! "
 				+ "udpsink host=" + clientIp.getHostAddress() + " port=" + videoPort + " sync=false async=false";
 	}
 

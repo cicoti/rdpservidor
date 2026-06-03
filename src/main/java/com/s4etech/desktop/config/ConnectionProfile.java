@@ -36,11 +36,11 @@ public class ConnectionProfile {
 
 	public static final String STARLINK_ID = "STARLINK";
 	public static final String STARLINK_DISPLAY_NAME = "Starlink";
-	public static final int STARLINK_WIDTH = 1280;
-	public static final int STARLINK_HEIGHT = 800;
-	public static final int STARLINK_FPS = 12;
-	public static final int STARLINK_BITRATE_KBPS = 1400;
-	public static final int STARLINK_KEY_INT_MAX = 24;
+	public static final int STARLINK_WIDTH = 1024;
+	public static final int STARLINK_HEIGHT = 576;
+	public static final int STARLINK_FPS = 10;
+	public static final int STARLINK_BITRATE_KBPS = 900;
+	public static final int STARLINK_KEY_INT_MAX = 20;
 	public static final String STARLINK_ENCODER_PRESET = "veryfast";
 	public static final String STARLINK_ENCODER_TUNE = "zerolatency";
 	public static final boolean STARLINK_LEAKY_QUEUE = true;
