@@ -12,8 +12,6 @@ public class ConnectionProfile {
 
 	public static final String LAN_ID = "LAN";
 	public static final String LAN_DISPLAY_NAME = "Rede local";
-	public static final int LAN_WIDTH = 1920;
-	public static final int LAN_HEIGHT = 1080;
 	public static final int LAN_FPS = 30;
 	public static final int LAN_BITRATE_KBPS = 6000;
 	public static final int LAN_KEY_INT_MAX = 30;
@@ -24,8 +22,6 @@ public class ConnectionProfile {
 
 	public static final String WIFI_ID = "WIFI";
 	public static final String WIFI_DISPLAY_NAME = "Wi-Fi";
-	public static final int WIFI_WIDTH = 1280;
-	public static final int WIFI_HEIGHT = 720;
 	public static final int WIFI_FPS = 20;
 	public static final int WIFI_BITRATE_KBPS = 2500;
 	public static final int WIFI_KEY_INT_MAX = 24;
@@ -36,8 +32,6 @@ public class ConnectionProfile {
 
 	public static final String STARLINK_ID = "STARLINK";
 	public static final String STARLINK_DISPLAY_NAME = "Starlink";
-	public static final int STARLINK_WIDTH = 1024;
-	public static final int STARLINK_HEIGHT = 576;
 	public static final int STARLINK_FPS = 10;
 	public static final int STARLINK_BITRATE_KBPS = 900;
 	public static final int STARLINK_KEY_INT_MAX = 20;
@@ -46,24 +40,22 @@ public class ConnectionProfile {
 	public static final boolean STARLINK_LEAKY_QUEUE = true;
 	public static final String STARLINK_CAPTURE_SOURCE = DEFAULT_CAPTURE_SOURCE;
 
-	public static final ConnectionProfile LAN = new ConnectionProfile(LAN_ID, LAN_DISPLAY_NAME, LAN_WIDTH, LAN_HEIGHT,
-			LAN_FPS, LAN_BITRATE_KBPS, LAN_KEY_INT_MAX, LAN_ENCODER_PRESET, LAN_ENCODER_TUNE, LAN_LEAKY_QUEUE,
+	public static final ConnectionProfile LAN = new ConnectionProfile(LAN_ID, LAN_DISPLAY_NAME, LAN_FPS,
+			LAN_BITRATE_KBPS, LAN_KEY_INT_MAX, LAN_ENCODER_PRESET, LAN_ENCODER_TUNE, LAN_LEAKY_QUEUE,
 			LAN_CAPTURE_SOURCE, true);
 
-	public static final ConnectionProfile WIFI = new ConnectionProfile(WIFI_ID, WIFI_DISPLAY_NAME, WIFI_WIDTH,
-			WIFI_HEIGHT, WIFI_FPS, WIFI_BITRATE_KBPS, WIFI_KEY_INT_MAX, WIFI_ENCODER_PRESET, WIFI_ENCODER_TUNE,
-			WIFI_LEAKY_QUEUE, WIFI_CAPTURE_SOURCE, true);
+	public static final ConnectionProfile WIFI = new ConnectionProfile(WIFI_ID, WIFI_DISPLAY_NAME, WIFI_FPS,
+			WIFI_BITRATE_KBPS, WIFI_KEY_INT_MAX, WIFI_ENCODER_PRESET, WIFI_ENCODER_TUNE, WIFI_LEAKY_QUEUE,
+			WIFI_CAPTURE_SOURCE, true);
 
 	public static final ConnectionProfile STARLINK = new ConnectionProfile(STARLINK_ID, STARLINK_DISPLAY_NAME,
-			STARLINK_WIDTH, STARLINK_HEIGHT, STARLINK_FPS, STARLINK_BITRATE_KBPS, STARLINK_KEY_INT_MAX,
-			STARLINK_ENCODER_PRESET, STARLINK_ENCODER_TUNE, STARLINK_LEAKY_QUEUE, STARLINK_CAPTURE_SOURCE, true);
+			STARLINK_FPS, STARLINK_BITRATE_KBPS, STARLINK_KEY_INT_MAX, STARLINK_ENCODER_PRESET, STARLINK_ENCODER_TUNE,
+			STARLINK_LEAKY_QUEUE, STARLINK_CAPTURE_SOURCE, true);
 
 	public static final ConnectionProfile DEFAULT = LAN;
 
 	private final String id;
 	private final String displayName;
-	private final int width;
-	private final int height;
 	private final int fps;
 	private final int bitrateKbps;
 	private final int keyIntMax;
@@ -73,19 +65,15 @@ public class ConnectionProfile {
 	private final String captureSource;
 	private final boolean systemProfile;
 
-	public ConnectionProfile(String id, String displayName, int width, int height, int fps, int bitrateKbps,
-			int keyIntMax, String encoderPreset, String encoderTune, boolean leakyQueue, String captureSource) {
-		this(id, displayName, width, height, fps, bitrateKbps, keyIntMax, encoderPreset, encoderTune, leakyQueue,
-				captureSource, false);
+	public ConnectionProfile(String id, String displayName, int fps, int bitrateKbps, int keyIntMax,
+			String encoderPreset, String encoderTune, boolean leakyQueue, String captureSource) {
+		this(id, displayName, fps, bitrateKbps, keyIntMax, encoderPreset, encoderTune, leakyQueue, captureSource, false);
 	}
 
-	public ConnectionProfile(String id, String displayName, int width, int height, int fps, int bitrateKbps,
-			int keyIntMax, String encoderPreset, String encoderTune, boolean leakyQueue, String captureSource,
-			boolean systemProfile) {
+	public ConnectionProfile(String id, String displayName, int fps, int bitrateKbps, int keyIntMax,
+			String encoderPreset, String encoderTune, boolean leakyQueue, String captureSource, boolean systemProfile) {
 		this.id = normalizeId(id);
 		this.displayName = normalizeText(displayName, this.id);
-		this.width = width;
-		this.height = height;
 		this.fps = fps;
 		this.bitrateKbps = bitrateKbps;
 		this.keyIntMax = keyIntMax;
@@ -102,14 +90,6 @@ public class ConnectionProfile {
 
 	public String getDisplayName() {
 		return displayName;
-	}
-
-	public int getWidth() {
-		return width;
-	}
-
-	public int getHeight() {
-		return height;
 	}
 
 	public int getFps() {
@@ -145,47 +125,52 @@ public class ConnectionProfile {
 	}
 
 	public String toPropertyValue() {
-		return String.join(",", id, displayName, String.valueOf(width), String.valueOf(height), String.valueOf(fps),
-				String.valueOf(bitrateKbps), String.valueOf(keyIntMax), encoderPreset, encoderTune,
-				String.valueOf(leakyQueue), captureSource);
+		return String.join(",", id, displayName, String.valueOf(fps), String.valueOf(bitrateKbps),
+				String.valueOf(keyIntMax), encoderPreset, encoderTune, String.valueOf(leakyQueue), captureSource);
 	}
 
 	public ConnectionProfile copyAsCustom(String newId, String newDisplayName) {
-		return new ConnectionProfile(newId, newDisplayName, width, height, fps, bitrateKbps, keyIntMax, encoderPreset,
-				encoderTune, leakyQueue, captureSource, false);
-	}
-
-	public ConnectionProfile withResolution(int width, int height) {
-		return new ConnectionProfile(id, displayName, width, height, fps, bitrateKbps, keyIntMax, encoderPreset,
-				encoderTune, leakyQueue, captureSource, systemProfile);
+		return new ConnectionProfile(newId, newDisplayName, fps, bitrateKbps, keyIntMax, encoderPreset, encoderTune,
+				leakyQueue, captureSource, false);
 	}
 
 	public static ConnectionProfile fromPropertyValue(String value) {
 		if (value == null || value.trim().isEmpty()) {
-			throw new IllegalArgumentException("Valor do perfil de conexão ausente.");
+			throw new IllegalArgumentException("Valor do perfil de conexao ausente.");
 		}
 
 		String[] parts = value.split(",", -1);
+		boolean legacyFormat = parts.length == 10 || parts.length == 11;
+		boolean currentFormat = parts.length == 8 || parts.length == 9;
 
-		if (parts.length != 11) {
+		if (!legacyFormat && !currentFormat) {
 			throw new IllegalArgumentException(
-					"Perfil de conexão inválido. Esperado 11 campos, encontrado " + parts.length + ".");
+					"Perfil de conexao invalido. Esperado 8 ou 9 campos, encontrado " + parts.length + ".");
 		}
 
 		String id = normalizeId(parts[0]);
 		String displayName = normalizeText(parts[1], id);
-		int width = parsePositiveInt(parts[2], "width");
-		int height = parsePositiveInt(parts[3], "height");
-		int fps = parsePositiveInt(parts[4], "fps");
-		int bitrateKbps = parsePositiveInt(parts[5], "bitrateKbps");
-		int keyIntMax = parsePositiveInt(parts[6], "keyIntMax");
-		String encoderPreset = normalizeText(parts[7], DEFAULT_ENCODER_PRESET);
-		String encoderTune = normalizeText(parts[8], DEFAULT_ENCODER_TUNE);
-		boolean leakyQueue = Boolean.parseBoolean(parts[9].trim());
-		String captureSource = normalizeCaptureSource(parts[10]);
 
-		return new ConnectionProfile(id, displayName, width, height, fps, bitrateKbps, keyIntMax, encoderPreset,
-				encoderTune, leakyQueue, captureSource, false);
+		// Old profile lines had width/height. They are accepted for compatibility and ignored.
+		int fpsIndex = legacyFormat ? 4 : 2;
+		int bitrateIndex = legacyFormat ? 5 : 3;
+		int keyIntIndex = legacyFormat ? 6 : 4;
+		int presetIndex = legacyFormat ? 7 : 5;
+		int tuneIndex = legacyFormat ? 8 : 6;
+		int leakyQueueIndex = legacyFormat ? 9 : 7;
+		int captureSourceIndex = legacyFormat ? 10 : 8;
+
+		int fps = parsePositiveInt(parts[fpsIndex], "fps");
+		int bitrateKbps = parsePositiveInt(parts[bitrateIndex], "bitrateKbps");
+		int keyIntMax = parsePositiveInt(parts[keyIntIndex], "keyIntMax");
+		String encoderPreset = normalizeText(parts[presetIndex], DEFAULT_ENCODER_PRESET);
+		String encoderTune = normalizeText(parts[tuneIndex], DEFAULT_ENCODER_TUNE);
+		boolean leakyQueue = Boolean.parseBoolean(parts[leakyQueueIndex].trim());
+		String captureSource = captureSourceIndex < parts.length ? normalizeCaptureSource(parts[captureSourceIndex])
+				: DEFAULT_CAPTURE_SOURCE;
+
+		return new ConnectionProfile(id, displayName, fps, bitrateKbps, keyIntMax, encoderPreset, encoderTune,
+				leakyQueue, captureSource, false);
 	}
 
 	public static boolean isReservedId(String id) {
@@ -223,7 +208,7 @@ public class ConnectionProfile {
 			// fallback below
 		}
 
-		throw new IllegalArgumentException("Valor inválido para " + fieldName + ": " + value);
+		throw new IllegalArgumentException("Valor invalido para " + fieldName + ": " + value);
 	}
 
 	private static String normalizeText(String value, String defaultValue) {

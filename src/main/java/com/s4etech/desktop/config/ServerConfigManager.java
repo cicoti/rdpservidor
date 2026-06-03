@@ -126,7 +126,7 @@ public class ServerConfigManager {
 
         try (FileOutputStream fos = new FileOutputStream(targetFile)) {
             properties.store(fos,
-                    "formato:\nid,displayName,width,height,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue\n\nRemote Desktop Server configuration");
+                    "formato:\nid,displayName,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue,captureSource\n\nRemote Desktop Server configuration");
             logger.info("Configuração salva com sucesso | arquivo={}", targetFile.getAbsolutePath());
         } catch (Exception e) {
             logger.error("Erro ao salvar configuração | arquivo={}", targetFile.getAbsolutePath(), e);

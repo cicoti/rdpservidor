@@ -9,6 +9,9 @@ import java.awt.Toolkit;
 
 public final class ScreenResolution {
 
+	private static final int FALLBACK_WIDTH = 1920;
+	private static final int FALLBACK_HEIGHT = 1080;
+
 	private ScreenResolution() {
 	}
 
@@ -34,7 +37,7 @@ public final class ScreenResolution {
 			// fallback below
 		}
 
-		return new Resolution(ConnectionProfile.LAN_WIDTH, ConnectionProfile.LAN_HEIGHT);
+		return new Resolution(FALLBACK_WIDTH, FALLBACK_HEIGHT);
 	}
 
 	public record Resolution(int width, int height) {

@@ -36,25 +36,6 @@ public class ServerConfigDialog extends JDialog {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] RESOLUTION_OPTIONS = {
-            "1920 x 1080",  // 16:9 - Widescreen
-            "1680 x 1050",  // 8:5 - 16:10
-            "1600 x 900",   // 16:9 - Widescreen
-            "1440 x 900",   // 8:5 - 16:10
-            "1400 x 1050",  // 4:3 - Classico
-            "1366 x 768",   // 683:384 - Quase 16:9
-            "1360 x 768",   // 85:48 - Quase 16:9
-            "1280 x 1024",  // 5:4 - Classico corporativo
-            "1280 x 960",   // 4:3 - Classico
-            "1280 x 800",   // 8:5 - 16:10
-            "1280 x 768",   // 5:3 - Widescreen antigo
-            "1280 x 720",   // 16:9 - HD
-            "1280 x 600",   // 32:15 - Ultrawide leve
-            "1152 x 864",   // 4:3 - Classico
-            "1024 x 768",   // 4:3 - Classico
-            "800 x 600"     // 4:3 - Classico
-    };
-
     private static final Integer[] FPS_OPTIONS = { 10, 12, 15, 20, 24, 30 };
     private static final Integer[] BITRATE_OPTIONS = { 600, 800, 1000, 1200, 1400, 1800, 2500, 3000, 6000 };
     private static final Integer[] KEY_INT_OPTIONS = { 10, 15, 20, 24, 30 };
@@ -68,7 +49,7 @@ public class ServerConfigDialog extends JDialog {
     private final JTextField controlField;
     private final JComboBox<ConnectionProfile> profileComboBox;
     private final JTextField profileNameField;
-    private final JComboBox<String> resolutionComboBox;
+    private final JTextField screenResolutionField;
     private final JComboBox<Integer> fpsComboBox;
     private final JComboBox<Integer> bitrateComboBox;
     private final JComboBox<Integer> keyIntComboBox;
@@ -102,7 +83,7 @@ public class ServerConfigDialog extends JDialog {
         this.controlField = new JTextField(String.valueOf(currentConfig.getControlPort()), 14);
         this.profileComboBox = new JComboBox<>(this.availableProfiles.toArray(new ConnectionProfile[0]));
         this.profileNameField = new JTextField(24);
-        this.resolutionComboBox = new JComboBox<>(RESOLUTION_OPTIONS);
+        this.screenResolutionField = createScreenResolutionField();
         this.fpsComboBox = new JComboBox<>(FPS_OPTIONS);
         this.bitrateComboBox = new JComboBox<>(BITRATE_OPTIONS);
         this.keyIntComboBox = new JComboBox<>(KEY_INT_OPTIONS);
@@ -308,8 +289,8 @@ public class ServerConfigDialog extends JDialog {
         gbc.insets = new Insets(0, 0, 8, 12);
 
         addEditorRow(panel, gbc, "Nome do perfil", profileNameField);
-        addEditorRow(panel, gbc, "Resolução", resolutionComboBox,
-                "Define o tamanho do vídeo transmitido. Resoluções maiores aumentam qualidade e consumo de banda.");
+        addEditorRow(panel, gbc, "Resolução da tela", screenResolutionField,
+                "Somente leitura. A transmissão usa a resolução configurada na máquina.");
         addEditorRow(panel, gbc, "FPS", fpsComboBox,
                 "Quantidade de quadros por segundo. Valores maiores deixam o vídeo mais fluido, mas aumentam uso de CPU e rede.");
         addEditorRow(panel, gbc, "Bitrate Kbps", bitrateComboBox,
@@ -423,6 +404,14 @@ public class ServerConfigDialog extends JDialog {
         return panel;
     }
 
+    private JTextField createScreenResolutionField() {
+        JTextField field = new JTextField(ScreenResolution.current().toDisplayText(), 24);
+        field.setEditable(false);
+        field.setFocusable(false);
+        field.setBackground(new Color(245, 245, 245));
+        return field;
+    }
+
     private void selectCurrentProfile() {
         ConnectionProfile profile = currentConfig.getConnectionProfile();
         profileComboBox.setSelectedItem(profile);
@@ -435,9 +424,7 @@ public class ServerConfigDialog extends JDialog {
 
     private void loadSelectedProfileIntoForm() {
         ConnectionProfile profile = getSelectedProfile();
-        String resolution = toResolutionText(profile.getWidth(), profile.getHeight());
 
-        ensureComboContains(resolutionComboBox, resolution);
         ensureComboContains(fpsComboBox, profile.getFps());
         ensureComboContains(bitrateComboBox, profile.getBitrateKbps());
         ensureComboContains(keyIntComboBox, profile.getKeyIntMax());
@@ -446,7 +433,7 @@ public class ServerConfigDialog extends JDialog {
         ensureComboContains(leakyQueueComboBox, profile.isLeakyQueue());
 
         profileNameField.setText(profile.getDisplayName());
-        resolutionComboBox.setSelectedItem(resolution);
+        screenResolutionField.setText(ScreenResolution.current().toDisplayText());
         fpsComboBox.setSelectedItem(profile.getFps());
         bitrateComboBox.setSelectedItem(profile.getBitrateKbps());
         keyIntComboBox.setSelectedItem(profile.getKeyIntMax());
@@ -456,7 +443,6 @@ public class ServerConfigDialog extends JDialog {
 
         boolean systemProfile = profile.isSystemProfile();
         profileNameField.setEditable(!systemProfile);
-        resolutionComboBox.setEnabled(!systemProfile);
         fpsComboBox.setEnabled(!systemProfile);
         bitrateComboBox.setEnabled(!systemProfile);
         keyIntComboBox.setEnabled(!systemProfile);
@@ -551,14 +537,7 @@ public class ServerConfigDialog extends JDialog {
         }
 
         ConnectionProfile selectedProfile = getSelectedProfile();
-        ScreenResolution.Resolution selectedResolution = parseSelectedResolution();
-        if (selectedResolution == null) {
-            showWarning("Selecione uma resoluÃ§Ã£o vÃ¡lida.");
-            return;
-        }
-
-        ConnectionProfile profileToActivate = selectedProfile.withResolution(selectedResolution.width(),
-                selectedResolution.height());
+        ConnectionProfile profileToActivate = selectedProfile;
 
         if (!selectedProfile.isSystemProfile()) {
             String displayName = profileNameField.getText() != null ? profileNameField.getText().trim() : "";
@@ -580,9 +559,8 @@ public class ServerConfigDialog extends JDialog {
             }
 
             String generatedId = generateUniqueProfileId(displayName, selectedProfile);
-            profileToActivate = new ConnectionProfile(generatedId, displayName, selectedResolution.width(),
-                    selectedResolution.height(), fps, bitrate, keyInt, preset, tune, leakyQueue,
-                    ConnectionProfile.DEFAULT_CAPTURE_SOURCE, false);
+            profileToActivate = new ConnectionProfile(generatedId, displayName, fps, bitrate, keyInt, preset, tune,
+                    leakyQueue, ConnectionProfile.DEFAULT_CAPTURE_SOURCE, false);
 
             availableProfiles.remove(selectedProfile);
             availableProfiles.add(profileToActivate);
@@ -629,34 +607,6 @@ public class ServerConfigDialog extends JDialog {
             JOptionPane.showMessageDialog(this, "Erro ao salvar a configuração: " + e.getMessage(), "Erro",
                     JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    private String toResolutionText(int width, int height) {
-        return width + " x " + height;
-    }
-
-    private ScreenResolution.Resolution parseSelectedResolution() {
-        Object selectedItem = resolutionComboBox.getSelectedItem();
-        if (!(selectedItem instanceof String resolutionText)) {
-            return null;
-        }
-
-        String[] parts = resolutionText.trim().toLowerCase().split("\\s*x\\s*");
-        if (parts.length != 2) {
-            return null;
-        }
-
-        try {
-            int width = Integer.parseInt(parts[0]);
-            int height = Integer.parseInt(parts[1]);
-            if (width > 0 && height > 0) {
-                return new ScreenResolution.Resolution(width, height);
-            }
-        } catch (NumberFormatException e) {
-            return null;
-        }
-
-        return null;
     }
 
     private void refreshProfileComboBox(ConnectionProfile selectedProfile) {

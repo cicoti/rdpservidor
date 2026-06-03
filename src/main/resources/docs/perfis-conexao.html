@@ -58,14 +58,14 @@
             <p>O perfil ativo é definido por:</p>
             <pre><code>connection.profile=LAN</code></pre>
             <p>Os perfis disponíveis são definidos assim:</p>
-            <pre><code>connection.profile.&lt;ID&gt;=id,displayName,width,height,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue</code></pre>
+            <pre><code>connection.profile.&lt;ID&gt;=id,displayName,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue,captureSource</code></pre>
             <p>Exemplo:</p>
-            <pre><code>connection.profile.LAN=LAN,Rede local,1920,1080,30,6000,30,ultrafast,zerolatency,false</code></pre>
+            <pre><code>connection.profile.SATELLITE_1=SATELLITE_1,Satélite 1,10,1000,20,veryfast,zerolatency,true,d3d11</code></pre>
         </div>
 
         <div class="section">
             <h2>Campos do perfil</h2>
-            <pre><code>id,displayName,width,height,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue</code></pre>
+            <pre><code>id,displayName,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue,captureSource</code></pre>
 
             <h3>1. id</h3>
             <p>Identificador interno do perfil.</p>
@@ -82,20 +82,11 @@
                 <li>Afeta apenas o texto mostrado ao usuário</li>
             </ul>
 
-            <h3>3. width</h3>
-            <p>Largura da imagem transmitida.</p>
+            <h3>Resolução da transmissão</h3>
+            <p>A resolução da imagem transmitida não faz parte do perfil de conexão.</p>
             <ul>
-                <li>Exemplos: <code>1024</code>, <code>1280</code>, <code>1920</code></li>
-                <li>Quanto maior, melhor definição horizontal</li>
-                <li>Quanto maior, maior consumo de banda e CPU</li>
-            </ul>
-
-            <h3>4. height</h3>
-            <p>Altura da imagem transmitida.</p>
-            <ul>
-                <li>Exemplos: <code>576</code>, <code>720</code>, <code>1080</code></li>
-                <li>Quanto maior, melhor definição vertical</li>
-                <li>Quanto maior, maior consumo de banda e CPU</li>
+                <li>O servidor sempre usa a resolução atual configurada na máquina Windows capturada</li>
+                <li>Os perfis controlam qualidade, fluidez e latência, mas não o tamanho do vídeo</li>
             </ul>
 
             <h3>5. fps</h3>
@@ -145,24 +136,31 @@
                 <li><code>true</code>: descarta frames antigos para reduzir atraso</li>
                 <li><code>false</code>: mantém mais frames, podendo aumentar latência</li>
             </ul>
+
+            <h3>11. captureSource</h3>
+            <p>Fonte de captura usada pelo pipeline.</p>
+            <ul>
+                <li>Valor atual: <code>d3d11</code></li>
+                <li>Não altera a resolução transmitida</li>
+            </ul>
         </div>
 
         <div class="section">
             <h2>Perfis de exemplo</h2>
             <h3>Rede local</h3>
-            <pre><code>connection.profile.LAN=LAN,Rede local,1920,1080,30,6000,30,ultrafast,zerolatency,false</code></pre>
+            <pre><code>LAN,Rede local,30,6000,30,ultrafast,zerolatency,false,d3d11</code></pre>
 
             <h3>Wi-Fi</h3>
-            <pre><code>connection.profile.WIFI=WIFI,Wi-Fi,1280,720,20,2500,30,veryfast,zerolatency,true</code></pre>
+            <pre><code>WIFI,Wi-Fi,20,2500,24,veryfast,zerolatency,true,d3d11</code></pre>
 
             <h3>Satélite 1</h3>
-            <pre><code>connection.profile.SATELLITE_1=SATELLITE_1,Satélite 1,1024,576,10,1000,20,veryfast,zerolatency,true</code></pre>
+            <pre><code>connection.profile.SATELLITE_1=SATELLITE_1,Satélite 1,10,1000,20,veryfast,zerolatency,true,d3d11</code></pre>
 
             <h3>Satélite 2</h3>
-            <pre><code>connection.profile.SATELLITE_2=SATELLITE_2,Satélite 2,1280,720,12,1400,24,veryfast,zerolatency,true</code></pre>
+            <pre><code>connection.profile.SATELLITE_2=SATELLITE_2,Satélite 2,12,1400,24,veryfast,zerolatency,true,d3d11</code></pre>
 
             <h3>Satélite 3</h3>
-            <pre><code>connection.profile.SATELLITE_3=SATELLITE_3,Satélite 3,1280,720,15,1800,30,veryfast,zerolatency,true</code></pre>
+            <pre><code>connection.profile.SATELLITE_3=SATELLITE_3,Satélite 3,15,1800,30,veryfast,zerolatency,true,d3d11</code></pre>
         </div>
 
         <div class="section">
@@ -178,13 +176,13 @@
         <div class="section">
             <h2>Recomendações rápidas</h2>
             <h3>Menor atraso</h3>
-            <pre><code>1280,720,12~20,1400~2500,20~30,veryfast,zerolatency,true</code></pre>
+            <pre><code>12~20,1400~2500,20~30,veryfast,zerolatency,true,d3d11</code></pre>
 
             <h3>Melhor imagem</h3>
-            <pre><code>1920,1080,30,6000+,30,ultrafast ou fast,zerolatency,false</code></pre>
+            <pre><code>30,6000+,30,ultrafast ou fast,zerolatency,false,d3d11</code></pre>
 
             <h3>Rede muito limitada</h3>
-            <pre><code>1024,576,10,800~1200,20,veryfast,zerolatency,true</code></pre>
+            <pre><code>10,800~1200,20,veryfast,zerolatency,true,d3d11</code></pre>
         </div>
     </div>
 </body>

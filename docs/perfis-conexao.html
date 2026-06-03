@@ -58,7 +58,7 @@
 <p>A aplicação trabalha com dois tipos de perfil:</p>
 
 <ul>
-<li>Perfis protegidos do sistema: `LAN` e `WIFI`</li>
+<li>Perfis protegidos do sistema: `LAN`, `WIFI` e `STARLINK`</li>
 <li>Perfis customizados: criados e mantidos pelo usuário</li>
 </ul>
 
@@ -75,24 +75,25 @@ connection.profile=LAN
 <p>Os perfis customizados gravados no arquivo são definidos assim:</p>
 
 <pre><code>
-connection.profile.&lt;ID&gt;=id,displayName,width,height,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue
+connection.profile.&lt;ID&gt;=id,displayName,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue,captureSource
 </code></pre>
 
 <p>Exemplo de perfil customizado:</p>
 
 <pre><code>
-connection.profile.SATELLITE_1=SATELLITE_1,Satélite 1,1024,576,10,1000,20,veryfast,zerolatency,true
+connection.profile.SATELLITE_1=SATELLITE_1,Satélite 1,10,1000,20,veryfast,zerolatency,true,d3d11
 </code></pre>
 
 <hr>
 
 <h2>Perfis protegidos do sistema</h2>
 
-<p>A aplicação sempre possui dois perfis protegidos:</p>
+<p>A aplicação sempre possui três perfis protegidos:</p>
 
 <ul>
 <li>`LAN`</li>
 <li>`WIFI`</li>
+<li>`STARLINK`</li>
 </ul>
 
 <h3>Regras desses perfis</h3>
@@ -146,7 +147,7 @@ connection.profile=SATELLITE_1
 <li>o usuário informa apenas o nome do perfil</li>
 <li>o sistema gera o ID automaticamente</li>
 <li>o ID é convertido para um formato interno sem acentos e em maiúsculas</li>
-<li>os IDs `LAN` e `WIFI` são reservados e não podem ser usados por perfis customizados</li>
+<li>os IDs `LAN`, `WIFI` e `STARLINK` são reservados e não podem ser usados por perfis customizados</li>
 <li>se o ID gerado já existir, o sistema cria um sufixo incremental automaticamente</li>
 </ul>
 
@@ -165,7 +166,7 @@ connection.profile=SATELLITE_1
 <p>Formato:</p>
 
 <pre><code>
-id,displayName,width,height,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue
+id,displayName,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue,captureSource
 </code></pre>
 
 <h3>1. `id`</h3>
@@ -204,34 +205,15 @@ id,displayName,width,height,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,
 
 <hr>
 
-<h3>3. `width` e `height`</h3>
-<p>Largura e altura da imagem transmitida.</p>
+<h3>Resolução da transmissão</h3>
+<p>A resolução da imagem transmitida não faz parte do perfil de conexão.</p>
 
-<p><strong>Resoluções disponíveis na interface</strong></p>
-<ul>
-<li>`640 x 360`</li>
-<li>`768 x 432`</li>
-<li>`854 x 480`</li>
-<li>`960 x 540`</li>
-<li>`1024 x 576`</li>
-<li>`1152 x 648`</li>
-<li>`1280 x 720`</li>
-<li>`1366 x 768`</li>
-<li>`1600 x 900`</li>
-<li>`1920 x 1080`</li>
-</ul>
-
-<p><strong>Observação importante:</strong></p>
-<ul>
-<li>a interface foi limitada a resoluções widescreen de uso prático, priorizando o comportamento estável do cliente</li>
-<li>resoluções fora desse conjunto não devem ser utilizadas como referência da documentação atual</li>
-</ul>
+<p>O servidor sempre usa a resolução atual configurada na máquina Windows que está sendo capturada. Se a resolução do monitor for alterada no sistema operacional, a próxima sessão de vídeo usa essa configuração.</p>
 
 <p><strong>Impacto:</strong></p>
 <ul>
-<li>quanto maior a resolução, melhor definição</li>
-<li>quanto maior a resolução, maior consumo de banda</li>
-<li>quanto maior a resolução, maior uso de CPU para captura e codificação</li>
+<li>a resolução segue a configuração real da máquina</li>
+<li>os perfis controlam qualidade, fluidez e latência, mas não o tamanho do vídeo</li>
 </ul>
 
 <hr>
@@ -371,6 +353,22 @@ id,displayName,width,height,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,
 
 <hr>
 
+<h3>10. `captureSource`</h3>
+<p>Fonte de captura usada pelo pipeline.</p>
+
+<p>Valores:</p>
+<ul>
+<li>`d3d11`</li>
+</ul>
+
+<p><strong>Impacto:</strong></p>
+<ul>
+<li>não altera a resolução transmitida</li>
+<li>define o backend de captura da tela no Windows</li>
+</ul>
+
+<hr>
+
 <h2>Perfis padrão do sistema</h2>
 
 <h3>LAN</h3>
@@ -379,7 +377,7 @@ id,displayName,width,height,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,
 <p>Configuração de referência:</p>
 
 <pre><code>
-LAN,Rede local,1920,1080,24,3000,30,superfast,zerolatency,false
+LAN,Rede local,30,6000,30,ultrafast,zerolatency,false,d3d11
 </code></pre>
 
 <h3>WIFI</h3>
@@ -388,7 +386,16 @@ LAN,Rede local,1920,1080,24,3000,30,superfast,zerolatency,false
 <p>Configuração de referência:</p>
 
 <pre><code>
-WIFI,Wi-Fi,1280,720,15,1800,24,veryfast,zerolatency,true
+WIFI,Wi-Fi,20,2500,24,veryfast,zerolatency,true,d3d11
+</code></pre>
+
+<h3>STARLINK</h3>
+<p>Perfil protegido para links com banda e latência mais restritas.</p>
+
+<p>Configuração de referência:</p>
+
+<pre><code>
+STARLINK,Starlink,10,900,20,veryfast,zerolatency,true,d3d11
 </code></pre>
 
 <blockquote>Observação: os perfis padrão acima devem refletir a estratégia atual do produto. Se os valores reais em `ConnectionProfile` forem diferentes, a documentação deve acompanhar exatamente o que estiver no código-fonte oficial.</blockquote>
@@ -399,17 +406,17 @@ WIFI,Wi-Fi,1280,720,15,1800,24,veryfast,zerolatency,true
 
 <h3>Satélite 1</h3>
 <pre><code>
-connection.profile.SATELLITE_1=SATELLITE_1,Satélite 1,1024,576,10,1000,20,veryfast,zerolatency,true
+connection.profile.SATELLITE_1=SATELLITE_1,Satélite 1,10,1000,20,veryfast,zerolatency,true,d3d11
 </code></pre>
 
 <h3>Satélite 2</h3>
 <pre><code>
-connection.profile.SATELLITE_2=SATELLITE_2,Satélite 2,1280,720,12,1400,24,veryfast,zerolatency,true
+connection.profile.SATELLITE_2=SATELLITE_2,Satélite 2,12,1400,24,veryfast,zerolatency,true,d3d11
 </code></pre>
 
 <h3>Satélite 3</h3>
 <pre><code>
-connection.profile.SATELLITE_3=SATELLITE_3,Satélite 3,1280,720,15,1800,30,faster,zerolatency,true
+connection.profile.SATELLITE_3=SATELLITE_3,Satélite 3,15,1800,30,faster,zerolatency,true,d3d11
 </code></pre>
 
 <hr>
@@ -429,12 +436,12 @@ connection.profile.SATELLITE_3=SATELLITE_3,Satélite 3,1280,720,15,1800,30,faste
 
 <pre><code>
 #formato:
-#id,displayName,width,height,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue
+#id,displayName,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue,captureSource
 #
 #Remote Desktop Server configuration
 #Mon Apr 20 13:44:15 BRT 2026
 connection.profile=LAN
-connection.profile.SATELLITE_1=SATELLITE_1,Sat\u00E9lite 1,1024,576,10,1000,20,veryfast,zerolatency,true
+connection.profile.SATELLITE_1=SATELLITE_1,Sat\u00E9lite 1,10,1000,20,veryfast,zerolatency,true,d3d11
 control.port=5000
 handshake.port=7000
 </code></pre>
@@ -442,7 +449,7 @@ handshake.port=7000
 <h3>Observações</h3>
 
 <ul>
-<li>`LAN` e `WIFI` não devem ser gravados no arquivo</li>
+<li>`LAN`, `WIFI` e `STARLINK` não devem ser gravados no arquivo</li>
 <li>o arquivo armazena apenas perfis customizados</li>
 <li>ao salvar alterações, o arquivo deve ser regenerado por completo</li>
 </ul>
@@ -457,8 +464,8 @@ handshake.port=7000
 <li>todos os campos do perfil devem ser preenchidos</li>
 <li>os campos numéricos devem ser positivos</li>
 <li>`leakyQueue` deve ser `true` ou `false`</li>
-<li>`LAN` e `WIFI` são IDs reservados</li>
-<li>qualquer definição de `connection.profile.LAN` ou `connection.profile.WIFI` no arquivo deve ser ignorada</li>
+<li>`LAN`, `WIFI` e `STARLINK` são IDs reservados</li>
+<li>qualquer definição de `connection.profile.LAN`, `connection.profile.WIFI` ou `connection.profile.STARLINK` no arquivo deve ser ignorada</li>
 </ul>
 
 <hr>
@@ -477,7 +484,7 @@ handshake.port=7000
 
 <h3>Comportamento dos perfis protegidos</h3>
 
-<p>Quando o perfil selecionado for <code>LAN</code> ou <code>WIFI</code>:</p>
+<p>Quando o perfil selecionado for <code>LAN</code>, <code>WIFI</code> ou <code>STARLINK</code>:</p>
 
 <ul>
 <li>os campos aparecem preenchidos</li>
@@ -505,28 +512,28 @@ handshake.port=7000
 <p>Use algo próximo de:</p>
 
 <pre><code>
-1280,720,12~20,1200~2500,20~30,veryfast ou faster,zerolatency,true
+12~20,1200~2500,20~30,veryfast ou faster,zerolatency,true,d3d11
 </code></pre>
 
 <h3>Melhor equilíbrio entre fluidez e consumo</h3>
 <p>Use algo próximo de:</p>
 
 <pre><code>
-1280,720,15~24,1400~3000,24~30,superfast ou veryfast,zerolatency,true
+15~24,1400~3000,24~30,superfast ou veryfast,zerolatency,true,d3d11
 </code></pre>
 
 <h3>Rede muito limitada</h3>
 <p>Use algo próximo de:</p>
 
 <pre><code>
-1024,576,10,800~1200,20,veryfast,zerolatency,true
+10,800~1200,20,veryfast,zerolatency,true,d3d11
 </code></pre>
 
 <h3>Rede local estável</h3>
 <p>Use algo próximo de:</p>
 
 <pre><code>
-1600,900 ou 1920,1080,20~24,2500~3000,24~30,superfast,zerolatency,false
+20~24,2500~3000,24~30,superfast,zerolatency,false,d3d11
 </code></pre>
     </div>
 </body>

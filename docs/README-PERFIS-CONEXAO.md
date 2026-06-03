@@ -4,7 +4,7 @@ Os perfis de conexão definem como o servidor transmite a imagem da área de tra
 
 A aplicação trabalha com dois tipos de perfil:
 
-- **Perfis protegidos do sistema**: `LAN` e `WIFI`
+- **Perfis protegidos do sistema**: `LAN`, `WIFI` e `STARLINK`
 - **Perfis customizados**: criados e mantidos pelo usuário
 
 ---
@@ -20,23 +20,24 @@ connection.profile=LAN
 Os perfis customizados gravados no arquivo são definidos assim:
 
 ```properties
-connection.profile.<ID>=id,displayName,width,height,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue
+connection.profile.<ID>=id,displayName,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue,captureSource
 ```
 
 Exemplo de perfil customizado:
 
 ```properties
-connection.profile.SATELLITE_1=SATELLITE_1,Satélite 1,1024,576,10,1000,20,veryfast,zerolatency,true
+connection.profile.SATELLITE_1=SATELLITE_1,Satélite 1,10,1000,20,veryfast,zerolatency,true,d3d11
 ```
 
 ---
 
 ## Perfis protegidos do sistema
 
-A aplicação sempre possui dois perfis protegidos:
+A aplicação sempre possui três perfis protegidos:
 
 - `LAN`
 - `WIFI`
+- `STARLINK`
 
 ### Regras desses perfis
 
@@ -84,7 +85,7 @@ Perfis customizados são criados pela interface da aplicação.
 - o usuário informa apenas o nome do perfil
 - o sistema gera o ID automaticamente
 - o ID é convertido para um formato interno sem acentos e em maiúsculas
-- os IDs `LAN` e `WIFI` são reservados e não podem ser usados por perfis customizados
+- os IDs `LAN`, `WIFI` e `STARLINK` são reservados e não podem ser usados por perfis customizados
 - se o ID gerado já existir, o sistema cria um sufixo incremental automaticamente
 
 Exemplos:
@@ -100,7 +101,7 @@ Exemplos:
 Formato:
 
 ```properties
-id,displayName,width,height,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue
+id,displayName,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue,captureSource
 ```
 
 ### 1. `id`
@@ -131,29 +132,14 @@ Exemplos:
 
 ---
 
-### 3. `width` e `height`
-Largura e altura da imagem transmitida.
+### Resolução da transmissão
+A resolução da imagem transmitida não faz parte do perfil de conexão.
 
-**Resoluções disponíveis na interface**
-- `640 x 360`
-- `768 x 432`
-- `854 x 480`
-- `960 x 540`
-- `1024 x 576`
-- `1152 x 648`
-- `1280 x 720`
-- `1366 x 768`
-- `1600 x 900`
-- `1920 x 1080`
-
-**Observação importante:**
-- a interface foi limitada a resoluções widescreen de uso prático, priorizando o comportamento estável do cliente
-- resoluções fora desse conjunto não devem ser utilizadas como referência da documentação atual
+O servidor sempre usa a resolução atual configurada na máquina Windows que está sendo capturada. Se a resolução do monitor for alterada no sistema operacional, a próxima sessão de vídeo usa essa configuração.
 
 **Impacto:**
-- quanto maior a resolução, melhor definição
-- quanto maior a resolução, maior consumo de banda
-- quanto maior a resolução, maior uso de CPU para captura e codificação
+- a resolução segue a configuração real da máquina
+- os perfis controlam qualidade, fluidez e latência, mas não o tamanho do vídeo
 
 ---
 
@@ -262,6 +248,18 @@ Valores:
 
 ---
 
+### 10. `captureSource`
+Fonte de captura usada pelo pipeline.
+
+Valores:
+- `d3d11`
+
+**Impacto:**
+- não altera a resolução transmitida
+- define o backend de captura da tela no Windows
+
+---
+
 ## Perfis padrão do sistema
 
 ### LAN
@@ -270,7 +268,7 @@ Perfil protegido para rede cabeada local.
 Configuração de referência:
 
 ```properties
-LAN,Rede local,1920,1080,24,3000,30,superfast,zerolatency,false
+LAN,Rede local,30,6000,30,ultrafast,zerolatency,false,d3d11
 ```
 
 ### WIFI
@@ -279,7 +277,16 @@ Perfil protegido para uso em rede Wi-Fi.
 Configuração de referência:
 
 ```properties
-WIFI,Wi-Fi,1280,720,15,1800,24,veryfast,zerolatency,true
+WIFI,Wi-Fi,20,2500,24,veryfast,zerolatency,true,d3d11
+```
+
+### STARLINK
+Perfil protegido para links com banda e latência mais restritas.
+
+Configuração de referência:
+
+```properties
+STARLINK,Starlink,10,900,20,veryfast,zerolatency,true,d3d11
 ```
 
 > Observação: os perfis padrão acima devem refletir a estratégia atual do produto. Se os valores reais em `ConnectionProfile` forem diferentes, a documentação deve acompanhar exatamente o que estiver no código-fonte oficial.
@@ -290,17 +297,17 @@ WIFI,Wi-Fi,1280,720,15,1800,24,veryfast,zerolatency,true
 
 ### Satélite 1
 ```properties
-connection.profile.SATELLITE_1=SATELLITE_1,Satélite 1,1024,576,10,1000,20,veryfast,zerolatency,true
+connection.profile.SATELLITE_1=SATELLITE_1,Satélite 1,10,1000,20,veryfast,zerolatency,true,d3d11
 ```
 
 ### Satélite 2
 ```properties
-connection.profile.SATELLITE_2=SATELLITE_2,Satélite 2,1280,720,12,1400,24,veryfast,zerolatency,true
+connection.profile.SATELLITE_2=SATELLITE_2,Satélite 2,12,1400,24,veryfast,zerolatency,true,d3d11
 ```
 
 ### Satélite 3
 ```properties
-connection.profile.SATELLITE_3=SATELLITE_3,Satélite 3,1280,720,15,1800,30,faster,zerolatency,true
+connection.profile.SATELLITE_3=SATELLITE_3,Satélite 3,15,1800,30,faster,zerolatency,true,d3d11
 ```
 
 ---
@@ -318,19 +325,19 @@ Exemplo:
 
 ```properties
 #formato:
-#id,displayName,width,height,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue
+#id,displayName,fps,bitrateKbps,keyIntMax,encoderPreset,encoderTune,leakyQueue,captureSource
 #
 #Remote Desktop Server configuration
 #Mon Apr 20 13:44:15 BRT 2026
 connection.profile=LAN
-connection.profile.SATELLITE_1=SATELLITE_1,Sat\u00E9lite 1,1024,576,10,1000,20,veryfast,zerolatency,true
+connection.profile.SATELLITE_1=SATELLITE_1,Sat\u00E9lite 1,10,1000,20,veryfast,zerolatency,true,d3d11
 control.port=5000
 handshake.port=7000
 ```
 
 ### Observações
 
-- `LAN` e `WIFI` não devem ser gravados no arquivo
+- `LAN`, `WIFI` e `STARLINK` não devem ser gravados no arquivo
 - o arquivo armazena apenas perfis customizados
 - ao salvar alterações, o arquivo deve ser regenerado por completo
 
@@ -343,8 +350,8 @@ handshake.port=7000
 - todos os campos do perfil devem ser preenchidos
 - os campos numéricos devem ser positivos
 - `leakyQueue` deve ser `true` ou `false`
-- `LAN` e `WIFI` são IDs reservados
-- qualquer definição de `connection.profile.LAN` ou `connection.profile.WIFI` no arquivo deve ser ignorada
+- `LAN`, `WIFI` e `STARLINK` são IDs reservados
+- qualquer definição de `connection.profile.LAN`, `connection.profile.WIFI` ou `connection.profile.STARLINK` no arquivo deve ser ignorada
 
 ---
 
@@ -360,7 +367,7 @@ Na interface de configuração, o usuário pode:
 
 ### Comportamento dos perfis protegidos
 
-Quando o perfil selecionado for `LAN` ou `WIFI`:
+Quando o perfil selecionado for `LAN`, `WIFI` ou `STARLINK`:
 
 - os campos aparecem preenchidos
 - os campos ficam bloqueados para edição
@@ -384,26 +391,26 @@ Quando o perfil selecionado for customizado:
 Use algo próximo de:
 
 ```properties
-1280,720,12~20,1200~2500,20~30,veryfast ou faster,zerolatency,true
+12~20,1200~2500,20~30,veryfast ou faster,zerolatency,true,d3d11
 ```
 
 ### Melhor equilíbrio entre fluidez e consumo
 Use algo próximo de:
 
 ```properties
-1280,720,15~24,1400~3000,24~30,superfast ou veryfast,zerolatency,true
+15~24,1400~3000,24~30,superfast ou veryfast,zerolatency,true,d3d11
 ```
 
 ### Rede muito limitada
 Use algo próximo de:
 
 ```properties
-1024,576,10,800~1200,20,veryfast,zerolatency,true
+10,800~1200,20,veryfast,zerolatency,true,d3d11
 ```
 
 ### Rede local estável
 Use algo próximo de:
 
 ```properties
-1600,900 ou 1920,1080,20~24,2500~3000,24~30,superfast,zerolatency,false
+20~24,2500~3000,24~30,superfast,zerolatency,false,d3d11
 ```

@@ -8,6 +8,7 @@ import org.freedesktop.gstreamer.Gst;
 import org.freedesktop.gstreamer.Pipeline;
 
 import com.s4etech.desktop.config.ConnectionProfile;
+import com.s4etech.desktop.config.ScreenResolution;
 import com.s4etech.desktop.listener.ServerHandshakeListener;
 import com.s4etech.desktop.session.ActiveSessionContext;
 
@@ -253,14 +254,15 @@ public class ScreenStreamServer {
 	}
 
 	private void startPipelineOnce() {
-		String pipelineStr = buildPipeline(clientIp, videoPort);
+		ScreenResolution.Resolution transmitResolution = ScreenResolution.current();
+		String pipelineStr = buildPipeline(clientIp, videoPort, transmitResolution);
 
 		pipeline = (Pipeline) Gst.parseLaunch(pipelineStr);
 		attachPipelineBusListeners(pipeline);
 
 		System.out.println("Servidor de tela enviando para " + clientIp.getHostAddress() + ":" + videoPort
-				+ " | perfil=" + connectionProfile.getDisplayName() + " | " + connectionProfile.getWidth() + "x"
-				+ connectionProfile.getHeight() + " @" + connectionProfile.getFps() + "fps" + " bitrate="
+				+ " | perfil=" + connectionProfile.getDisplayName() + " | " + transmitResolution.width() + "x"
+				+ transmitResolution.height() + " @" + connectionProfile.getFps() + "fps" + " bitrate="
 				+ connectionProfile.getBitrateKbps() + "kbps");
 		System.out.println("Pipeline GStreamer: " + pipelineStr);
 
@@ -332,14 +334,14 @@ public class ScreenStreamServer {
 		recoveryThread.start();
 	}
 
-	private String buildPipeline(InetAddress clientIp, int videoPort) {
+	private String buildPipeline(InetAddress clientIp, int videoPort, ScreenResolution.Resolution transmitResolution) {
 		String queueSegment = connectionProfile.isLeakyQueue() ? "queue leaky=downstream max-size-buffers=2 ! "
 				: "queue ! ";
 
 		String captureSourceSegment = "d3d11screencapturesrc monitor-index=0 show-cursor=false ! ";
 
 		return captureSourceSegment + queueSegment + "videoconvert ! videoscale ! " + "video/x-raw,format=I420,width="
-				+ connectionProfile.getWidth() + ",height=" + connectionProfile.getHeight() + ",framerate="
+				+ transmitResolution.width() + ",height=" + transmitResolution.height() + ",framerate="
 				+ connectionProfile.getFps() + "/1 ! " + "x264enc tune=" + connectionProfile.getEncoderTune()
 				+ " speed-preset=" + connectionProfile.getEncoderPreset() + " bitrate="
 				+ connectionProfile.getBitrateKbps() + " key-int-max=" + connectionProfile.getKeyIntMax()
