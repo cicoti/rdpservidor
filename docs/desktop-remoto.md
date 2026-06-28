@@ -25,6 +25,29 @@ A comunicação é **toda em UDP**, dividida em **3 canais** com portas distinta
 > implementação própria — em vez do protocolo **RDP da Microsoft** — se deve ao
 > **suporte limitado e desatualizado** da API Java para esse protocolo.
 
+### Por que uma solução própria (e não o RDP da Microsoft)
+
+Não existe uma via viável de RDP em Java — o que torna a implementação própria uma
+**decisão técnica**, não um improviso:
+
+- **Não há biblioteca Java de RDP moderna e mantida.** As implementações Java
+  "puras" (ProperJavaRDP, JavaRDP) derivam do `rdesktop`, foram otimizadas para
+  **Java 1.4** e estão **paradas desde ~2007**: só suportam RDP antigo (Windows
+  Server 2003/Vista) e não funcionam com Windows Server 2012+. A `jrDesktop` está
+  descontinuada.
+- **Sem recursos modernos.** Por terem parado em 2007, não acompanham
+  **NLA/CredSSP**, TLS atual nem os codecs novos (**RemoteFX, H.264**).
+- **A implementação robusta (FreeRDP) é em C.** O único binding Java é o do app
+  **Android** (via JNI/NDK); não há binding desktop pronto. Usá-lo traria
+  dependência nativa e perda de portabilidade.
+- **Reimplementar o protocolo é inviável.** O RDP (`MS-RDPBCGR`) é proprietário e
+  complexo: sequência de conexão em ~10 fases, **MCS** (Multipoint Communication
+  Service) e várias camadas de segurança.
+
+Por isso optou-se por uma stack **madura e portável** — **GStreamer** para o vídeo
+(H264/RTP/UDP) e **sockets UDP** para handshake e controle — com controle total
+sobre latência e formato.
+
 ---
 
 ## 2. Arquitetura
